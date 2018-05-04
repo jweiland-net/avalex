@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2018-03-18T17:38:20Z" product-name="avalex">
+		<header/>
+		<body>
+			<trans-unit id="tx_avalex_avalex.name">
+				<source>avalex</source>
+			</trans-unit>
+			<trans-unit id="tx_avalex_avalex.description">
+				<source>This plugin displays a privacy statement for your website using the avalex.de API. Get an API key from: https://www.avalex.de/121.html .</source>
+			</trans-unit>
+			<trans-unit id="scheduler-importer.title">
+				<source>avalex content import</source>
+			</trans-unit>
+			<trans-unit id="scheduler-importer.description">
+				<source>This importer fetches the current privacy statement for your website(s) from avalex.de.</source>
+			</trans-unit>
+			<trans-unit id="tx_avalex_configuration">
+				<source>Avalex configuration</source>
+			</trans-unit>
+			<trans-unit id="tx_avalex_configuration.website_root">
+				<source>For Website</source>
+			</trans-unit>
+			<trans-unit id="tx_avalex_configuration.api_key">
+				<source>API key</source>
+			</trans-unit>
+			<trans-unit id="tx_avalex_legaltext">
+				<source>Privacy statement</source>
+			</trans-unit>
+			<trans-unit id="tx_avalex_legaltext.website_root">
+				<source>For website</source>
+			</trans-unit>
+			<trans-unit id="tx_avalex_legaltext.content">
+				<source>Content</source>
+			</trans-unit>
+			<trans-unit id="tx_avalex_legaltext.tstamp">
+				<source>Modification date</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

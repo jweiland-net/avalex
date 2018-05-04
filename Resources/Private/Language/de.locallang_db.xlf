@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2018-03-18T17:38:20Z" product-name="avalex">
+		<header/>
+		<body>
+			<trans-unit id="tx_avalex_avalex.name">
+				<source>avalex</source>
+				<target>avalex</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_avalex.description">
+				<source>This plugin displays a privacy statement for your website using the avalex.de API. Get an API key from: https://www.avalex.de/121.html .</source>
+				<target>Das Plugin ermöglicht es, Ihre Website mit der avalex API zu verbinden. Einen API Key erhalten Sie auf https://www.avalex.de/121.html .</target>
+			</trans-unit>
+			<trans-unit id="scheduler-importer.title">
+				<source>avalex content import</source>
+				<target>Avalex Text Importer</target>
+			</trans-unit>
+			<trans-unit id="scheduler-importer.description">
+				<source>This importer fetches the current privacy statement for your website(s) from avalex.de.</source>
+				<target>Der Importer lädt mit Hilfe der avalex.de API die aktuelle Datenschutzerklärung für die Webseite(n) herunter.</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_configuration">
+				<source>Avalex configuration</source>
+				<target>Avalex Konfiguration</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_configuration.website_root">
+				<source>For Website</source>
+				<target>Für Webseite</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_configuration.api_key">
+				<source>API key</source>
+				<target>API-Key</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_legaltext">
+				<source>Privacy statement</source>
+				<target>Datenschutzerklärung</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_legaltext.website_root">
+				<source>For website</source>
+				<target>Für Webseite</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_legaltext.content">
+				<source>Content</source>
+				<target>Inhalt</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_legaltext.tstamp">
+				<source>Modification date</source>
+				<target>Zuletzt modifiziert am</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

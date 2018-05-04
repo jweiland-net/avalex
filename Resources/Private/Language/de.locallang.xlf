@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2018-03-18T17:38:20Z"
+				product-name="avalex">
+		<header/>
+		<body>
+			<trans-unit id="errors.missing_data">
+				<source>Could not find a legal text record for your site root. Please check your configuration and take a look
+					into the documentation.
+				</source>
+				<target>Es konnte kein Datenschutz Datensatz gefunden werden. Bitte Konfiguration prüfen und einen Blick in die
+					Dokumentation werfen.
+				</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
