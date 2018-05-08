@@ -34,7 +34,7 @@ class AvalexConfigurationRepository extends AbstractRepository
             $result = $this->getDatabaseConnection()->exec_SELECTgetRows(
                 '*',
                 'tx_avalex_configuration',
-                $this->getAdditionalWhereClause(self::TABLE)
+                substr($this->getAdditionalWhereClause(self::TABLE), 5)
             );
         }
         return ($result !== null) ? $result : array();
