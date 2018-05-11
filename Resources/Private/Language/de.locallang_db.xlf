@@ -47,6 +47,10 @@
 				<source>Modification date</source>
 				<target>Zuletzt modifiziert am</target>
 			</trans-unit>
+			<trans-unit id="tx_avalex_configuration.description">
+				<source>Description (optional)</source>
+				<target>Beschreibung (optional)</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

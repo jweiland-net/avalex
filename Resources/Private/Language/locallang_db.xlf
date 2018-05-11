@@ -36,6 +36,9 @@
 			<trans-unit id="tx_avalex_legaltext.tstamp">
 				<source>Modification date</source>
 			</trans-unit>
+			<trans-unit id="tx_avalex_configuration.description">
+				<source>Description (optional)</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

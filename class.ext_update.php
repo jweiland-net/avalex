@@ -44,21 +44,6 @@ class ext_update {
     protected $apiKey = '';
 
     /**
-     * ext_update constructor.
-     */
-    public function __construct()
-    {
-        /** @var ObjectManager $objectManager */
-        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-        /** @var ConfigurationUtility $configurationUtility */
-        $this->configurationUtility = $objectManager->get(
-            'TYPO3\\CMS\\Extensionmanager\\Utility\\ConfigurationUtility'
-        );
-        $configuration = $this->configurationUtility->getCurrentConfiguration('avalex');
-        $this->apiKey = isset($configuration['apiKey']['value']) ? $configuration['apiKey']['value'] : '';
-    }
-
-    /**
      * Checks if an update is necessary
      *
      * @return bool
@@ -82,10 +67,25 @@ class ext_update {
      */
     public function main()
     {
+        $this->init();
         $this->processUpdates();
         return $this->generateOutput();
     }
 
+    /**
+     * ext_update init
+     */
+    protected function init()
+    {
+        /** @var ObjectManager $objectManager */
+        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        /** @var ConfigurationUtility $configurationUtility */
+        $this->configurationUtility = $objectManager->get(
+            'TYPO3\\CMS\\Extensionmanager\\Utility\\ConfigurationUtility'
+        );
+        $configuration = $this->configurationUtility->getCurrentConfiguration('avalex');
+        $this->apiKey = isset($configuration['apiKey']['value']) ? $configuration['apiKey']['value'] : '';
+    }
 
     /**
      * The actual update function. Add your update task in here.

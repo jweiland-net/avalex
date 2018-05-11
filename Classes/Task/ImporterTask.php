@@ -16,18 +16,12 @@ namespace JWeiland\Avalex\Task;
 
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Domain\Repository\LegalTextRepository;
-use JWeiland\Avalex\Service\ExtensionSettingsService;
+use JWeiland\Avalex\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
 class ImporterTask extends AbstractTask
 {
-
-    /**
-     * @var ExtensionSettingsService
-     */
-    protected $extensionSettingsService;
-
     /**
      * @var AvalexConfigurationRepository
      */
@@ -47,7 +41,10 @@ class ImporterTask extends AbstractTask
     {
         $this->init();
 
-        $apiBaseURL = $this->extensionSettingsService->getSetting('apiBaseUrl');
+        $extensionConfiguration = ConfigurationUtility::getExtensionConfiguration();
+        $apiBaseURL = (string)$extensionConfiguration['apiBaseUrl'];
+        unset($extensionConfiguration);
+
         if (!$apiBaseURL) {
             return false;
         }
@@ -78,7 +75,6 @@ class ImporterTask extends AbstractTask
             }
         }
 
-
         return true;
     }
 
@@ -89,8 +85,6 @@ class ImporterTask extends AbstractTask
      */
     protected function init()
     {
-        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-        $this->extensionSettingsService = $objectManager->get('JWeiland\\Avalex\\Service\\ExtensionSettingsService');
         $this->avalexConfigurationRepository = GeneralUtility::makeInstance(
             'JWeiland\\Avalex\\Domain\\Repository\\AvalexConfigurationRepository'
         );

@@ -61,9 +61,14 @@ class AvalexPlugin
         $pageRepository = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
         $currentPageUid = $this->getTypoScriptFrontendController()->id;
         $rootLine = $pageRepository->getRootLine($currentPageUid);
-        $rootPageUid = array_pop($rootLine);
-        $rootPageUid = $rootPageUid['uid'];
-        if (!MathUtility::canBeInterpretedAsInteger($rootPageUid)) {
+        $rootPageUid = 0;
+        while ($page = array_pop($rootLine)) {
+            if ($page['is_siteroot']) {
+                $rootPageUid = $page['uid'];
+                break;
+            }
+        }
+        if (!MathUtility::canBeInterpretedAsInteger($rootPageUid) && $rootPageUid > 0) {
             throw new InvalidUidException('Could not determine root page uid of current page id!', 1525270267);
         }
         return (int)$rootPageUid;
@@ -79,8 +84,7 @@ class AvalexPlugin
     {
         /** @var LegalTextRepository $legalTextRepository */
         $legalTextRepository = GeneralUtility::makeInstance(
-            'JWeiland\\Avalex\\Domain\\Repository\\LegalTextRepository',
-            $this->cObj
+            'JWeiland\\Avalex\\Domain\\Repository\\LegalTextRepository'
         );
         return $legalTextRepository->findByWebsiteRoot($rootPageUid);
     }

@@ -43,6 +43,7 @@ CREATE TABLE tx_avalex_configuration (
 
 	website_root  INT(11)                         NOT NULL,
 	api_key       VARCHAR(50) DEFAULT ''          NOT NULL,
+	description   VARCHAR(50) DEFAULT ''          NOT NULL,
 
 	tstamp        INT(11) UNSIGNED DEFAULT '0'    NOT NULL,
 	crdate        INT(11) UNSIGNED DEFAULT '0'    NOT NULL,

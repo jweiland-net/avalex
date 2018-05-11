@@ -4,7 +4,7 @@ return array(
         'title' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration',
         'adminOnly' => 1,
         'rootLevel' => 1,
-        'label' => 'uid',
+        'label' => 'description',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
         'cruser_id' => 'cruser_id',
@@ -23,7 +23,7 @@ return array(
         'showRecordsFieldList' => 'hidden, website_root, api_key'
     ),
     'types' => array(
-        '1' => array('showitem' => 'hidden, website_root, api_key, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime')
+        '1' => array('showitem' => 'hidden, website_root, api_key, description, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime')
     ),
     'columns' => array(
         't3ver_label' => array(
@@ -43,7 +43,6 @@ return array(
         ),
         'starttime' => array(
             'exclude' => true,
-            'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.starttime',
             'config' => array(
                 'type' => 'input',
@@ -59,7 +58,6 @@ return array(
         ),
         'endtime' => array(
             'exclude' => true,
-            'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.endtime',
             'config' => array(
                 'type' => 'input',
@@ -75,7 +73,6 @@ return array(
         ),
         'website_root' => array(
             'exclude' => true,
-            'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.website_root',
             'config' => array(
                 'type' => 'select',
@@ -86,8 +83,14 @@ return array(
         ),
         'api_key' => array(
             'exclude' => true,
-            'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.api_key',
+            'config' => array(
+                'type' => 'input'
+            )
+        ),
+        'description' => array(
+            'exclude' => true,
+            'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.description',
             'config' => array(
                 'type' => 'input'
             )
