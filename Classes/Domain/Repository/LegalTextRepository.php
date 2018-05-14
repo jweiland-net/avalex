@@ -32,47 +32,102 @@ class LegalTextRepository extends AbstractRepository
         if (version_compare(TYPO3_version, '8.4', '>')) {
             $result = $this
                 ->getQueryBuilder(self::TABLE)
-                ->select('uid', 'content')
-                ->where($this->getQueryBuilder(self::TABLE)->expr()->eq('website_root', (int)$websiteRoot))
-                ->from(self::TABLE)
+                ->select('l.uid', 'l.content', 'l.configuration', 'c.global')
+                ->from(self::TABLE, 'l')
+                ->leftJoin('l', 'tx_avalex_configuration', 'c', 'c.uid = l.configuration')
+                ->where($this->getQueryBuilder(self::TABLE)->expr()->eq('c.website_root', (int)$websiteRoot))
+                ->orWhere($this->getQueryBuilder(self::TABLE)->expr()->eq('c.global', 1))
                 ->execute()
-                ->fetch();
+                ->fetchAll();
         } else {
-           $result = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
-               'uid, content',
-               self::TABLE,
+           $result = $this->getDatabaseConnection()->exec_SELECTgetRows(
+               'uid, content, c.global',
+               self::TABLE . ' l LEFT JOIN tx_avalex_configuration c ON tx_avalex_legaltext.configuration = c.uid',
                sprintf(
-                   'website_root = %d %s',
+                   'c.website_root = %d %s',
                    $websiteRoot,
                    $this->getAdditionalWhereClause(self::TABLE)
                )
            );
         }
-        return $result;
+        $result = $this->sortRecords($result);
+        return array_shift($result);
     }
 
     /**
-     * Update legal text by website root
+     * Find record by configuration uid
+     *
+     * @param $configurationUid
+     * @return array|null
+     */
+    public function findByConfigurationUid($configurationUid)
+    {
+        $configurationUid = (int)$configurationUid;
+        if (version_compare(TYPO3_version, '8.4', '>')) {
+            $result = $this
+                ->getQueryBuilder(self::TABLE)
+                ->select('uid', 'content', 'configuration')
+                ->from(self::TABLE)
+                ->where($this->getQueryBuilder(self::TABLE)->expr()->eq('configuration', $configurationUid))
+                ->execute()
+                ->fetchAll();
+        } else {
+            $result = $this->getDatabaseConnection()->exec_SELECTgetRows(
+                'uid, content, configuration',
+                self::TABLE,
+                sprintf(
+                    'configuration = %d %s',
+                    $configurationUid,
+                    $this->getAdditionalWhereClause(self::TABLE)
+                )
+            );
+        }
+        $result = $this->sortRecords($result);
+        return array_shift($result);
+    }
+
+    /**
+     * Sort records. The GLOBAL configurations will be inserted BELOW all non global records.
+     *
+     * @param array $records
+     * @return array
+     */
+    private function sortRecords(array $records)
+    {
+        $nonGlobal = array();
+        $global = array();
+        foreach ($records as $record) {
+            if ($record['global']) {
+                $global[] = $record;
+            } else {
+                $nonGlobal[] = $record;
+            }
+        }
+        return array_merge($nonGlobal, $global);
+    }
+
+    /**
+     * Update legal text by configuration uid
      *
      * @param string $legalText
-     * @param int $websiteRoot
+     * @param int $configurationUid
      * @return void
      */
-    public function updateByWebsiteRoot($legalText, $websiteRoot)
+    public function updateByConfigurationUid($legalText, $configurationUid)
     {
+        $configurationUid = (int)$configurationUid;
         if (version_compare(TYPO3_version, '8.4', '>')) {
             $this
                 ->getQueryBuilder(self::TABLE)
                 ->update(self::TABLE)
+                ->where($this->getQueryBuilder(self::TABLE)->expr()->eq('configuration', $configurationUid))
                 ->set('content', trim($legalText))
                 ->set('tstamp', time())
-                ->where($this->getQueryBuilder(self::TABLE)->expr()->eq('website_root', (int)$websiteRoot))
-                ->from(self::TABLE)
                 ->execute();
         } else {
             $this->getDatabaseConnection()->exec_UPDATEquery(
                 self::TABLE,
-                'website_root = ' . (int)$websiteRoot,
+                'configuration = ' . (int)$configurationUid,
                 array(
                     'content' => trim($legalText),
                     'tstamp' => time()
@@ -85,18 +140,19 @@ class LegalTextRepository extends AbstractRepository
      * Insert a new legal text
      *
      * @param string $legalText
-     * @param int $websiteRoot
+     * @param int $configurationUid
      * @return void
      */
-    public function insert($legalText, $websiteRoot)
+    public function insert($legalText, $configurationUid)
     {
+        $configurationUid = (int)$configurationUid;
         if (version_compare(TYPO3_version, '8.4', '>')) {
             $this
                 ->getQueryBuilder(self::TABLE)
                 ->insert(self::TABLE)
                 ->values(
                     array(
-                        'website_root' => (int)$websiteRoot,
+                        'configuration' => $configurationUid,
                         'content' => trim($legalText),
                         'crdate' => time(),
                         'tstamp' => time()
@@ -107,7 +163,7 @@ class LegalTextRepository extends AbstractRepository
             $this->getDatabaseConnection()->exec_INSERTquery(
                 self::TABLE,
                 array(
-                    'website_root' => (int)$websiteRoot,
+                    'configuration' => $configurationUid,
                     'content' => trim($legalText),
                     'crdate' => time(),
                     'tstamp' => time()

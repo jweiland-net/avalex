@@ -40,18 +40,14 @@ class ImporterTask extends AbstractTask
     public function execute()
     {
         $this->init();
-
-        $extensionConfiguration = ConfigurationUtility::getExtensionConfiguration();
-        $apiBaseURL = (string)$extensionConfiguration['apiBaseUrl'];
-        unset($extensionConfiguration);
-
+        $apiBaseURL = (string)ConfigurationUtility::getSetting('apiBaseUrl');
         if (!$apiBaseURL) {
             return false;
         }
 
         $configurations = $this->avalexConfigurationRepository->findAll();
         foreach ($configurations as $configuration) {
-            $rootUid = (int)$configuration['website_root'];
+            $configurationUid = (int)$configuration['uid'];
             $apiKey = (string)$configuration['api_key'];
             if (!$apiKey) {
                 GeneralUtility::sysLog(
@@ -67,11 +63,11 @@ class ImporterTask extends AbstractTask
                 return false;
             }
 
-            $record = $this->legalTextRepository->findByWebsiteRoot($rootUid);
+            $record = $this->legalTextRepository->findByConfigurationUid($configurationUid);
             if ($record) {
-                $this->legalTextRepository->updateByWebsiteRoot($legalText, $rootUid);
+                $this->legalTextRepository->updateByConfigurationUid($legalText, $configurationUid);
             } else {
-                $this->legalTextRepository->insert($legalText, $rootUid);
+                $this->legalTextRepository->insert($legalText, $configurationUid);
             }
         }
 

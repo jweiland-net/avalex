@@ -19,7 +19,7 @@
 				<source>Avalex configuration</source>
 			</trans-unit>
 			<trans-unit id="tx_avalex_configuration.website_root">
-				<source>For Website</source>
+				<source>For Website(s)</source>
 			</trans-unit>
 			<trans-unit id="tx_avalex_configuration.api_key">
 				<source>API key</source>
@@ -27,8 +27,8 @@
 			<trans-unit id="tx_avalex_legaltext">
 				<source>Privacy statement</source>
 			</trans-unit>
-			<trans-unit id="tx_avalex_legaltext.website_root">
-				<source>For website</source>
+			<trans-unit id="tx_avalex_legaltext.configuration">
+				<source>Configuration profile</source>
 			</trans-unit>
 			<trans-unit id="tx_avalex_legaltext.content">
 				<source>Content</source>
@@ -38,6 +38,9 @@
 			</trans-unit>
 			<trans-unit id="tx_avalex_configuration.description">
 				<source>Description (optional)</source>
+			</trans-unit>
+			<trans-unit id="tx_avalex_configuration.global">
+				<source>Use this configuration for all websites</source>
 			</trans-unit>
 		</body>
 	</file>

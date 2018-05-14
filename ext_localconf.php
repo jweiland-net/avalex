@@ -52,6 +52,10 @@ tt_content.list.20.avalex_avalex {
         'title' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:scheduler-importer.title',
         'description' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:scheduler-importer.description',
     );
+
+    // Use hook to check API key while saving the record
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['avalex'] =
+        'JWeiland\\Avalex\\Hooks\\DataHandler';
 };
 
 $boot();

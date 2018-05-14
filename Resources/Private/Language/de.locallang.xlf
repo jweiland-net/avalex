@@ -12,6 +12,18 @@
 					Dokumentation werfen.
 				</target>
 			</trans-unit>
+			<trans-unit id="flash_message.configuration.response_ok">
+				<source>The submitted API key is valid and can be used for the following domain(s): %s</source>
+				<target>Der eingegebene API-Key ist gültig und kann für die folgende(n) Domain(s) verwendet werden: %s</target>
+			</trans-unit>
+			<trans-unit id="flash_message.configuration.key_invalid">
+				<source>The submitted API key is invalid, please check your input!</source>
+				<target>Der eingegebene API-Key ist ungültigt, bitte überprüfe die Eingabe!</target>
+			</trans-unit>
+			<trans-unit id="flash_message.configuration.response_unknown">
+				<source>Could not validate API key because API returned unknown content.</source>
+				<target>Der eingegebene API-Key konnte nicht geprüft werden, da die API eine unbekannte Antwort zurückgegeben hat!</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

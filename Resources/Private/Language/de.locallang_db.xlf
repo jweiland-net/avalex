@@ -24,8 +24,8 @@
 				<target>Avalex Konfiguration</target>
 			</trans-unit>
 			<trans-unit id="tx_avalex_configuration.website_root">
-				<source>For Website</source>
-				<target>Für Webseite</target>
+				<source>For Website(s)</source>
+				<target>Für Webseite(n)</target>
 			</trans-unit>
 			<trans-unit id="tx_avalex_configuration.api_key">
 				<source>API key</source>
@@ -35,9 +35,9 @@
 				<source>Privacy statement</source>
 				<target>Datenschutzerklärung</target>
 			</trans-unit>
-			<trans-unit id="tx_avalex_legaltext.website_root">
-				<source>For website</source>
-				<target>Für Webseite</target>
+			<trans-unit id="tx_avalex_legaltext.configuration">
+				<source>Configuration profile</source>
+				<target>Konfigurationsprofil</target>
 			</trans-unit>
 			<trans-unit id="tx_avalex_legaltext.content">
 				<source>Content</source>
@@ -50,6 +50,10 @@
 			<trans-unit id="tx_avalex_configuration.description">
 				<source>Description (optional)</source>
 				<target>Beschreibung (optional)</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_configuration.global">
+				<source>Use this configuration for all websites</source>
+				<target>Diese Konfiguration für alle Webseiten verwenden</target>
 			</trans-unit>
 		</body>
 	</file>

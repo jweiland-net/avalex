@@ -20,10 +20,10 @@ return array(
         'iconfile' => 'EXT:avalex/ext_icon.png'
     ),
     'interface' => array(
-        'showRecordsFieldList' => 'hidden, website_root, api_key'
+        'showRecordsFieldList' => 'hidden, api_key, website_root'
     ),
     'types' => array(
-        '1' => array('showitem' => 'hidden, website_root, api_key, description, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime')
+        '1' => array('showitem' => 'hidden, api_key, website_root, global, description, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime')
     ),
     'columns' => array(
         't3ver_label' => array(
@@ -74,17 +74,31 @@ return array(
         'website_root' => array(
             'exclude' => true,
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.website_root',
+            'displayCond' => 'FIELD:global:REQ:false',
             'config' => array(
                 'type' => 'select',
-                'renderType' => 'selectSingle',
+                'renderType' => 'selectMultipleSideBySide',
                 'foreign_table' => 'pages',
-                'foreign_table_where' => 'AND is_siteroot = 1'
+                'foreign_table_where' => 'AND is_siteroot = 1',
+                'minitems' => 0,
+                'maxitems' => 999,
+                'multiple' => true
+            )
+        ),
+        'global' => array(
+            'exclude' => true,
+            'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.global',
+            'onChange' => 'reload',
+            'config' => array(
+                'type' => 'check',
+                'default' => '0'
             )
         ),
         'api_key' => array(
             'exclude' => true,
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.api_key',
             'config' => array(
+                'required' => true,
                 'type' => 'input'
             )
         ),

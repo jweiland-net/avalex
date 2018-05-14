@@ -50,6 +50,7 @@ class ext_update {
      */
     public function access()
     {
+        $this->init();
         $required = false;
         // The old version was compatible with TYPO3 7.6 - 8.7, so the script needs to be executed
         // in that versions only.
@@ -127,14 +128,12 @@ class ext_update {
     {
         $success = true;
         $data = array('tx_avalex_configuration' => array());
-        foreach ($this->getSiteRoots() as $page) {
-            $uid = (int)$page['uid'];
-            $data['tx_avalex_configuration']['NEW' . $uid] = array(
-                'pid' => 0,
-                'website_root' => $uid,
-                'api_key' => (string)$this->apiKey
-            );
-        }
+        $data['tx_avalex_configuration']['NEW2018'] = array(
+            'pid' => 0,
+            'description' => 'Main',
+            'global' => true,
+            'api_key' => (string)$this->apiKey
+        );
         /** @var DataHandler $dataHandler */
         $dataHandler = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
         $dataHandler->start($data, array());
@@ -200,29 +199,6 @@ class ext_update {
             '',
             'Successfully removed api key from extension configuration.'
         );
-    }
-
-    /**
-     * Get pages that has been marked as site root
-     *
-     * @return array
-     * @throws \InvalidArgumentException
-     */
-    protected function getSiteRoots()
-    {
-        $result = $this->getDatabaseConnection()->exec_SELECTgetRows(
-            'uid',
-            'pages',
-            'is_siteroot = 1 ' . BackendUtility::deleteClause('pages') . BackendUtility::BEenableFields('pages')
-        );
-        if (!is_array($result) || empty($result)) {
-            throw new InvalidArgumentException(
-                'Could not determine any active page that has been declared as site root! Please edit "Home" '
-                . 'page of your website and set Behaviour > Use as Root Page to true!',
-                1525360021
-            );
-        }
-        return $result;
     }
 
     /**

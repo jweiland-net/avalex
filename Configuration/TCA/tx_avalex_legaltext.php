@@ -20,10 +20,10 @@ return array(
         'iconfile' => 'EXT:avalex/ext_icon.png',
     ),
     'interface' => array(
-        'showRecordFieldList' => 'hidden, website_root, content, tstamp',
+        'showRecordFieldList' => 'hidden, configuration, content, tstamp',
     ),
     'types' => array(
-        '1' => array('showitem' => 'hidden, website_root, content, tstamp, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
+        '1' => array('showitem' => 'hidden, configuration, content, tstamp, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
     ),
     'columns' => array(
         't3ver_label' => array(
@@ -71,14 +71,13 @@ return array(
                 ),
             ),
         ),
-        'website_root' => array(
+        'configuration' => array(
             'exclude' => 1,
-            'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_legaltext.website_root',
+            'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_legaltext.configuration',
             'config' => array(
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'foreign_table' => 'pages',
-                'foreign_table_where' => 'AND is_siteroot = 1'
+                'foreign_table' => 'tx_avalex_configuration',
             )
         ),
         'content' => array(

@@ -8,6 +8,15 @@
 					into the documentation.
 				</source>
 			</trans-unit>
+			<trans-unit id="flash_message.configuration.response_ok">
+				<source>The submitted API key is valid and can be used for the following domain(s): %s</source>
+			</trans-unit>
+			<trans-unit id="flash_message.configuration.key_invalid">
+				<source>The submitted API key is invalid, please check your input!</source>
+			</trans-unit>
+			<trans-unit id="flash_message.configuration.response_unknown">
+				<source>Could not validate API key because API returned unknown content.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
