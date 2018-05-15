@@ -1,0 +1,3 @@
+# cat=API/enable/22; type=string; label=API Base Url
+apiBaseUrl = https://beta.avalex.de/
+

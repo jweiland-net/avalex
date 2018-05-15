@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<description>Labels for avalex.</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="tx_avalex_avalex.name">avalex</label>
+			<label index="tx_avalex_avalex.description">This plugin displays a privacy statement for your website using the avalex.de API. Get an API key from: https://www.avalex.de/121.html .</label>
+			<label index="scheduler-importer.title">avalex content import</label>
+			<label index="scheduler-importer.description">This importer fetches the current privacy statement for your website(s) from avalex.de.</label>
+			<label index="tx_avalex_configuration">Avalex configuration</label>
+			<label index="tx_avalex_configuration.website_root">For Website</label>
+			<label index="tx_avalex_configuration.api_key">API key</label>
+			<label index="tx_avalex_legaltext">Privacy statement</label>
+			<label index="tx_avalex_legaltext.configuration">Configuration profile</label>
+			<label index="tx_avalex_legaltext.content">Content</label>
+			<label index="tx_avalex_legaltext.tstamp">Modification date</label>
+			<label index="tx_avalex_configuration.description">Description (optional)</label>
+			<label index="tx_avalex_configuration.global">Use this configuration for all websites</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="tx_avalex_avalex.name">avalex</label>
+			<label index="tx_avalex_avalex.description">Das Plugin ermöglicht es, Ihre Website mit der avalex API zu verbinden. Einen API Key erhalten Sie auf https://www.avalex.de/121.html .</label>
+			<label index="scheduler-importer.title">Avalex Text Importer</label>
+			<label index="scheduler-importer.description">Der Importer lädt mit Hilfe der avalex.de API die aktuelle Datenschutzerklärung für die Webseite(n) herunter.</label>
+			<label index="tx_avalex_configuration">Avalex Konfiguration</label>
+			<label index="tx_avalex_configuration.website_root">Für Webseite</label>
+			<label index="tx_avalex_configuration.api_key">API-Key</label>
+			<label index="tx_avalex_legaltext">Datenschutzerklärung</label>
+			<label index="tx_avalex_legaltext.configuration">Konfigurationsprofil</label>
+			<label index="tx_avalex_legaltext.content">Inhalt</label>
+			<label index="tx_avalex_legaltext.tstamp">Zuletzt modifiziert am</label>
+			<label index="tx_avalex_configuration.description">Beschreibung (optional)</label>
+			<label index="tx_avalex_configuration.global">Diese Konfiguration für alle Webseiten verwenden</label>
+		</languageKey>
+	</data>
+</T3locallang>
