@@ -41,16 +41,16 @@ class LegalTextRepository extends AbstractRepository
                 ->fetchAll();
         } else {
            $result = $this->getDatabaseConnection()->exec_SELECTgetRows(
-               'uid, content, c.global',
-               self::TABLE . ' l LEFT JOIN tx_avalex_configuration c ON tx_avalex_legaltext.configuration = c.uid',
+               'tx_avalex_legaltext.uid, tx_avalex_legaltext.content, c.global',
+               self::TABLE . ' LEFT JOIN tx_avalex_configuration c ON tx_avalex_legaltext.configuration = c.uid',
                sprintf(
-                   'c.website_root = %d %s',
+                   'FIND_IN_SET(%d, c.website_root) %s',
                    $websiteRoot,
                    $this->getAdditionalWhereClause(self::TABLE)
                )
            );
         }
-        $result = $this->sortRecords($result);
+        $result = $this->sortRecords((array)$result);
         return array_shift($result);
     }
 
@@ -82,7 +82,7 @@ class LegalTextRepository extends AbstractRepository
                 )
             );
         }
-        $result = $this->sortRecords($result);
+        $result = $this->sortRecords((array)$result);
         return array_shift($result);
     }
 
