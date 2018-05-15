@@ -2,9 +2,7 @@
 
 $EM_CONF[$_EXTKEY] = array(
     'title' => 'avalex',
-    'description' =>
-        'The Avalex extension allows to display an automatically generated and '
-        . 'updated „Data Privacy Statement” within a TYPO3 web site.',
+    'description' => 'The Avalex extension allows to display an automatically generated and updated „Data Privacy Statement” within a TYPO3 web site.',
     'category' => 'plugin',
     'author' => '',
     'author_email' => '',
