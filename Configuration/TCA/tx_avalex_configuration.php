@@ -1,4 +1,15 @@
 <?php
+$locallangTtc = 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:';
+$locallangGeneral = 'LLL:EXT:lang/locallang_general.xlf:';
+
+if (version_compare(TYPO3_version, '9.3', '>=')) {
+    $locallangGeneral = 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:';
+}
+if (version_compare(TYPO3_version, '7.4', '<')) {
+    $locallangTtc = 'LLL:EXT:cms/locallang_ttc.xlf:';
+}
+
+
 return array(
     'ctrl' => array(
         'title' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration',
@@ -23,11 +34,11 @@ return array(
         'showRecordsFieldList' => 'hidden, api_key, website_root'
     ),
     'types' => array(
-        '1' => array('showitem' => 'hidden, api_key, website_root, global, description, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime')
+        '1' => array('showitem' => 'hidden, api_key, website_root, global, description, --div--;' . $locallangTtc . 'tabs.access, starttime, endtime')
     ),
     'columns' => array(
         't3ver_label' => array(
-            'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.versionLabel',
+            'label' => $locallangGeneral . 'LGL.versionLabel',
             'config' => array(
                 'type' => 'input',
                 'size' => 30,
@@ -36,14 +47,14 @@ return array(
         ),
         'hidden' => array(
             'exclude' => true,
-            'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.hidden',
+            'label' => $locallangGeneral . 'LGL.hidden',
             'config' => array(
                 'type' => 'check',
             ),
         ),
         'starttime' => array(
             'exclude' => true,
-            'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.starttime',
+            'label' => $locallangGeneral . 'LGL.starttime',
             'config' => array(
                 'type' => 'input',
                 'size' => 13,
@@ -58,7 +69,7 @@ return array(
         ),
         'endtime' => array(
             'exclude' => true,
-            'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.endtime',
+            'label' => $locallangGeneral . 'LGL.endtime',
             'config' => array(
                 'type' => 'input',
                 'size' => 13,
