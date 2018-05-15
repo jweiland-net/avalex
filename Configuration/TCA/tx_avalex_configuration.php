@@ -81,8 +81,7 @@ return array(
                 'foreign_table' => 'pages',
                 'foreign_table_where' => 'AND is_siteroot = 1',
                 'minitems' => 0,
-                'maxitems' => 999,
-                'multiple' => true
+                'maxitems' => 999
             )
         ),
         'global' => array(
