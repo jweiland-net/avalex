@@ -17,9 +17,7 @@ namespace JWeiland\Avalex\Hooks;
 use JWeiland\Avalex\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
-use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -40,26 +38,26 @@ class DataHandler
     /**
      * Check API keys on save
      *
+     * @param array $incomingFieldArray reference
+     * @param string $table
+     * @param string|int $id
      * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
      * @return void
      */
-    public function processDatamap_beforeStart(\TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler)
+    public function processDatamap_preProcessFieldArray(
+        array &$incomingFieldArray,
+        $table,
+        $id,
+        \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
+    )
     {
-        // only continue for configuration table
-        if (!array_key_exists('tx_avalex_configuration', $dataHandler->datamap)) {
+        if ($table !== 'tx_avalex_configuration' || !array_key_exists('api_key', $incomingFieldArray)) {
             return;
         }
-        /** @var ObjectManager $objectManager */
-        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-        /** @var FlashMessageService $flashMessageService */
-        $flashMessageService = $objectManager->get('TYPO3\\CMS\Core\\Messaging\\FlashMessageService');
-        $this->flashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
         $this->apiBaseUrl = (string)ConfigurationUtility::getSetting('apiBaseUrl');
-        foreach ($dataHandler->datamap['tx_avalex_configuration'] as $key => $data) {
-            // prevent to save invalid api keys
-            if (!$this->checkApiKey($data['api_key'])) {
-                unset($dataHandler->datamap['tx_avalex_configuration'][$key]);
-            }
+        if (!$this->checkApiKey($incomingFieldArray['api_key'])) {
+            // prevent save because key is invalid
+            unset($incomingFieldArray['api_key']);
         }
     }
 

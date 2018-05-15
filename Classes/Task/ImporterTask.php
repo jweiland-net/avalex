@@ -58,7 +58,7 @@ class ImporterTask extends AbstractTask
                 return false;
             }
 
-            $legalText = @file_get_contents($apiBaseURL . "datenschutzerklaerung?apikey=" . $apiKey);
+            $legalText = @file_get_contents($apiBaseURL . 'datenschutzerklaerung?apikey=' . $apiKey);
             if (!$this->checkResponse($legalText)) {
                 return false;
             }

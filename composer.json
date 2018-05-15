@@ -1,7 +1,7 @@
 {
 	"name": "jweiland/avalex",
 	"type": "typo3-cms-extension",
-	"description": "",
+	"description": "The Avalex extension allows to display an automatically generated and updated „Data Privacy Statement” within a TYPO3 web site.",
 	"license": "GPL-2.0-or-later",
 	"keywords": ["typo3", "TYPO3 CMS", "avalex"],
 	"homepage": "http://www.jweiland.net",

@@ -13,7 +13,7 @@
  */
 
 use JWeiland\Avalex\Task\ImporterTask;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
+
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
@@ -171,6 +171,11 @@ class ext_update {
                 FlashMessage::OK,
                 '',
                 'Successfully run scheduler task manually to fetch the latest privacy content'
+            );
+            $this->messageArray[] = array(
+                FlashMessage::INFO,
+                'Important information',
+                'Please open the Scheduler module, create a new avalex importer task and remove the old one!'
             );
         } else {
             $this->messageArray[] = array(
