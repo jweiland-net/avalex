@@ -13,13 +13,11 @@
  */
 
 use JWeiland\Avalex\Task\ImporterTask;
-
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
@@ -34,7 +32,7 @@ class ext_update {
     protected $messageArray = array();
 
     /**
-     * @var ConfigurationUtility
+     * @var TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility
      */
     protected $configurationUtility;
 
@@ -50,11 +48,11 @@ class ext_update {
      */
     public function access()
     {
-        $this->init();
         $required = false;
         // The old version was compatible with TYPO3 7.6 - 8.7, so the script needs to be executed
         // in that versions only.
-        if (version_compare(TYPO3_version, '7.6', '>=') || version_compare(TYPO3_version, '8.7', '<=')) {
+        if (version_compare(TYPO3_version, '7.6', '>=') && version_compare(TYPO3_version, '8.7', '<=')) {
+            $this->init();
             $required = $this->apiKey && is_string($this->apiKey);
         }
         return $required;
@@ -80,7 +78,6 @@ class ext_update {
     {
         /** @var ObjectManager $objectManager */
         $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-        /** @var ConfigurationUtility $configurationUtility */
         $this->configurationUtility = $objectManager->get(
             'TYPO3\\CMS\\Extensionmanager\\Utility\\ConfigurationUtility'
         );

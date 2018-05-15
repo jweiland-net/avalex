@@ -17,6 +17,7 @@ namespace JWeiland\Avalex\Hooks;
 use JWeiland\Avalex\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
+use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -54,6 +55,10 @@ class DataHandler
         if ($table !== 'tx_avalex_configuration' || !array_key_exists('api_key', $incomingFieldArray)) {
             return;
         }
+        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        /** @var FlashMessageService $flashMessageService */
+        $flashMessageService = $objectManager->get('TYPO3\\CMS\Core\\Messaging\\FlashMessageService');
+        $this->flashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
         $this->apiBaseUrl = (string)ConfigurationUtility::getSetting('apiBaseUrl');
         if (!$this->checkApiKey($incomingFieldArray['api_key'])) {
             // prevent save because key is invalid
