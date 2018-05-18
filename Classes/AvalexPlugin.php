@@ -52,8 +52,13 @@ class tx_avalex_AvalexPlugin
         $pageRepository = t3lib_div::makeInstance('t3lib_pageSelect');
         $currentPageUid = $this->getTypoScriptFrontendController()->id;
         $rootLine = $pageRepository->getRootLine($currentPageUid);
-        $rootPageUid = array_shift($rootLine);
-        $rootPageUid = $rootPageUid['pid'];
+        $rootPageUid = 0;
+        while ($page = array_pop($rootLine)) {
+            if ($page['is_siteroot']) {
+                $rootPageUid = $page['uid'];
+                break;
+            }
+        }
         if (version_compare(TYPO3_version, '4.6', '>')) {
             $validPageRootUid = t3lib_utility_Math::canBeInterpretedAsInteger($rootPageUid);
         } else {
