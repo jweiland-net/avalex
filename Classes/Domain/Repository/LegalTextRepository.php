@@ -44,7 +44,7 @@ class LegalTextRepository extends AbstractRepository
                'tx_avalex_legaltext.uid, tx_avalex_legaltext.content, c.global',
                self::TABLE . ' LEFT JOIN tx_avalex_configuration c ON tx_avalex_legaltext.configuration = c.uid',
                sprintf(
-                   'FIND_IN_SET(%d, c.website_root) %s',
+                   '(FIND_IN_SET(%d, c.website_root) OR c.global = 1) %s',
                    $websiteRoot,
                    $this->getAdditionalWhereClause(self::TABLE)
                )

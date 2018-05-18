@@ -14,9 +14,9 @@ namespace JWeiland\Avalex\Task;
  * The TYPO3 project - inspiring people to share!
  */
 
+use JWeiland\Avalex\Configuration\ExtConf;
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Domain\Repository\LegalTextRepository;
-use JWeiland\Avalex\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
@@ -40,7 +40,7 @@ class ImporterTask extends AbstractTask
     public function execute()
     {
         $this->init();
-        $apiBaseURL = (string)ConfigurationUtility::getSetting('apiBaseUrl');
+        $apiBaseURL = ExtConf::getInstance()->getApiBaseUrl();
         if (!$apiBaseURL) {
             return false;
         }

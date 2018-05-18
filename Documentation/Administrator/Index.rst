@@ -48,6 +48,12 @@ Administrator Manual
    :width: 300px
    :alt: Create record
 
+- Go to the scheduler module and add the "avalex content import" task. Select recurring as type and a frequency you want (in seconds).
+
+.. figure:: ../Images/SchedulerTask.png
+   :width: 300px
+   :alt: Scheduler task
+
 - To display the content from the Privacy Statement on a web site, simply include a content element of type „Plugin” on the page and select „Avalex” as the plugin.
   No further settings are necessary. The text output will be with standard h2 headers and therefore should blend with the normal content.
 

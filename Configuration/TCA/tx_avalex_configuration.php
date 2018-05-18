@@ -91,6 +91,7 @@ return array(
                 'renderType' => 'selectMultipleSideBySide',
                 'foreign_table' => 'pages',
                 'foreign_table_where' => 'AND is_siteroot = 1',
+                'size' => 3,
                 'minitems' => 0,
                 'maxitems' => 999
             )
