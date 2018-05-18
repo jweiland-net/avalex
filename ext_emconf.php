@@ -4,8 +4,9 @@ $EM_CONF[$_EXTKEY] = array(
     'title' => 'avalex legacy',
     'description' => 'avalex',
     'category' => 'plugin',
-    'author' => '',
-    'author_email' => '',
+    'author' => 'Pascal Rinker',
+    'author_email' => 'support@jweiland.net',
+    'author_company' => 'jweiland.net',
     'state' => 'stable',
     'uploadfolder' => false,
     'createDirs' => '',
@@ -24,7 +25,6 @@ $EM_CONF[$_EXTKEY] = array(
             'suggests' =>
                 array(),
         ),
-    'clearcacheonload' => false,
-    'author_company' => null,
+    'clearcacheonload' => false
 );
 
