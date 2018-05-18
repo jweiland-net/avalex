@@ -7,7 +7,7 @@ return array(
     'tx_avalex_legaltextrepository' => $extensionClassesPath . 'Domain/Repository/LegalTextRepository.php',
     'tx_avalex_invaliduidexception' => $extensionClassesPath . 'Exception/InvalidUidException.php',
     'tx_avalex_importertask' => $extensionClassesPath . 'Task/ImporterTask.php',
-    'tx_avalex_configurationutility' => $extensionClassesPath . 'Utility/ConfigurationUtility.php',
     'tx_avalex_datahandler' => $extensionClassesPath . 'Hooks/DataHandler.php',
-    'tx_avalex_avalexplugin' => $extensionClassesPath . 'AvalexPlugin.php'
+    'tx_avalex_avalexplugin' => $extensionClassesPath . 'AvalexPlugin.php',
+    'tx_avalex_extconf' => $extensionClassesPath . 'Configuration/ExtConf.php'
 );

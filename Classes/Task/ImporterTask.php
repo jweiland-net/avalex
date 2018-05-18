@@ -33,7 +33,7 @@ class tx_avalex_ImporterTask extends tx_scheduler_Task
     {
         $this->init();
 
-        $apiBaseURL = (string)tx_avalex_ConfigurationUtility::getSetting('apiBaseUrl');
+        $apiBaseURL = tx_avalex_ExtConf::getInstance()->getApiBaseUrl();
         if (!$apiBaseURL) {
             return false;
         }

@@ -41,7 +41,7 @@ class tx_avalex_DataHandler
         if ($table !== 'tx_avalex_configuration' || !array_key_exists('api_key', $incomingFieldArray)) {
             return;
         }
-        $this->apiBaseUrl = (string)tx_avalex_ConfigurationUtility::getSetting('apiBaseUrl');
+        $this->apiBaseUrl = tx_avalex_ExtConf::getInstance()->getApiBaseUrl();
         if (!$this->checkApiKey($incomingFieldArray['api_key'])) {
             // prevent save because key is invalid
             unset($incomingFieldArray['api_key']);
