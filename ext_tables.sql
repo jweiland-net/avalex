@@ -3,33 +3,33 @@
 #
 CREATE TABLE tx_avalex_legaltext (
 
-	uid           INT(11)                         NOT NULL AUTO_INCREMENT,
-	pid           INT(11) DEFAULT '0'             NOT NULL,
+	uid           int(11)                         NOT NULL auto_increment,
+	pid           int(11) DEFAULT '0'             NOT NULL,
 
-	configuration INT(11)                         NOT NULL,
-	content       TEXT DEFAULT ''                 NOT NULL,
+	configuration int(11) DEFAULT '0'             NOT NULL,
+	content       text,
 
-	tstamp        INT(11) UNSIGNED DEFAULT '0'    NOT NULL,
-	crdate        INT(11) UNSIGNED DEFAULT '0'    NOT NULL,
-	cruser_id     INT(11) UNSIGNED DEFAULT '0'    NOT NULL,
-	deleted       TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL,
-	hidden        TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL,
-	starttime     INT(11) UNSIGNED DEFAULT '0'    NOT NULL,
-	endtime       INT(11) UNSIGNED DEFAULT '0'    NOT NULL,
+	tstamp        int(11) unsigned DEFAULT '0'    NOT NULL,
+	crdate        int(11) unsigned DEFAULT '0'    NOT NULL,
+	cruser_id     int(11) unsigned DEFAULT '0'    NOT NULL,
+	deleted       tinyint(4) unsigned DEFAULT '0' NOT NULL,
+	hidden        tinyint(4) unsigned DEFAULT '0' NOT NULL,
+	starttime     int(11) unsigned DEFAULT '0'    NOT NULL,
+	endtime       int(11) unsigned DEFAULT '0'    NOT NULL,
 
-	t3ver_oid     INT(11) DEFAULT '0'             NOT NULL,
-	t3ver_id      INT(11) DEFAULT '0'             NOT NULL,
-	t3ver_wsid    INT(11) DEFAULT '0'             NOT NULL,
-	t3ver_label   VARCHAR(255) DEFAULT ''         NOT NULL,
-	t3ver_state   TINYINT(4) DEFAULT '0'          NOT NULL,
-	t3ver_stage   INT(11) DEFAULT '0'             NOT NULL,
-	t3ver_count   INT(11) DEFAULT '0'             NOT NULL,
-	t3ver_tstamp  INT(11) DEFAULT '0'             NOT NULL,
-	t3ver_move_id INT(11) DEFAULT '0'             NOT NULL,
+	t3ver_oid     int(11) DEFAULT '0'             NOT NULL,
+	t3ver_id      int(11) DEFAULT '0'             NOT NULL,
+	t3ver_wsid    int(11) DEFAULT '0'             NOT NULL,
+	t3ver_label   varchar(255) DEFAULT ''         NOT NULL,
+	t3ver_state   tinyint(4) DEFAULT '0'          NOT NULL,
+	t3ver_stage   int(11) DEFAULT '0'             NOT NULL,
+	t3ver_count   int(11) DEFAULT '0'             NOT NULL,
+	t3ver_tstamp  int(11) DEFAULT '0'             NOT NULL,
+	t3ver_move_id int(11) DEFAULT '0'             NOT NULL,
 
 	PRIMARY KEY (uid),
 	KEY parent (pid),
-	KEY t3ver_oid (t3ver_oid, t3ver_wsid)
+	KEY t3ver_oid (t3ver_oid,t3ver_wsid)
 
 );
 
@@ -38,35 +38,34 @@ CREATE TABLE tx_avalex_legaltext (
 #
 CREATE TABLE tx_avalex_configuration (
 
-	uid           INT(11)                         NOT NULL AUTO_INCREMENT,
-	pid           INT(11) DEFAULT '0'             NOT NULL,
+	uid           int(11)                         NOT NULL auto_increment,
+	pid           int(11) DEFAULT '0'             NOT NULL,
 
-	website_root  VARCHAR(50) DEFAULT ''          NOT NULL,
-	api_key       VARCHAR(50) DEFAULT ''          NOT NULL,
-	description   VARCHAR(50) DEFAULT ''          NOT NULL,
-	global        TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL,
+	website_root  varchar(50) DEFAULT ''          NOT NULL,
+	api_key       varchar(50) DEFAULT ''          NOT NULL,
+	description   varchar(50) DEFAULT ''          NOT NULL,
+	global        tinyint(4) unsigned DEFAULT '0' NOT NULL,
 
-	tstamp        INT(11) UNSIGNED DEFAULT '0'    NOT NULL,
-	crdate        INT(11) UNSIGNED DEFAULT '0'    NOT NULL,
-	cruser_id     INT(11) UNSIGNED DEFAULT '0'    NOT NULL,
-	deleted       TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL,
-	hidden        TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL,
-	starttime     INT(11) UNSIGNED DEFAULT '0'    NOT NULL,
-	endtime       INT(11) UNSIGNED DEFAULT '0'    NOT NULL,
+	tstamp        int(11) unsigned DEFAULT '0'    NOT NULL,
+	crdate        int(11) unsigned DEFAULT '0'    NOT NULL,
+	cruser_id     int(11) unsigned DEFAULT '0'    NOT NULL,
+	deleted       tinyint(4) unsigned DEFAULT '0' NOT NULL,
+	hidden        tinyint(4) unsigned DEFAULT '0' NOT NULL,
+	starttime     int(11) unsigned DEFAULT '0'    NOT NULL,
+	endtime       int(11) unsigned DEFAULT '0'    NOT NULL,
 
-	t3ver_oid     INT(11) DEFAULT '0'             NOT NULL,
-	t3ver_id      INT(11) DEFAULT '0'             NOT NULL,
-	t3ver_wsid    INT(11) DEFAULT '0'             NOT NULL,
-	t3ver_label   VARCHAR(255) DEFAULT ''         NOT NULL,
-	t3ver_state   TINYINT(4) DEFAULT '0'          NOT NULL,
-	t3ver_stage   INT(11) DEFAULT '0'             NOT NULL,
-	t3ver_count   INT(11) DEFAULT '0'             NOT NULL,
-	t3ver_tstamp  INT(11) DEFAULT '0'             NOT NULL,
-	t3ver_move_id INT(11) DEFAULT '0'             NOT NULL,
+	t3ver_oid     int(11) DEFAULT '0'             NOT NULL,
+	t3ver_id      int(11) DEFAULT '0'             NOT NULL,
+	t3ver_wsid    int(11) DEFAULT '0'             NOT NULL,
+	t3ver_label   varchar(255) DEFAULT ''         NOT NULL,
+	t3ver_state   tinyint(4) DEFAULT '0'          NOT NULL,
+	t3ver_stage   int(11) DEFAULT '0'             NOT NULL,
+	t3ver_count   int(11) DEFAULT '0'             NOT NULL,
+	t3ver_tstamp  int(11) DEFAULT '0'             NOT NULL,
+	t3ver_move_id int(11) DEFAULT '0'             NOT NULL,
 
 	PRIMARY KEY (uid),
 	KEY parent (pid),
-	KEY t3ver_oid (t3ver_oid, t3ver_wsid)
+	KEY t3ver_oid (t3ver_oid,t3ver_wsid)
 
 );
-
