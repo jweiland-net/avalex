@@ -5,3 +5,6 @@
     'list_type',
     'avalex'
 );
+
+// Hide redundant fields
+$GLOBALS['TCA']['tt_content']['types']['list']['subtypes_excludelist']['avalex_avalex'] = 'recursive,select_key,pages';
