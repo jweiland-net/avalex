@@ -13,3 +13,6 @@ t3lib_extMgm::addPlugin(
 $extPath = t3lib_extMgm::extPath($_EXTKEY);
 $TCA['tx_avalex_configuration'] = include($extPath . 'Configuration/TCA/tx_avalex_configuration.php');
 $TCA['tx_avalex_legaltext'] = include($extPath . 'Configuration/TCA/tx_avalex_legaltext.php');
+
+// Hide redundant fields
+$GLOBALS['TCA']['tt_content']['types']['list']['subtypes_excludelist']['avalex_avalex'] = 'recursive,select_key,pages';
