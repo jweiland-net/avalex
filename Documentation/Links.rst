@@ -12,7 +12,7 @@ Links
 -----
 
 :TER:
-	https://typo3.org/extensions/repository/view/avalex
+	https://extensions.typo3.org/extension/avalex/
 
 :Bug Tracker:
 	https://github.com/jweiland-net/avalex/issues
