@@ -48,13 +48,14 @@ Administrator Manual
    :width: 300px
    :alt: Create record
 
-- Go to the scheduler module and add the "avalex content import" task. Select recurring as type and a frequency you want (in seconds).
-
+- Go to the scheduler module and add the "avalex content import" task. Select recurring as type and a frequency you want (in seconds, default should be 21600 (6 hours)).
+  IMPORTANT: Make sure, that the TYPO3 Scheduler is periodically executed by a cronjob on your server. Otherwise the task will not be executed and the privacy statement will not be updated. 
+  
 .. figure:: ../Images/SchedulerTask.png
    :width: 300px
    :alt: Scheduler task
 
-- To display the content from the Privacy Statement on a web site, simply include a content element of type „Plugin” on the page and select „Avalex” as the plugin.
+- To display the content from the Privacy Statement on a web site, simply include a content element of type „Plugin” on the page and select „Avalex” as the plugin. In the settings of the page the cache duration should be changed from "default" to a value like "1 hour". This will ensure, that the privacy statement on the web site will be updated no later than 1 hour after the scheduler task has fetched a new version from the Avalex server (Otherwise it may take up to 24 hours).
   No further settings are necessary. The text output will be with standard h2 headers and therefore should blend with the normal content.
 
 .. figure:: ../Images/AddPlugin.png
