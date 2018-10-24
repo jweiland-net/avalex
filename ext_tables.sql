@@ -7,7 +7,7 @@ CREATE TABLE tx_avalex_legaltext (
   pid int(11) DEFAULT '0' NOT NULL,
 
   configuration int(11) DEFAULT '0' NOT NULL,
-  content text,
+  content mediumtext,
 
   tstamp int(11) unsigned DEFAULT '0' NOT NULL,
   crdate int(11) unsigned DEFAULT '0' NOT NULL,
