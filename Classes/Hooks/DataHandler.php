@@ -18,11 +18,6 @@
 class tx_avalex_DataHandler
 {
     /**
-     * @var string
-     */
-    protected $apiBaseUrl = '';
-
-    /**
      * Check API keys on save
      *
      * @param array $incomingFieldArray reference
@@ -41,7 +36,6 @@ class tx_avalex_DataHandler
         if ($table !== 'tx_avalex_configuration' || !array_key_exists('api_key', $incomingFieldArray)) {
             return;
         }
-        $this->apiBaseUrl = tx_avalex_ExtConf::getInstance()->getApiBaseUrl();
         if (!$this->checkApiKey($incomingFieldArray['api_key'])) {
             // prevent save because key is invalid
             unset($incomingFieldArray['api_key']);
@@ -58,7 +52,9 @@ class tx_avalex_DataHandler
     {
         $isValid = true;
         $apiKey = (string)$apiKey;
-        $response = @file_get_contents($this->apiBaseUrl . 'api_keys/is_configured.json?apikey=' . $apiKey);
+        $response = @file_get_contents(
+            tx_avalex_ApiUtility::getApiUrl() . 'api_keys/is_configured.json?apikey=' . $apiKey
+        );
         $responseArray = json_decode($response, true);
         if ($responseArray && array_key_exists('message', $responseArray) && $responseArray['message'] === 'OK') {
             // API key valid

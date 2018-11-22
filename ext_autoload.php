@@ -9,5 +9,5 @@ return array(
     'tx_avalex_importertask' => $extensionClassesPath . 'Task/ImporterTask.php',
     'tx_avalex_datahandler' => $extensionClassesPath . 'Hooks/DataHandler.php',
     'tx_avalex_avalexplugin' => $extensionClassesPath . 'AvalexPlugin.php',
-    'tx_avalex_extconf' => $extensionClassesPath . 'Configuration/ExtConf.php'
+    'tx_avalex_apiutility' => $extensionClassesPath . 'Utility/ApiUtility.php'
 );

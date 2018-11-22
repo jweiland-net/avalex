@@ -33,11 +33,6 @@ class tx_avalex_ImporterTask extends tx_scheduler_Task
     {
         $this->init();
 
-        $apiBaseURL = tx_avalex_ExtConf::getInstance()->getApiBaseUrl();
-        if (!$apiBaseURL) {
-            return false;
-        }
-
         $configurations = $this->avalexConfigurationRepository->findAll();
         foreach ($configurations as $configuration) {
             $configurationUid = (int)$configuration['uid'];
@@ -51,7 +46,9 @@ class tx_avalex_ImporterTask extends tx_scheduler_Task
                 return false;
             }
 
-            $legalText = @file_get_contents($apiBaseURL . 'datenschutzerklaerung?apikey=' . $apiKey);
+            $legalText = @file_get_contents(
+                tx_avalex_ApiUtility::getApiUrl() . 'datenschutzerklaerung?apikey=' . $apiKey
+            );
             if (!$this->checkResponse($legalText)) {
                 return false;
             }
