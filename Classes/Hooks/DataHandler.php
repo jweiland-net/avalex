@@ -14,7 +14,7 @@ namespace JWeiland\Avalex\Hooks;
  * The TYPO3 project - inspiring people to share!
  */
 
-use JWeiland\Avalex\Configuration\ExtConf;
+use JWeiland\Avalex\Utility\ApiUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
@@ -30,11 +30,6 @@ class DataHandler
      * @var FlashMessageQueue
      */
     protected $flashMessageQueue;
-
-    /**
-     * @var string
-     */
-    protected $apiBaseUrl = '';
 
     /**
      * Check API keys on save
@@ -59,7 +54,6 @@ class DataHandler
         /** @var FlashMessageService $flashMessageService */
         $flashMessageService = $objectManager->get('TYPO3\\CMS\Core\\Messaging\\FlashMessageService');
         $this->flashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
-        $this->apiBaseUrl = ExtConf::getInstance()->getApiBaseUrl();
         if (!$this->checkApiKey($incomingFieldArray['api_key'])) {
             // prevent save because key is invalid
             unset($incomingFieldArray['api_key']);
@@ -76,7 +70,7 @@ class DataHandler
     {
         $isValid = true;
         $apiKey = (string)$apiKey;
-        $response = @file_get_contents($this->apiBaseUrl . 'api_keys/is_configured.json?apikey=' . $apiKey);
+        $response = @file_get_contents(ApiUtility::getApiUrl() . 'api_keys/is_configured.json?apikey=' . $apiKey);
         $responseArray = json_decode($response, true);
         if ($responseArray && array_key_exists('message', $responseArray) && $responseArray['message'] === 'OK') {
             // API key valid

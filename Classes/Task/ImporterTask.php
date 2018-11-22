@@ -14,9 +14,9 @@ namespace JWeiland\Avalex\Task;
  * The TYPO3 project - inspiring people to share!
  */
 
-use JWeiland\Avalex\Configuration\ExtConf;
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Domain\Repository\LegalTextRepository;
+use JWeiland\Avalex\Utility\ApiUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
@@ -40,11 +40,6 @@ class ImporterTask extends AbstractTask
     public function execute()
     {
         $this->init();
-        $apiBaseURL = ExtConf::getInstance()->getApiBaseUrl();
-        if (!$apiBaseURL) {
-            return false;
-        }
-
         $configurations = $this->avalexConfigurationRepository->findAll();
         foreach ($configurations as $configuration) {
             $configurationUid = (int)$configuration['uid'];
@@ -58,7 +53,7 @@ class ImporterTask extends AbstractTask
                 return false;
             }
 
-            $legalText = @file_get_contents($apiBaseURL . 'datenschutzerklaerung?apikey=' . $apiKey);
+            $legalText = @file_get_contents(ApiUtility::getApiUrl() . 'datenschutzerklaerung?apikey=' . $apiKey);
             if (!$this->checkResponse($legalText)) {
                 return false;
             }

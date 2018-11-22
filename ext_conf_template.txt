@@ -1,4 +1,2 @@
-# cat=API/enable/22; type=string; label=API Base Url
-apiBaseUrl = https://beta.avalex.de/
 # cat=API/enable/23; type=string; label=API key field (deprecated):Just there for compatibility! Please don´t fill in.
 apiKey =
