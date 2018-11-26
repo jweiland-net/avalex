@@ -62,7 +62,7 @@ class AvalexPlugin
         $currentPageUid = $this->getTypoScriptFrontendController()->id;
         $rootLine = $pageRepository->getRootLine($currentPageUid);
         $rootPageUid = 0;
-        while ($page = array_pop($rootLine)) {
+        foreach ($rootLine as $page) {
             if ($page['is_siteroot']) {
                 $rootPageUid = $page['uid'];
                 break;
