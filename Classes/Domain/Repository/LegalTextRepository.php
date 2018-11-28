@@ -35,7 +35,7 @@ class LegalTextRepository extends AbstractRepository
                 ->select('l.uid', 'l.content', 'l.configuration', 'c.global')
                 ->from(self::TABLE, 'l')
                 ->leftJoin('l', 'tx_avalex_configuration', 'c', 'c.uid = l.configuration')
-                ->where($this->getQueryBuilder(self::TABLE)->expr()->eq('c.website_root', (int)$websiteRoot))
+                ->where($this->getQueryBuilder(self::TABLE)->expr()->inSet('c.website_root', (int)$websiteRoot))
                 ->orWhere($this->getQueryBuilder(self::TABLE)->expr()->eq('c.global', 1))
                 ->execute()
                 ->fetchAll();
