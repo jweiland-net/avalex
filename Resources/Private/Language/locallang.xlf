@@ -4,9 +4,7 @@
 		<header/>
 		<body>
 			<trans-unit id="errors.missing_data">
-				<source>Could not find a legal text record for your site root. Please check your configuration and take a look
-					into the documentation.
-				</source>
+				<source>Could not fetch HTML from API for your site root. Please check your configuration and take a look into the documentation.</source>
 			</trans-unit>
 			<trans-unit id="flash_message.configuration.response_ok">
 				<source>The submitted API key is valid and can be used for the following domain(s): %s</source>

@@ -39,4 +39,34 @@ class AvalexConfigurationRepository extends AbstractRepository
         }
         return ($result !== null) ? $result : array();
     }
+
+    /**
+     * @param int $websiteRoot
+     * @return string
+     */
+    public function findApiKeyByWebsiteRoot($websiteRoot)
+    {
+        $websiteRoot = (int)$websiteRoot;
+        if (version_compare(TYPO3_version, '8.4', '>')) {
+            $result = $this
+                ->getQueryBuilder(self::TABLE)
+                ->select('c.api_key')
+                ->from(self::TABLE, 'c')
+                ->where($this->getQueryBuilder(self::TABLE)->expr()->inSet('c.website_root', $websiteRoot))
+                ->orWhere($this->getQueryBuilder(self::TABLE)->expr()->eq('c.global', 1))
+                ->execute()
+                ->fetch();
+        } else {
+            $result = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
+                'c.api_key',
+                sprintf('%s c', self::TABLE),
+                sprintf(
+                    '(FIND_IN_SET(%d, c.website_root) OR c.global = 1) %s',
+                    $websiteRoot,
+                    $this->getAdditionalWhereClause(self::TABLE)
+                )
+            );
+        }
+        return ($result !== null) ? $result['api_key'] : '';
+    }
 }

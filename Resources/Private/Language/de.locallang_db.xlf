@@ -4,6 +4,38 @@
 		<header/>
 		<body>
 			<trans-unit id="tx_avalex_avalex.name">
+				<source>Privacy statement</source>
+				<target>Datenschutzerklärung</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_avalex.description">
+				<source>This plugin displays a privacy statement for your website using the avalex.de API</source>
+				<target>Das Plugin ermöglicht es, eine Datenschutzerklärung für Ihre webseite über avalex.de zu beziehen.</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_imprint.name">
+				<source>Imprint</source>
+				<target>Impressum</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_imprint.description">
+				<source>This plugin displays an imprint for your website using the avalex.de API</source>
+				<target>Das Plugin ermöglicht es, ein Impressum für Ihre webseite über avalex.de zu beziehen.</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_bedingungen.name">
+				<source>Terms and conditions</source>
+				<target>Allgemeine Geschäftsbedingungen (AGB)</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_bedingungen.description">
+				<source>This plugin displays terms and conditions for your website using the avalex.de API</source>
+				<target>Das Plugin ermöglicht es, Allgemeine Geschäftsbedingungen für Ihre webseite über avalex.de zu beziehen.</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_widerruf.name">
+				<source>Cancellation policy</source>
+				<target>Widerrufsbelehrung</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_widerruf.description">
+				<source>This plugin displays a cancellation policy for your website using the avalex.de API</source>
+				<target>Das Plugin ermöglicht es, eine Widerrufsbelehrung für Ihre webseite über avalex.de zu beziehen.</target>
+			</trans-unit>
+			<trans-unit id="tx_avalex_avalex.name">
 				<source>avalex</source>
 				<target>avalex</target>
 			</trans-unit>
@@ -31,22 +63,6 @@
 				<source>API key</source>
 				<target>API-Key</target>
 			</trans-unit>
-			<trans-unit id="tx_avalex_legaltext">
-				<source>Privacy statement</source>
-				<target>Datenschutzerklärung</target>
-			</trans-unit>
-			<trans-unit id="tx_avalex_legaltext.configuration">
-				<source>Configuration profile</source>
-				<target>Konfigurationsprofil</target>
-			</trans-unit>
-			<trans-unit id="tx_avalex_legaltext.content">
-				<source>Content</source>
-				<target>Inhalt</target>
-			</trans-unit>
-			<trans-unit id="tx_avalex_legaltext.tstamp">
-				<source>Modification date</source>
-				<target>Zuletzt modifiziert am</target>
-			</trans-unit>
 			<trans-unit id="tx_avalex_configuration.description">
 				<source>Description (optional)</source>
 				<target>Beschreibung (optional)</target>
@@ -54,6 +70,10 @@
 			<trans-unit id="tx_avalex_configuration.global">
 				<source>Use this configuration for all websites</source>
 				<target>Diese Konfiguration für alle Webseiten verwenden</target>
+			</trans-unit>
+			<trans-unit id="wizard_items.tx_avalex">
+				<source>Avalex</source>
+				<target>Avalex</target>
 			</trans-unit>
 		</body>
 	</file>

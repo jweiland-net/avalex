@@ -14,12 +14,12 @@ namespace JWeiland\Avalex;
  * The TYPO3 project - inspiring people to share!
  */
 
-use JWeiland\Avalex\Domain\Repository\LegalTextRepository;
 use JWeiland\Avalex\Exception\InvalidUidException;
+use JWeiland\Avalex\Service\ApiService;
+use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 
@@ -29,24 +29,34 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 class AvalexPlugin
 {
     /**
-     * @var ContentObjectRenderer
+     * @var VariableFrontend
      */
-    public $cObj;
+    protected $cache;
+
+    public function __construct()
+    {
+        $this->cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('avalex_content');
+    }
 
     /**
-     * Render plugin
-     *
+     * @param $endpoint
      * @return string
      */
-    public function render()
+    protected function checkEndpoint($endpoint)
     {
-        $legalText = $this->getLegalText($this->getRootForCurrentPage());
-        if ($legalText) {
-            $content = $legalText['content'];
-        } else {
-            $content = LocalizationUtility::translate('errors.missing_data', 'avalex');
+        $endpoint = (string)$endpoint;
+        if (in_array($endpoint, array('datenschutzerklaerung', 'imprint', 'bedingungen', 'widerruf'), true)) {
+            return $endpoint;
         }
-        return $content;
+        throw new \InvalidArgumentException(sprintf('The endpoint "%s" is invalid!', $endpoint), 1582029646660);
+    }
+
+    /**
+     * @return TypoScriptFrontendController
+     */
+    protected function getTypoScriptFrontendController()
+    {
+        return $GLOBALS['TSFE'];
     }
 
     /**
@@ -75,25 +85,29 @@ class AvalexPlugin
     }
 
     /**
-     * Get legal text by rootPageUid (website_root)
+     * Render plugin
      *
-     * @param $rootPageUid
-     * @return array|false|null
+     * @param string $_ empty string
+     * @param array $conf TypoScript configuration
+     * @return string
      */
-    protected function getLegalText($rootPageUid)
+    public function render($_, $conf)
     {
-        /** @var LegalTextRepository $legalTextRepository */
-        $legalTextRepository = GeneralUtility::makeInstance(
-            'JWeiland\\Avalex\\Domain\\Repository\\LegalTextRepository'
-        );
-        return $legalTextRepository->findByWebsiteRoot($rootPageUid);
-    }
-
-    /**
-     * @return TypoScriptFrontendController
-     */
-    protected function getTypoScriptFrontendController()
-    {
-        return $GLOBALS['TSFE'];
+        $endpoint = $this->checkEndpoint($conf['endpoint']);
+        $rootPage = $this->getRootForCurrentPage();
+        $cacheIdentifier = sprintf('avalex_%s_%d', $endpoint, $rootPage);
+        if ($this->cache->has($cacheIdentifier)) {
+            $content = (string)$this->cache->get($cacheIdentifier);
+        } else {
+            /** @var ApiService $apiService */
+            $apiService = GeneralUtility::makeInstance('JWeiland\\Avalex\\Service\\ApiService');
+            $content = $apiService->getHtmlForCurrentRootPage($endpoint, $rootPage);
+            if ($content === '') {
+                $content = LocalizationUtility::translate('errors.missing_data', 'avalex');
+            } else {
+                $this->cache->set($cacheIdentifier, $content);
+            }
+        }
+        return $content;
     }
 }
