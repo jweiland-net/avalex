@@ -14,7 +14,7 @@ namespace JWeiland\Avalex\Hooks;
  * The TYPO3 project - inspiring people to share!
  */
 
-use JWeiland\Avalex\Utility\ApiUtility;
+use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
@@ -70,7 +70,7 @@ class DataHandler
     {
         $isValid = true;
         $apiKey = (string)$apiKey;
-        $response = @file_get_contents(ApiUtility::getApiUrl() . 'api_keys/is_configured.json?apikey=' . $apiKey);
+        $response = @file_get_contents(AvalexUtility::getApiUrl() . 'api_keys/is_configured.json?apikey=' . $apiKey);
         $responseArray = json_decode($response, true);
         if ($responseArray && array_key_exists('message', $responseArray) && $responseArray['message'] === 'OK') {
             // API key valid

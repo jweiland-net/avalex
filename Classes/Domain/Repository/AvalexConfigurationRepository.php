@@ -14,6 +14,8 @@ namespace JWeiland\Avalex\Domain\Repository;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Class AvalexConfigurationRepository
  */
@@ -42,31 +44,42 @@ class AvalexConfigurationRepository extends AbstractRepository
 
     /**
      * @param int $websiteRoot
-     * @return string
+     * @param string $select
+     * @return array
      */
-    public function findApiKeyByWebsiteRoot($websiteRoot)
+    public function findByWebsiteRoot($websiteRoot, $select = '*')
     {
         $websiteRoot = (int)$websiteRoot;
         if (version_compare(TYPO3_version, '8.4', '>')) {
             $result = $this
                 ->getQueryBuilder(self::TABLE)
-                ->select('c.api_key')
-                ->from(self::TABLE, 'c')
-                ->where($this->getQueryBuilder(self::TABLE)->expr()->inSet('c.website_root', $websiteRoot))
-                ->orWhere($this->getQueryBuilder(self::TABLE)->expr()->eq('c.global', 1))
+                ->select(...GeneralUtility::trimExplode(',', $select))
+                ->from(self::TABLE)
+                ->where($this->getQueryBuilder(self::TABLE)->expr()->inSet('website_root', $websiteRoot))
+                ->orWhere($this->getQueryBuilder(self::TABLE)->expr()->eq('global', 1))
                 ->execute()
                 ->fetch();
         } else {
             $result = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
-                'c.api_key',
-                sprintf('%s c', self::TABLE),
+                $select,
+                sprintf('%s', self::TABLE),
                 sprintf(
-                    '(FIND_IN_SET(%d, c.website_root) OR c.global = 1) %s',
+                    '(FIND_IN_SET(%d, website_root) OR global = 1) %s',
                     $websiteRoot,
                     $this->getAdditionalWhereClause(self::TABLE)
                 )
             );
         }
+        return ($result !== null) ? $result : array();
+    }
+
+    /**
+     * @param int $websiteRoot
+     * @return string
+     */
+    public function findApiKeyByWebsiteRoot($websiteRoot)
+    {
+        $result = $this->findByWebsiteRoot($websiteRoot, 'api_key');
         return ($result !== null) ? $result['api_key'] : '';
     }
 }

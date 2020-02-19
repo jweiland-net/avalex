@@ -14,14 +14,11 @@ namespace JWeiland\Avalex;
  * The TYPO3 project - inspiring people to share!
  */
 
-use JWeiland\Avalex\Exception\InvalidUidException;
 use JWeiland\Avalex\Service\ApiService;
+use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
-use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * Class AvalexPlugin
@@ -52,39 +49,6 @@ class AvalexPlugin
     }
 
     /**
-     * @return TypoScriptFrontendController
-     */
-    protected function getTypoScriptFrontendController()
-    {
-        return $GLOBALS['TSFE'];
-    }
-
-    /**
-     * Returns the uid of the site root of current page
-     *
-     * @return int
-     * @throws InvalidUidException
-     */
-    protected function getRootForCurrentPage()
-    {
-        /** @var PageRepository $pageRepository */
-        $pageRepository = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
-        $currentPageUid = $this->getTypoScriptFrontendController()->id;
-        $rootLine = $pageRepository->getRootLine($currentPageUid);
-        $rootPageUid = 0;
-        foreach ($rootLine as $page) {
-            if ($page['is_siteroot']) {
-                $rootPageUid = $page['uid'];
-                break;
-            }
-        }
-        if (!MathUtility::canBeInterpretedAsInteger($rootPageUid) && $rootPageUid > 0) {
-            throw new InvalidUidException('Could not determine root page uid of current page id!', 1525270267);
-        }
-        return (int)$rootPageUid;
-    }
-
-    /**
      * Render plugin
      *
      * @param string $_ empty string
@@ -94,7 +58,7 @@ class AvalexPlugin
     public function render($_, $conf)
     {
         $endpoint = $this->checkEndpoint($conf['endpoint']);
-        $rootPage = $this->getRootForCurrentPage();
+        $rootPage = AvalexUtility::getRootForPage();
         $cacheIdentifier = sprintf('avalex_%s_%d', $endpoint, $rootPage);
         if ($this->cache->has($cacheIdentifier)) {
             $content = (string)$this->cache->get($cacheIdentifier);

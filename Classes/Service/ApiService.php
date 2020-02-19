@@ -15,7 +15,7 @@ namespace JWeiland\Avalex\Service;
  */
 
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
-use JWeiland\Avalex\Utility\ApiUtility;
+use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -76,7 +76,7 @@ class ApiService
         );
         $apiKey = $avalexConfigurationRepository->findApiKeyByWebsiteRoot($rootPage);
 
-        $apiResponse = @file_get_contents(sprintf('%s%s?apikey=%s', ApiUtility::getApiUrl(), $endpoint, $apiKey));var_dump(sprintf('%s%s?apikey=%s', ApiUtility::getApiUrl(), $endpoint, $apiKey));
+        $apiResponse = @file_get_contents(sprintf('%s%s?apikey=%s', AvalexUtility::getApiUrl(), $endpoint, $apiKey));
         if (!$this->checkResponse($apiResponse)) {
             $apiResponse  = '';
         }
