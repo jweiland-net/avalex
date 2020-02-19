@@ -75,6 +75,22 @@
 				<source>Avalex</source>
 				<target>Avalex</target>
 			</trans-unit>
+			<trans-unit id="preview_renderer.no_config">
+				<source>Could not find any configuration for avalex!</source>
+				<target>Es konnte keine Avalex Konfiguration gefunden werden!</target>
+			</trans-unit>
+			<trans-unit id="preview_renderer.found_config">
+				<source>Using configuration "%s".</source>
+				<target>Die Konfiguration "%s" wird verwendet.</target>
+			</trans-unit>
+			<trans-unit id="preview_renderer.button.add">
+				<source>Add configuration</source>
+				<target>Konfiguration hinzufügen</target>
+			</trans-unit>
+			<trans-unit id="preview_renderer.button.edit">
+				<source>Edit configuration</source>
+				<target>Konfiguration bearbeiten</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

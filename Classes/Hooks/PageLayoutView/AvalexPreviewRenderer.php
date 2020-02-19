@@ -36,6 +36,10 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
             $avalexConfigurationRepository = GeneralUtility::makeInstance(
                 'JWeiland\\Avalex\\Domain\\Repository\\AvalexConfigurationRepository'
             );
+            $itemContent .= sprintf(
+                '<p><b>Avalex: %s</b></p>',
+                $GLOBALS['LANG']->sL(sprintf('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_%s.name', $row['list_type']))
+            );
             $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid,description');
             if (empty($configuration)) {
                 // could not find any key

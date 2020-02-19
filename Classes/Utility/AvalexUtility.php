@@ -17,8 +17,8 @@ namespace JWeiland\Avalex\Utility;
 use JWeiland\Avalex\Exception\InvalidUidException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
+use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
-use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * General stuff for ext:avalex
@@ -49,12 +49,12 @@ class AvalexUtility
      */
     public static function getRootForPage($currentPageUid = 0)
     {
-        /** @var PageRepository $pageRepository */
-        $pageRepository = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
         if ($currentPageUid === 0) {
             $currentPageUid = (int)self::getTypoScriptFrontendController()->id;
         }
-        $rootLine = $pageRepository->getRootLine($currentPageUid);
+        /** @var RootlineUtility $rootLineUtility */
+        $rootLineUtility = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Utility\\RootlineUtility', $currentPageUid);
+        $rootLine = $rootLineUtility->get();
         $rootPageUid = 0;
         foreach ($rootLine as $page) {
             if ($page['is_siteroot']) {
