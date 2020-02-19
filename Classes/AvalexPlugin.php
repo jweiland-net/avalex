@@ -18,76 +18,66 @@
 class tx_avalex_AvalexPlugin
 {
     /**
-     * @var tslib_cObj
+     * @var t3lib_cache_frontend_VariableFrontend
      */
-    public $cObj;
+    protected $cache;
+
+    protected function initializeLevel2Cache() {
+        t3lib_cache::initializeCachingFramework();
+        try {
+            $this->cache = $GLOBALS['typo3CacheManager']->getCache('avalex_content');
+        } catch (t3lib_cache_exception_NoSuchCache $exception) {
+            $this->cache = $GLOBALS['typo3CacheFactory']->create(
+                'avalex_content',
+                $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_content']['frontend'],
+                $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_content']['backend'],
+                $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_content']['options']
+            );
+        }
+    }
+
+    public function __construct()
+    {
+        $this->initializeLevel2Cache();
+    }
+
+    /**
+     * @param string $endpoint
+     * @return string
+     */
+    protected function checkEndpoint($endpoint)
+    {
+        $endpoint = (string)$endpoint;
+        if (in_array($endpoint, array('datenschutzerklaerung', 'imprint', 'bedingungen', 'widerruf'), true)) {
+            return $endpoint;
+        }
+        throw new InvalidArgumentException(sprintf('The endpoint "%s" is invalid!', $endpoint), 1582029646660);
+    }
 
     /**
      * Render plugin
      *
+     * @param string $_ empty string
+     * @param array $conf TypoScript configuration
      * @return string
      */
-    public function render()
+    public function render($_, $conf)
     {
-        $legalText = $this->getLegalText($this->getRootForCurrentPage());
-        if ($legalText) {
-            $content = $legalText['content'];
+        $endpoint = $this->checkEndpoint($conf['endpoint']);
+        $rootPage = tx_avalex_AvalexUtility::getRootForPage();
+        $cacheIdentifier = sprintf('avalex_%s_%d', $endpoint, $rootPage);
+        if ($this->cache->has($cacheIdentifier)) {
+            $content = (string)$this->cache->get($cacheIdentifier);
         } else {
-            /** @var Tx_Extbase_Utility_Localization $localization */
-            $localization = t3lib_div::makeInstance('Tx_Extbase_Utility_Localization');
-            $content = $localization->translate('errors.missing_data', 'avalex');
-        }
-        return $content;
-    }
-
-    /**
-     * Returns the uid of the site root of current page
-     *
-     * @return int
-     * @throws tx_avalex_InvalidUidException
-     */
-    protected function getRootForCurrentPage()
-    {
-        /** @var t3lib_pageSelect $pageRepository */
-        $pageRepository = t3lib_div::makeInstance('t3lib_pageSelect');
-        $currentPageUid = $this->getTypoScriptFrontendController()->id;
-        $rootLine = $pageRepository->getRootLine($currentPageUid);
-        $rootPageUid = 0;
-        foreach ($rootLine as $page) {
-            if ($page['is_siteroot']) {
-                $rootPageUid = $page['uid'];
-                break;
+            /** @var tx_avalex_ApiService $apiService */
+            $apiService = t3lib_div::makeInstance('tx_avalex_ApiService');
+            $content = $apiService->getHtmlForCurrentRootPage($endpoint, $rootPage);
+            if ($content === '') {
+                $content = Tx_Extbase_Utility_Localization::translate('errors.missing_data', 'avalex');
+            } else {
+                $this->cache->set($cacheIdentifier, $content);
             }
         }
-        if (version_compare(TYPO3_version, '4.6', '>')) {
-            $validPageRootUid = t3lib_utility_Math::canBeInterpretedAsInteger($rootPageUid);
-        } else {
-            $validPageRootUid = t3lib_div::intInRange($rootPageUid, 0) !== 0;
-        }
-        if (!$validPageRootUid) {
-            throw new tx_avalex_InvalidUidException('Could not determine root page uid of current page id!', 1525270267);
-        }
-        return (int)$rootPageUid;
-    }
-
-    /**
-     * Get legal text by rootPageUid (website_root)
-     *
-     * @param $rootPageUid
-     * @return array|false|null
-     */
-    protected function getLegalText($rootPageUid)
-    {
-        /** @var tx_avalex_LegalTextRepository $legalTextRepository */
-        $legalTextRepository = t3lib_div::makeInstance('tx_avalex_LegalTextRepository');
-        return $legalTextRepository->findByWebsiteRoot($rootPageUid);
-    }
-
-    /**
-     * @return tslib_fe
-     */
-    protected function getTypoScriptFrontendController()
-    {
-        return $GLOBALS['TSFE'];
+        return $content;
     }
 }

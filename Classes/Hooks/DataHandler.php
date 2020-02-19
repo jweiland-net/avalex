@@ -53,7 +53,7 @@ class tx_avalex_DataHandler
         $isValid = true;
         $apiKey = (string)$apiKey;
         $response = @file_get_contents(
-            tx_avalex_ApiUtility::getApiUrl() . 'api_keys/is_configured.json?apikey=' . $apiKey
+            tx_avalex_AvalexUtility::getApiUrl() . 'api_keys/is_configured.json?apikey=' . $apiKey
         );
         $responseArray = json_decode($response, true);
         if ($responseArray && array_key_exists('message', $responseArray) && $responseArray['message'] === 'OK') {

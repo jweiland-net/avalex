@@ -33,4 +33,34 @@ class tx_avalex_AvalexConfigurationRepository extends tx_avalex_AbstractReposito
         );
         return ($result !== null) ? $result : array();
     }
+
+    /**
+     * @param int $websiteRoot
+     * @param string $select
+     * @return array
+     */
+    public function findByWebsiteRoot($websiteRoot, $select = '*')
+    {
+        $websiteRoot = (int)$websiteRoot;
+        $result = $this->getDatabaseConnection()->exec_SELECTgetRows(
+            $select,
+            sprintf('%s', self::TABLE),
+            sprintf(
+                '(FIND_IN_SET(%d, website_root) OR global = 1) %s',
+                $websiteRoot,
+                $this->getAdditionalWhereClause(self::TABLE)
+            )
+        );
+        return (is_array($result) && !empty($result)) ? array_shift($result) : array();
+    }
+
+    /**
+     * @param int $websiteRoot
+     * @return string
+     */
+    public function findApiKeyByWebsiteRoot($websiteRoot)
+    {
+        $result = $this->findByWebsiteRoot($websiteRoot, 'api_key');
+        return ($result !== null) ? $result['api_key'] : '';
+    }
 }
