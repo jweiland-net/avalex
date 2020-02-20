@@ -1,14 +1,14 @@
 <?php
 
-/***************************************************************
- * Extension Manager/Repository config file for ext "avalex".
- *
- * Auto generated 20-02-2020 11:34
- *
- * Manual updates:
- * Only the data in the array - everything else is removed by next
- * writing. "version" and "dependencies" must not be touched!
- ***************************************************************/
+########################################################################
+# Extension Manager/Repository config file for ext "avalex".
+#
+# Auto generated 20-02-2020 16:14
+#
+# Manual updates:
+# Only the data in the array - everything else is removed by next
+# writing. "version" and "dependencies" must not be touched!
+########################################################################
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'avalex legacy',
@@ -21,12 +21,11 @@ $EM_CONF[$_EXTKEY] = array(
 	'uploadfolder' => '',
 	'createDirs' => '',
 	'clearCacheOnLoad' => 0,
-	'version' => '4.1.2',
+	'version' => '4.2.0',
 	'constraints' => array(
 		'depends' => array(
 			'typo3' => '4.3.0-6.1.99',
 			'extbase' => '1.0.0-0.0.0',
-			'scheduler' => '1.0.0-0.0.0',
 		),
 		'conflicts' => array(
 		),
@@ -34,7 +33,7 @@ $EM_CONF[$_EXTKEY] = array(
 		),
 	),
 	'clearcacheonload' => '',
-	'_md5_values_when_last_written' => 'a:18:{s:16:"ext_autoload.php";s:4:"fe44";s:21:"ext_conf_template.txt";s:4:"b272";s:12:"ext_icon.gif";s:4:"5c06";s:17:"ext_localconf.php";s:4:"14ca";s:14:"ext_tables.php";s:4:"87dd";s:14:"ext_tables.sql";s:4:"e3f8";s:24:"Classes/AvalexPlugin.php";s:4:"932b";s:48:"Classes/Domain/Repository/AbstractRepository.php";s:4:"7ea2";s:59:"Classes/Domain/Repository/AvalexConfigurationRepository.php";s:4:"de82";s:41:"Classes/Exception/InvalidUidException.php";s:4:"d4b5";s:29:"Classes/Hooks/DataHandler.php";s:4:"d916";s:54:"Classes/Hooks/PageLayoutView/AvalexPreviewRenderer.php";s:4:"d5c7";s:30:"Classes/Service/ApiService.php";s:4:"c331";s:33:"Classes/Utility/AvalexUtility.php";s:4:"e4cc";s:45:"Configuration/TCA/tx_avalex_configuration.php";s:4:"fc54";s:41:"Configuration/TCA/tx_avalex_legaltext.php";s:4:"e165";s:40:"Resources/Private/Language/locallang.xml";s:4:"9bbb";s:43:"Resources/Private/Language/locallang_db.xml";s:4:"bc73";}',
+	'_md5_values_when_last_written' => 'a:21:{s:16:"ext_autoload.php";s:4:"fe44";s:21:"ext_conf_template.txt";s:4:"b272";s:12:"ext_icon.gif";s:4:"5c06";s:17:"ext_localconf.php";s:4:"c7a2";s:14:"ext_tables.php";s:4:"06d3";s:14:"ext_tables.sql";s:4:"e3f8";s:24:"Classes/AvalexPlugin.php";s:4:"6045";s:48:"Classes/Domain/Repository/AbstractRepository.php";s:4:"7ea2";s:59:"Classes/Domain/Repository/AvalexConfigurationRepository.php";s:4:"de82";s:41:"Classes/Exception/InvalidUidException.php";s:4:"d4b5";s:29:"Classes/Hooks/DataHandler.php";s:4:"d916";s:54:"Classes/Hooks/PageLayoutView/AvalexPreviewRenderer.php";s:4:"d5c7";s:30:"Classes/Service/ApiService.php";s:4:"6f81";s:33:"Classes/Utility/AvalexUtility.php";s:4:"ad9b";s:45:"Configuration/TCA/tx_avalex_configuration.php";s:4:"fc54";s:40:"Resources/Private/Language/locallang.xml";s:4:"0039";s:43:"Resources/Private/Language/locallang_db.xml";s:4:"bc73";s:40:"Resources/Public/Icons/avalex_avalex.gif";s:4:"90b5";s:45:"Resources/Public/Icons/avalex_bedingungen.gif";s:4:"6e0e";s:41:"Resources/Public/Icons/avalex_imprint.gif";s:4:"36da";s:42:"Resources/Public/Icons/avalex_widerruf.gif";s:4:"1105";}',
 );
 
 ?>
