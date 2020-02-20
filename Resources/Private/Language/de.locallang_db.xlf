@@ -35,14 +35,6 @@
 				<source>This plugin displays a cancellation policy for your website using the avalex.de API</source>
 				<target>Das Plugin ermöglicht es, eine Widerrufsbelehrung für Ihre webseite über avalex.de zu beziehen.</target>
 			</trans-unit>
-			<trans-unit id="tx_avalex_avalex.name">
-				<source>avalex</source>
-				<target>avalex</target>
-			</trans-unit>
-			<trans-unit id="tx_avalex_avalex.description">
-				<source>This plugin displays a privacy statement for your website using the avalex.de API. Get an API key from: https://www.avalex.de/121.html .</source>
-				<target>Das Plugin ermöglicht es, Ihre Website mit der avalex API zu verbinden. Einen API Key erhalten Sie auf https://www.avalex.de/121.html .</target>
-			</trans-unit>
 			<trans-unit id="scheduler-importer.title">
 				<source>avalex content import</source>
 				<target>Avalex Text Importer</target>

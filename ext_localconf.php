@@ -2,66 +2,48 @@
 defined('TYPO3_MODE') || die('Access denied.');
 
 $boot = function () {
-    // Use IconRegistry for newer TYPO3 versions
-    if (version_compare(TYPO3_version, '7.4', '>')) {
-        $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Imaging\\IconRegistry');
-        $iconRegistry->registerIcon(
-            'avalex-plugin-avalex',
-            'TYPO3\\CMS\\Core\\Imaging\\IconProvider\\SvgIconProvider',
-            array('source' => 'EXT:avalex/Resources/Public/Icons/Extension.svg')
+
+    $wizardItems = 'mod.wizards.newContentElement.wizardItems {
+    tx_avalex {
+        header = LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:wizard_items.tx_avalex
+        elements {';
+
+    foreach (\JWeiland\Avalex\Utility\AvalexUtility::getListTypes() as $listType) {
+        // Use IconRegistry for newer TYPO3 versions
+        if (version_compare(TYPO3_version, '7.4', '>')) {
+            $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Imaging\\IconRegistry');
+            $iconRegistry->registerIcon(
+                $listType,
+                'TYPO3\\CMS\\Core\\Imaging\\IconProvider\\SvgIconProvider',
+                array('source' => 'EXT:avalex/Resources/Public/Icons/' . $listType . '.svg')
+            );
+            $elementIcon = 'iconIdentifier = ' . $listType;
+        } else {
+            $elementIcon = 'icon = EXT:avalex/Resources/Public/Icons/' . $listType . '.png';
+        }
+
+        $wizardItems .= str_replace(
+            array('###LIST_TYPE###', '###ICON###'),
+            array($listType, $elementIcon),
+            '
+            ###LIST_TYPE### {
+                ###ICON###
+                title = LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_###LIST_TYPE###.name
+                description = LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_###LIST_TYPE###.description
+                 tt_content_defValues {
+                    CType = list
+                    list_type = ###LIST_TYPE###
+                }
+            }'
         );
-        $elementIcon = 'iconIdentifier = avalex-plugin-avalex';
-    } else {
-        $elementIcon = 'icon = EXT:avalex/ext_icon.png';
     }
 
-    // @todo: add custom icons
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
-        'mod.wizards.newContentElement.wizardItems {
-            tx_avalex {
-                header = LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:wizard_items.tx_avalex
-                elements {
-                    avalex {
-                    ' . $elementIcon . '
-                        title = LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_avalex.name
-                        description = LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_avalex.description
-                        tt_content_defValues {
-                            CType = list
-                            list_type = avalex_avalex
-                        }
-                    }
-                    avalex_imprint {
-                    ' . $elementIcon . '
-                        title = LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_imprint.name
-                        description = LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_imprint.description
-                        tt_content_defValues {
-                            CType = list
-                            list_type = avalex_imprint
-                        }
-                    }
-                    avalex_bedingungen {
-                    ' . $elementIcon . '
-                        title = LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_bedingungen.name
-                        description = LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_bedingungen.description
-                        tt_content_defValues {
-                            CType = list
-                            list_type = avalex_bedingungen
-                        }
-                    }
-                    avalex_widerruf {
-                    ' . $elementIcon . '
-                        title = LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_widerruf.name
-                        description = LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_widerruf.description
-                        tt_content_defValues {
-                            CType = list
-                            list_type = avalex_widerruf
-                        }
-                    }
-                }
-                show = *
-            }
-       }'
-    );
+    $wizardItems .= '
+        }
+        show = *
+    }
+}';
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig($wizardItems);
 
     // Configure frontend plugin
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript(

@@ -97,4 +97,12 @@ class AvalexUtility
         }
         return (array)$configuration;
     }
+
+    /**
+     * @return array
+     */
+    public static function getListTypes()
+    {
+        return ['avalex_avalex', 'avalex_imprint', 'avalex_bedingungen', 'avalex_widerruf'];
+    }
 }
