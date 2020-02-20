@@ -49,7 +49,10 @@ class tx_avalex_AvalexConfigurationRepository extends tx_avalex_AbstractReposito
                 '(FIND_IN_SET(%d, website_root) OR global = 1) %s',
                 $websiteRoot,
                 $this->getAdditionalWhereClause(self::TABLE)
-            )
+            ),
+            '',
+            '',
+            '1'
         );
         return (is_array($result) && !empty($result)) ? array_shift($result) : array();
     }
@@ -61,6 +64,6 @@ class tx_avalex_AvalexConfigurationRepository extends tx_avalex_AbstractReposito
     public function findApiKeyByWebsiteRoot($websiteRoot)
     {
         $result = $this->findByWebsiteRoot($websiteRoot, 'api_key');
-        return ($result !== null) ? $result['api_key'] : '';
+        return $result ? $result['api_key'] : '';
     }
 }

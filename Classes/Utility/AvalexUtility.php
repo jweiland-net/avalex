@@ -54,7 +54,7 @@ class tx_avalex_AvalexUtility
                 break;
             }
         }
-        if (version_compare(TYPO3_version, '4.5', '>')) {
+        if (version_compare(TYPO3_version, '4.6', '>')) {
             $validPageRootUid = t3lib_utility_Math::canBeInterpretedAsInteger($rootPageUid);
         } else {
             $validPageRootUid = t3lib_div::testInt($rootPageUid);
