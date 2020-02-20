@@ -34,13 +34,20 @@ Administrator Manual
 - After completing the data you can download the TYPO3 extension directly from the Avalex site, however we recommend always using the latest version from the TYPO3 Extension Repository (TER), Github or Packagist.
 
 - In the next step install the extension (Note: when upgrading from version 1.0.0 of the extension, please run the update script in the extension manager).
-  No other settings are need to be made in the extension manager, the API Base Url is https://beta.avalex.de/ .
+  No other settings are need to be made in the extension manager.
 
-- On the top level page in the page tree (id 0) create at least one data record of type „Avalex configuration”.
+- Add a plugin from Tab „Avalex” to display one of the Avalex services on your site. In the settings of the page the cache duration should be changed from "default" to a value like "1 hour". This will ensure, that the privacy statement on the web site will be updated no later than 1 hour after the scheduler task has fetched a new version from the Avalex server (Otherwise it may take up to 24 hours).
+  No further settings are necessary. The text output will be with standard h2 headers and therefore should blend with the normal content.
 
-.. figure:: ../Images/CreateRecord.png
+.. figure:: ../Images/AddPlugin.png
    :width: 300px
-   :alt: Create record
+   :alt: Add frontend plugin
+
+- Now it is required to add a configuration which contains the Avalex API key. Use the „Add configuration” button at one of the avalex plugins in the „Page” view for that.
+
+.. figure:: ../Images/AddConfigurationButton.jpg
+   :width: 300px
+   :alt: Add configuration button
 
 - In the record you select the root page of your web site and the API key for the domain (which you get from the Avalex web site after registering for the service).
 
@@ -48,16 +55,21 @@ Administrator Manual
    :width: 300px
    :alt: Create record
 
-- Go to the scheduler module and add the "avalex content import" task. Select recurring as type and a frequency you want (in seconds, default should be 21600 (6 hours)).
-  IMPORTANT: Make sure, that the TYPO3 Scheduler is periodically executed by a cronjob on your server. Otherwise the task will not be executed and the privacy statement will not be updated. 
-  
-.. figure:: ../Images/SchedulerTask.png
-   :width: 300px
-   :alt: Scheduler task
+Configure caching lifetime
+---------------------------
 
-- To display the content from the Privacy Statement on a web site, simply include a content element of type „Plugin” on the page and select „Avalex” as the plugin. In the settings of the page the cache duration should be changed from "default" to a value like "1 hour". This will ensure, that the privacy statement on the web site will be updated no later than 1 hour after the scheduler task has fetched a new version from the Avalex server (Otherwise it may take up to 24 hours).
-  No further settings are necessary. The text output will be with standard h2 headers and therefore should blend with the normal content.
+- You can configure the caching lifetime inside the Extension Configuration.
 
-.. figure:: ../Images/AddPlugin.png
+For TYPO3 and above go to Admin tools > Settings > Extension Configuration:
+
+.. figure:: ../Images/ExtensionSettingsTypo39.png
    :width: 300px
-   :alt: Add frontend plugin
+   :alt: TYPO3 9 extension settings
+
+For TYPO3 8 and below:
+
+.. figure:: ../Images/ExtensionSettingsTypo38.png
+   :width: 300px
+   :alt: TYPO3 8 extension settings
+
+Enter the lifetime in seconds you want to hold a fetched text from the Avalex API.
