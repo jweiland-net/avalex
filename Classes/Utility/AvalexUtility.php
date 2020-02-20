@@ -87,13 +87,13 @@ class AvalexUtility
         if (version_compare(TYPO3_version, '9.0', '>=')) {
             /** @var ExtensionConfiguration $extensionConfiguration */
             $extensionConfiguration = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Configuration\\ExtensionConfiguration');
-            $configuration = @$extensionConfiguration->get('avalex');
+            $configuration = $extensionConfiguration->get('avalex');
         } else {
             /** @var ObjectManager $objectManager */
             $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
             /** @var ConfigurationUtility $configurationUtility */
             $configurationUtility = $objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\ConfigurationUtility');
-            $configuration = @$configurationUtility->getCurrentConfiguration('avalex');
+            $configuration = $configurationUtility->getCurrentConfiguration('avalex');
         }
         return (array)$configuration;
     }
@@ -103,6 +103,6 @@ class AvalexUtility
      */
     public static function getListTypes()
     {
-        return ['avalex_avalex', 'avalex_imprint', 'avalex_bedingungen', 'avalex_widerruf'];
+        return array('avalex_avalex', 'avalex_imprint', 'avalex_bedingungen', 'avalex_widerruf');
     }
 }

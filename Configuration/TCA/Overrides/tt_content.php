@@ -5,7 +5,7 @@ foreach (\JWeiland\Avalex\Utility\AvalexUtility::getListTypes() as $listType) {
         array(
             'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_' . $listType .'.name',
             $listType,
-            'EXT:avalex/Resources/Public/Icons/' . $listType . '.svg'
+            'EXT:avalex/Resources/Public/Icons/' . $listType . '.png'
         ),
         'list_type',
         'avalex'
