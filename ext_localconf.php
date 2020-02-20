@@ -80,11 +80,14 @@ if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_content'] = array(
         'frontend' => 't3lib_cache_frontend_VariableFrontend',
         'backend' => 't3lib_cache_backend_DbBackend',
-        'options' => array(
+        'options' => array()
+    );
+    if (version_compare(TYPO3_version, '4.6', '<')) {
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_content']['options'] = array(
             'cacheTable' => 'tx_avalex_cache',
             'tagsTable' => 'tx_avalex_cache_tags',
-        ),
-    );
+        );
+    }
 }
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['avalex_newcontentelement'] = 'tx_avalex_AvalexPreviewRenderer';
