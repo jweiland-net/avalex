@@ -5,18 +5,16 @@
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
-			<label index="errors.missing_data">Could not find a legal text record for your site root. Please check your configuration and take a look
-				into the documentation.</label>
 			<label index="flash_message.configuration.response_ok">The submitted API key is valid and can be used for the following domain(s): %s</label>
 			<label index="flash_message.configuration.key_invalid">The submitted API key is invalid, please check your input!</label>
 			<label index="flash_message.configuration.response_unknown">Could not validate API key because API returned unknown content.</label>
+			<label index="error.reqeuest_failed">Avalex returned the following message (%d): "%s"</label>
 		</languageKey>
 		<languageKey index="de" type="array">
-			<label index="errors.missing_data">Es konnte kein Datenschutz Datensatz gefunden werden. Bitte Konfiguration prüfen und einen Blick in die
-				Dokumentation werfen.</label>
 			<label index="flash_message.configuration.response_ok">Der eingegebene API-Key ist gültig und kann für die folgende(n) Domain(s) verwendet werden: %s</label>
 			<label index="flash_message.configuration.key_invalid">Der eingegebene API-Key ist ungültigt, bitte überprüfe die Eingabe!</label>
 			<label index="flash_message.configuration.response_unknown">Der eingegebene API-Key konnte nicht geprüft werden, da die API eine unbekannte Antwort zurückgegeben hat!</label>
+			<label index="error.request_failed">Avalex gab folgende Nachricht zurück (%d): "%s"</label>
 		</languageKey>
 	</data>
 </T3locallang>

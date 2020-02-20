@@ -72,9 +72,9 @@ class tx_avalex_AvalexPlugin
             /** @var tx_avalex_ApiService $apiService */
             $apiService = t3lib_div::makeInstance('tx_avalex_ApiService');
             $content = $apiService->getHtmlForCurrentRootPage($endpoint, $rootPage);
-            if ($content === '') {
-                $content = Tx_Extbase_Utility_Localization::translate('errors.missing_data', 'avalex');
-            } else {
+            $curlInfo = $apiService->getCurlInfo();
+            if ($curlInfo['http_code'] === 200) {
+                // set cache for successful calls only
                 $configuration = tx_avalex_AvalexUtility::getExtensionConfiguration();
                 $this->cache->set(
                     $cacheIdentifier,
