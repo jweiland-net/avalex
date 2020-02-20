@@ -72,4 +72,13 @@ class tx_avalex_AvalexUtility
     {
         return $GLOBALS['TSFE'];
     }
+
+    /**
+     * @return array
+     */
+    public static function getExtensionConfiguration()
+    {
+        $configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['avalex']);
+        return $configuration ? $configuration : array();
+    }
 }

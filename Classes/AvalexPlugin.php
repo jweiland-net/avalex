@@ -75,7 +75,12 @@ class tx_avalex_AvalexPlugin
             if ($content === '') {
                 $content = Tx_Extbase_Utility_Localization::translate('errors.missing_data', 'avalex');
             } else {
-                $this->cache->set($cacheIdentifier, $content);
+                $configuration = tx_avalex_AvalexUtility::getExtensionConfiguration();
+                $this->cache->set(
+                    $cacheIdentifier,
+                    $content,
+                    array(),
+                    $configuration['cacheLifetime'] ? $configuration['cacheLifetime'] : 3600);
             }
         }
         return $content;
