@@ -81,4 +81,12 @@ class tx_avalex_AvalexUtility
         $configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['avalex']);
         return $configuration ? $configuration : array();
     }
+
+    /**
+     * @return array
+     */
+    public static function getListTypes()
+    {
+        return array('avalex_avalex', 'avalex_imprint', 'avalex_bedingungen', 'avalex_widerruf');
+    }
 }
