@@ -54,10 +54,10 @@ class tx_avalex_AvalexUtility
                 break;
             }
         }
-        if (version_compare(TYPO3_version, '4.6', '>')) {
+        if (version_compare(TYPO3_version, '4.5', '>')) {
             $validPageRootUid = t3lib_utility_Math::canBeInterpretedAsInteger($rootPageUid);
         } else {
-            $validPageRootUid = t3lib_div::intInRange($rootPageUid, 0) !== 0;
+            $validPageRootUid = t3lib_div::testInt($rootPageUid);
         }
         if (!$validPageRootUid) {
             throw new tx_avalex_InvalidUidException('Could not determine root page uid of current page id!', 1525270267);
