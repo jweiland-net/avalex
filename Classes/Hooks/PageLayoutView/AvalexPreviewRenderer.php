@@ -86,8 +86,8 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
             $link = sprintf(
                 '%salt_doc.php?returnUrl=%s&edit[tx_avalex_configuration][%d]=edit',
                 $GLOBALS['BACK_PATH'],
-                $uid,
-                GeneralUtility::getIndpEnv('REQUEST_URI')
+                GeneralUtility::getIndpEnv('REQUEST_URI'),
+                (int)$uid
             );
         }
         return $link;

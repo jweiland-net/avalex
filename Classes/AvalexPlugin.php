@@ -36,7 +36,7 @@ class AvalexPlugin
     }
 
     /**
-     * @param $endpoint
+     * @param string $endpoint
      * @return string
      */
     protected function checkEndpoint($endpoint)

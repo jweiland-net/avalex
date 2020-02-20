@@ -75,15 +75,12 @@ $boot = function () {
     endpoint = datenschutzerklaerung
   }
 
-  avalex_imprint = USER
   avalex_imprint < tt_content.list.20.avalex_avalex
   avalex_imprint.endpoint = imprint
 
-  avalex_bedingungen = USER
   avalex_bedingungen < tt_content.list.20.avalex_avalex
   avalex_bedingungen.endpoint = bedingungen
 
-  avalex_widerruf = USER
   avalex_widerruf < tt_content.list.20.avalex_avalex
   avalex_widerruf.endpoint = widerruf
 }',
