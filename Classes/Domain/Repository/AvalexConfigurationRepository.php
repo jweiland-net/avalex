@@ -62,7 +62,7 @@ class AvalexConfigurationRepository extends AbstractRepository
         } else {
             $result = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
                 $select,
-                sprintf('%s', self::TABLE),
+                self::TABLE,
                 sprintf(
                     '(FIND_IN_SET(%d, website_root) OR global = 1) %s',
                     $websiteRoot,
@@ -80,6 +80,6 @@ class AvalexConfigurationRepository extends AbstractRepository
     public function findApiKeyByWebsiteRoot($websiteRoot)
     {
         $result = $this->findByWebsiteRoot($websiteRoot, 'api_key');
-        return ($result !== null) ? $result['api_key'] : '';
+        return $result ? $result['api_key'] : '';
     }
 }
