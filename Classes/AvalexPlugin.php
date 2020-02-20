@@ -18,7 +18,6 @@ use JWeiland\Avalex\Service\ApiService;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Class AvalexPlugin
@@ -66,10 +65,15 @@ class AvalexPlugin
             /** @var ApiService $apiService */
             $apiService = GeneralUtility::makeInstance('JWeiland\\Avalex\\Service\\ApiService');
             $content = $apiService->getHtmlForCurrentRootPage($endpoint, $rootPage);
-            if ($content === '') {
-                $content = LocalizationUtility::translate('errors.missing_data', 'avalex');
-            } else {
-                $this->cache->set($cacheIdentifier, $content);
+            $curlInfo = $apiService->getCurlInfo();
+            if ($curlInfo['http_code'] === 200) {
+                // set cache for successful calls only
+                $configuration = AvalexUtility::getExtensionConfiguration();
+                $this->cache->set(
+                    $cacheIdentifier,
+                    $content,
+                    [],
+                    $configuration['cacheLifetime'] ? $configuration['cacheLifetime'] : 3600);
             }
         }
         return $content;

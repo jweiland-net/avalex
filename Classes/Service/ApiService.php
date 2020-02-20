@@ -29,6 +29,16 @@ class ApiService
      */
     protected $logger;
 
+    /**
+     * @var array
+     */
+    protected $curlInfo = array();
+
+    /**
+     * @var string
+     */
+    protected $curlOutput = '';
+
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(__CLASS__);
@@ -37,23 +47,18 @@ class ApiService
     /**
      * Checks the JSON response
      *
-     * @param string|mixed $response
      * @return bool Returns true if given data is valid or false in case of an error
      */
-    protected function checkResponse($response)
+    protected function checkResponse()
     {
         $success = true;
-        if ($response === false || !is_string($response) || !$response) {
-            $this->logger->error('Fetching legal text failed!');
+        if ($this->curlInfo['http_code'] !== 200) {
             $success = false;
-        }
-        if (strpos($http_response_header[0], '401')) {
-            $this->logger->error('Fetching legal text returned error 401. Please check your api key!');
-            $success = false;
-        }
-        if (strpos($http_response_header[0], '400')) {
-            $this->logger->error('Fetching legal text returned error 403!');
-            $success = false;
+            $this->logger->error(sprintf(
+                'The avalex API answered with code "%d" and message: "%s".',
+                $this->curlInfo['http_code'],
+                $this->curlOutput
+            ));
         }
         return $success;
     }
@@ -76,11 +81,45 @@ class ApiService
         );
         $apiKey = $avalexConfigurationRepository->findApiKeyByWebsiteRoot($rootPage);
 
-        $apiResponse = @file_get_contents(sprintf('%s%s?apikey=%s', AvalexUtility::getApiUrl(), $endpoint, $apiKey));
-        if (!$this->checkResponse($apiResponse)) {
-            $apiResponse  = '';
+        $curlResource = curl_init();
+
+        curl_setopt_array($curlResource, array(
+            CURLOPT_URL => sprintf('%s%s?apikey=%s', AvalexUtility::getApiUrl(), $endpoint, $apiKey),
+            CURLOPT_RETURNTRANSFER => true,
+        ));
+
+        $this->curlOutput = (string)curl_exec($curlResource);
+        $this->curlInfo = curl_getinfo($curlResource);
+
+        curl_close($curlResource);
+
+        if ($this->checkResponse()) {
+            $content = $this->curlOutput;
+        } else {
+            // render error message wrapped with translated notice in frontend if request !== 200
+            $content = sprintf(
+                $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang.xlf:error.request_failed'),
+                (int)$this->curlInfo['http_code'],
+                $this->curlOutput
+            );
         }
 
-        return $apiResponse;
+        return $content;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCurlInfo()
+    {
+        return $this->curlInfo;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurlOutput()
+    {
+        return $this->curlOutput;
     }
 }

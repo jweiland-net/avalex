@@ -1,2 +1,2 @@
-# cat=API/enable/23; type=string; label=API key field (deprecated):Just there for compatibility! Please don´t fill in.
-apiKey =
+# cat=Cache; type=int; label=Cache lifetime for avalex content (privacy statement, imprint, ...)
+cacheLifetime = 3600

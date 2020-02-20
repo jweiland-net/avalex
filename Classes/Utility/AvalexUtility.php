@@ -15,9 +15,12 @@ namespace JWeiland\Avalex\Utility;
  */
 
 use JWeiland\Avalex\Exception\InvalidUidException;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
@@ -74,5 +77,24 @@ class AvalexUtility
     public static function getTypoScriptFrontendController()
     {
         return $GLOBALS['TSFE'];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getExtensionConfiguration()
+    {
+        if (version_compare(TYPO3_version, '9.0', '>=')) {
+            /** @var ExtensionConfiguration $extensionConfiguration */
+            $extensionConfiguration = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Configuration\\ExtensionConfiguration');
+            $configuration = @$extensionConfiguration->get('avalex');
+        } else {
+            /** @var ObjectManager $objectManager */
+            $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+            /** @var ConfigurationUtility $configurationUtility */
+            $configurationUtility = $objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\ConfigurationUtility');
+            $configuration = @$configurationUtility->getCurrentConfiguration('avalex');
+        }
+        return (array)$configuration;
     }
 }

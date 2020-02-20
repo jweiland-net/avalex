@@ -3,9 +3,6 @@
 	<file source-language="en" datatype="plaintext" original="messages" date="2018-03-18T17:38:20Z" product-name="avalex">
 		<header/>
 		<body>
-			<trans-unit id="errors.missing_data">
-				<source>Could not fetch HTML from API for your site root. Please check your configuration and take a look into the documentation.</source>
-			</trans-unit>
 			<trans-unit id="flash_message.configuration.response_ok">
 				<source>The submitted API key is valid and can be used for the following domain(s): %s</source>
 			</trans-unit>
@@ -14,6 +11,9 @@
 			</trans-unit>
 			<trans-unit id="flash_message.configuration.response_unknown">
 				<source>Could not validate API key because API returned unknown content.</source>
+			</trans-unit>
+			<trans-unit id="error.request_failed">
+				<source>Avalex returned the following message (%d): "%s"</source>
 			</trans-unit>
 		</body>
 	</file>
