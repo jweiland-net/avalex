@@ -10,7 +10,7 @@ if (version_compare(TYPO3_version, '7.4', '<')) {
 }
 
 
-return array(
+$tca = array(
     'ctrl' => array(
         'title' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration',
         'adminOnly' => 1,
@@ -20,8 +20,6 @@ return array(
         'crdate' => 'crdate',
         'cruser_id' => 'cruser_id',
         'dividers2tabs' => true,
-        'versioningWS' => 2,
-        'versioning_followPages' => true,
         'delete' => 'deleted',
         'enablecolumns' => array(
             'disabled' => 'hidden',
@@ -58,13 +56,13 @@ return array(
             'config' => array(
                 'type' => 'input',
                 'size' => 13,
-                'max' => 20,
                 'eval' => 'datetime',
                 'checkbox' => 0,
                 'default' => 0,
                 'range' => array(
                     'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y')),
                 ),
+                'renderType' => 'inputDateTime',
             ),
         ),
         'endtime' => array(
@@ -73,13 +71,13 @@ return array(
             'config' => array(
                 'type' => 'input',
                 'size' => 13,
-                'max' => 20,
                 'eval' => 'datetime',
                 'checkbox' => 0,
                 'default' => 0,
                 'range' => array(
                     'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y')),
                 ),
+                'renderType' => 'inputDateTime',
             ),
         ),
         'website_root' => array(
@@ -122,3 +120,12 @@ return array(
         )
     )
 );
+
+if (version_compare(TYPO3_version, '8.5', '<')) {
+    $tca['ctrl']['versioning_followPages'] = true;
+    $tca['ctrl']['versioningWS'] = 2;
+} else {
+    $tca['ctrl']['versioningWS'] = true;
+}
+
+return $tca;
