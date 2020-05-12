@@ -31,7 +31,7 @@ class AvalexUtility
     /**
      * @var string
      */
-    protected static $apiUrl = 'https://avalex.de/';
+    protected static $apiUrl = 'https://dev.avalex.de/';
 
     /**
      * Returns the API url with trailing slash

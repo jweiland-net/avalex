@@ -54,17 +54,17 @@ $boot = function () {
   avalex_avalex {
     includeLibs = EXT:avalex/Classes/AvalexPlugin.php
     userFunc = JWeiland\\Avalex\\AvalexPlugin->render
-    endpoint = datenschutzerklaerung
+    endpoint = avx-datenschutzerklaerung
   }
 
   avalex_imprint < tt_content.list.20.avalex_avalex
-  avalex_imprint.endpoint = imprint
+  avalex_imprint.endpoint = avx-impressum
 
   avalex_bedingungen < tt_content.list.20.avalex_avalex
-  avalex_bedingungen.endpoint = bedingungen
+  avalex_bedingungen.endpoint = avx-bedingungen
 
   avalex_widerruf < tt_content.list.20.avalex_avalex
-  avalex_widerruf.endpoint = widerruf
+  avalex_widerruf.endpoint = avx-widerruf
 }',
         'defaultContentRendering'
     );
@@ -78,6 +78,13 @@ $boot = function () {
     }
 
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['avalex_newcontentelement'] = 'JWeiland\\Avalex\\Hooks\\PageLayoutView\\AvalexPreviewRenderer';
+
+    if (!is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'])) {
+        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'] = array();
+    }
+
+    $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'][] = 'JWeiland\\Avalex\\Hooks\\ApiServiceSetDefaultDomainHook';
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals']['JWeiland\\Avalex\\Evaluation\\DomainEvaluation'] = '';
 };
 
 $boot();

@@ -15,6 +15,8 @@ namespace JWeiland\Avalex\Service;
  */
 
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
+use JWeiland\Avalex\Hooks\ApiService\PostApiRequestHookInterface;
+use JWeiland\Avalex\Hooks\ApiService\PreApiRequestHookInterface;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -39,9 +41,20 @@ class ApiService
      */
     protected $curlOutput = '';
 
+    /**
+     * @var array
+     */
+    protected $hookObjectsArray = array();
+
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(__CLASS__);
+        if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'])) {
+            foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'] as $key => $classRef) {
+                $hookObject = GeneralUtility::makeInstance($classRef);
+                $this->hookObjectsArray[$key] = $hookObject;
+            }
+        }
     }
 
     /**
@@ -49,7 +62,7 @@ class ApiService
      *
      * @return bool Returns true if given data is valid or false in case of an error
      */
-    protected function checkResponse()
+    public function checkResponse()
     {
         $success = true;
         if ($this->curlInfo['http_code'] !== 200) {
@@ -79,12 +92,19 @@ class ApiService
         $avalexConfigurationRepository = GeneralUtility::makeInstance(
             'JWeiland\\Avalex\\Domain\\Repository\\AvalexConfigurationRepository'
         );
-        $apiKey = $avalexConfigurationRepository->findApiKeyByWebsiteRoot($rootPage);
+        $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid, api_key, domain');
+
+        // Hook: Allow to modify $apiKey and $domain before curl sends the request to avalex
+        foreach ($this->hookObjectsArray as $hookObject) {
+            if ($hookObject instanceof PreApiRequestHookInterface) {
+                $hookObject->preApiRequest($configuration);
+            }
+        }
 
         $curlResource = curl_init();
 
         curl_setopt_array($curlResource, array(
-            CURLOPT_URL => sprintf('%s%s?apikey=%s', AvalexUtility::getApiUrl(), $endpoint, $apiKey),
+            CURLOPT_URL => sprintf('%s%s?apikey=%s&domain=%s', AvalexUtility::getApiUrl(), $endpoint, $configuration['api_key'], $configuration['domain']),
             CURLOPT_RETURNTRANSFER => true,
         ));
 
@@ -102,6 +122,13 @@ class ApiService
                 (int)$this->curlInfo['http_code'],
                 $this->curlOutput
             );
+        }
+
+        // Hook: Allow to modify $content and access to curlInfo, curlOutput before returning it!
+        foreach ($this->hookObjectsArray as $hookObject) {
+           if ($hookObject instanceof PostApiRequestHookInterface) {
+               $hookObject->postApiRequest($content, $this);
+           }
         }
 
         return $content;

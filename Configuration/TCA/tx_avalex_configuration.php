@@ -9,7 +9,6 @@ if (version_compare(TYPO3_version, '7.4', '<')) {
     $locallangTtc = 'LLL:EXT:cms/locallang_ttc.xlf:';
 }
 
-
 $tca = array(
     'ctrl' => array(
         'title' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration',
@@ -32,7 +31,7 @@ $tca = array(
         'showRecordsFieldList' => 'hidden, api_key, website_root'
     ),
     'types' => array(
-        '1' => array('showitem' => 'hidden, api_key, website_root, global, description, --div--;' . $locallangTtc . 'tabs.access, starttime, endtime')
+        '1' => array('showitem' => 'hidden, api_key, domain, website_root, global, description, --div--;' . $locallangTtc . 'tabs.access, starttime, endtime')
     ),
     'columns' => array(
         't3ver_label' => array(
@@ -109,6 +108,15 @@ $tca = array(
             'config' => array(
                 'required' => true,
                 'type' => 'input'
+            )
+        ),
+        'domain' => array(
+            'exclude' => true,
+            'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.domain',
+            'config' => array(
+                'required' => true,
+                'type' => 'input',
+                'eval' => 'JWeiland\\Avalex\\Evaluation\\DomainEvaluation'
             )
         ),
         'description' => array(

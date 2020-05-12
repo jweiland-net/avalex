@@ -72,14 +72,4 @@ class AvalexConfigurationRepository extends AbstractRepository
         }
         return ($result !== null) ? $result : array();
     }
-
-    /**
-     * @param int $websiteRoot
-     * @return string
-     */
-    public function findApiKeyByWebsiteRoot($websiteRoot)
-    {
-        $result = $this->findByWebsiteRoot($websiteRoot, 'api_key');
-        return $result ? $result['api_key'] : '';
-    }
 }

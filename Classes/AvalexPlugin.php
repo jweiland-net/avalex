@@ -41,7 +41,7 @@ class AvalexPlugin
     protected function checkEndpoint($endpoint)
     {
         $endpoint = (string)$endpoint;
-        if (in_array($endpoint, array('datenschutzerklaerung', 'imprint', 'bedingungen', 'widerruf'), true)) {
+        if (in_array($endpoint, array('avx-datenschutzerklaerung', 'avx-impressum', 'avx-bedingungen', 'avx-widerruf'), true)) {
             return $endpoint;
         }
         throw new \InvalidArgumentException(sprintf('The endpoint "%s" is invalid!', $endpoint), 1582029646660);
@@ -62,7 +62,6 @@ class AvalexPlugin
         if ($this->cache->has($cacheIdentifier)) {
             $content = (string)$this->cache->get($cacheIdentifier);
         } else {
-            /** @var ApiService $apiService */
             $apiService = GeneralUtility::makeInstance('JWeiland\\Avalex\\Service\\ApiService');
             $content = $apiService->getHtmlForCurrentRootPage($endpoint, $rootPage);
             $curlInfo = $apiService->getCurlInfo();

@@ -63,6 +63,10 @@
 				<source>Use this configuration for all websites</source>
 				<target>Diese Konfiguration für alle Webseiten verwenden</target>
 			</trans-unit>
+			<trans-unit id="tx_avalex_configuration.domain">
+				<source>Domain linked with API key (e.g. https://example.com)</source>
+				<target>Mit dem API-Key verknüpfte Domain (z.B. https://example.com)</target>
+			</trans-unit>
 			<trans-unit id="wizard_items.tx_avalex">
 				<source>Avalex</source>
 				<target>Avalex</target>
