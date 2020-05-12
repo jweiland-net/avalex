@@ -9,5 +9,9 @@ return array(
     'tx_avalex_avalexpreviewrenderer' => $extensionClassesPath . 'Hooks/PageLayoutView/AvalexPreviewRenderer.php',
     'tx_avalex_avalexplugin' => $extensionClassesPath . 'AvalexPlugin.php',
     'tx_avalex_avalexutility' => $extensionClassesPath . 'Utility/AvalexUtility.php',
-    'tx_avalex_apiservice' => $extensionClassesPath . 'Service/ApiService.php'
+    'tx_avalex_apiservice' => $extensionClassesPath . 'Service/ApiService.php',
+    'tx_avalex_postapirequesthookinterface' => $extensionClassesPath . 'Hooks/ApiService/PostApiRequestHookInterface.php',
+    'tx_avalex_preapirequesthookinterface' => $extensionClassesPath . 'Hooks/ApiService/PreApiRequestHookInterface.php',
+    'tx_avalex_apiservicesetdefaultdomainhook' => $extensionClassesPath . 'Hooks/ApiServiceSetDefaultDomainHook.php',
+    'tx_avalex_domainevaluation' => $extensionClassesPath . 'Evaluation/DomainEvaluation.php'
 );

@@ -39,17 +39,17 @@ t3lib_extMgm::addTypoScript(
 avalex_avalex = USER
 avalex_avalex {
 userFunc = tx_avalex_AvalexPlugin->render
-endpoint = datenschutzerklaerung
+endpoint = avx-datenschutzerklaerung
 }
 
 avalex_imprint < tt_content.list.20.avalex_avalex
-avalex_imprint.endpoint = imprint
+avalex_imprint.endpoint = avx-impressum
 
 avalex_bedingungen < tt_content.list.20.avalex_avalex
-avalex_bedingungen.endpoint = bedingungen
+avalex_bedingungen.endpoint = avx-bedingungen
 
 avalex_widerruf < tt_content.list.20.avalex_avalex
-avalex_widerruf.endpoint = widerruf
+avalex_widerruf.endpoint = avx-widerruf
 }'
     , 43);
 
@@ -72,4 +72,11 @@ if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations
 }
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['avalex_newcontentelement'] = 'tx_avalex_AvalexPreviewRenderer';
+
+if (!is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'])) {
+    $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'] = array();
+}
+
+$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'][] = 'tx_avalex_ApiServiceSetDefaultDomainHook';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals']['tx_avalex_DomainEvaluation'] = '';
 

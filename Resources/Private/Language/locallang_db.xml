@@ -18,6 +18,7 @@
 			<label index="tx_avalex_configuration.api_key">API key</label>
 			<label index="tx_avalex_configuration.description">Description (optional)</label>
 			<label index="tx_avalex_configuration.global">Use this configuration for all websites</label>
+			<label index="tx_avalex_configuration.domain">Domain linked with API key (e.g. https://example.com)</label>
 			<label index="wizard_items.tx_avalex">Avalex</label>
 			<label index="preview_renderer.no_config">Could not find any configuration for avalex!</label>
 			<label index="preview_renderer.found_config">Using configuration "%s".</label>
@@ -38,6 +39,7 @@
 			<label index="tx_avalex_configuration.api_key">API-Key</label>
 			<label index="tx_avalex_configuration.description">Beschreibung (optional)</label>
 			<label index="tx_avalex_configuration.global">Diese Konfiguration für alle Webseiten verwenden</label>
+			<label index="tx_avalex_configuration.domain">Mit dem API-Key verknüpfte Domain (z.B. https://example.com)</label>
 			<label index="wizard_items.tx_avalex">Avalex</label>
 			<label index="preview_renderer.no_config">Es konnte keine Avalex Konfiguration gefunden werden!</label>
 			<label index="preview_renderer.found_config">Die Konfiguration "%s" wird verwendet.</label>

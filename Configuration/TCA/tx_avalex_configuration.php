@@ -23,7 +23,7 @@ return array(
         'showRecordsFieldList' => 'hidden, website_root, api_key'
     ),
     'types' => array(
-        '1' => array('showitem' => 'hidden, api_key, website_root, global, description, --div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access, starttime, endtime')
+        '1' => array('showitem' => 'hidden, api_key, domain, website_root, global, description, --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access, starttime, endtime')
     ),
     'columns' => array(
         't3ver_label' => array(
@@ -99,6 +99,15 @@ return array(
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xml:tx_avalex_configuration.api_key',
             'config' => array(
                 'type' => 'input'
+            )
+        ),
+        'domain' => array(
+            'exclude' => true,
+            'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xml:tx_avalex_configuration.domain',
+            'config' => array(
+                'required' => true,
+                'type' => 'input',
+                'eval' => 'tx_avalex_DomainEvaluation'
             )
         ),
         'description' => array(

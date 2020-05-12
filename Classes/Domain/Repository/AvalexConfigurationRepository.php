@@ -56,14 +56,4 @@ class tx_avalex_AvalexConfigurationRepository extends tx_avalex_AbstractReposito
         );
         return (is_array($result) && !empty($result)) ? array_shift($result) : array();
     }
-
-    /**
-     * @param int $websiteRoot
-     * @return string
-     */
-    public function findApiKeyByWebsiteRoot($websiteRoot)
-    {
-        $result = $this->findByWebsiteRoot($websiteRoot, 'api_key');
-        return $result ? $result['api_key'] : '';
-    }
 }

@@ -28,11 +28,26 @@ class tx_avalex_ApiService
     protected $curlOutput = '';
 
     /**
+     * @var array
+     */
+    protected $hookObjectsArray = array();
+
+    public function __construct()
+    {
+        if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'])) {
+            foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'] as $key => $classRef) {
+                $hookObject = t3lib_div::makeInstance($classRef);
+                $this->hookObjectsArray[$key] = $hookObject;
+            }
+        }
+    }
+
+    /**
      * Checks the JSON response
      *
      * @return bool Returns true if given data is valid or false in case of an error
      */
-    protected function checkResponse()
+    public function checkResponse()
     {
         $success = true;
         if ($this->curlInfo['http_code'] !== 200) {
@@ -65,12 +80,25 @@ class tx_avalex_ApiService
         $avalexConfigurationRepository = t3lib_div::makeInstance(
             'tx_avalex_AvalexConfigurationRepository'
         );
-        $apiKey = $avalexConfigurationRepository->findApiKeyByWebsiteRoot($rootPage);
+        $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid, api_key, domain');
+
+        // Hook: Allow to modify $apiKey and $domain before curl sends the request to avalex
+        foreach ($this->hookObjectsArray as $hookObject) {
+            if ($hookObject instanceof tx_avalex_PreApiRequestHookInterface) {
+                $hookObject->preApiRequest($configuration);
+            }
+        }
 
         $curlResource = curl_init();
 
         curl_setopt_array($curlResource, array(
-            CURLOPT_URL => sprintf('%s%s?apikey=%s', tx_avalex_AvalexUtility::getApiUrl(), $endpoint, $apiKey),
+            CURLOPT_URL => sprintf(
+                '%s%s?apikey=%s&domain=%s',
+                tx_avalex_AvalexUtility::getApiUrl(),
+                $endpoint,
+                $configuration['api_key'],
+                $configuration['domain']
+            ),
             CURLOPT_RETURNTRANSFER => true,
         ));
 
@@ -88,6 +116,13 @@ class tx_avalex_ApiService
                 (int)$this->curlInfo['http_code'],
                 $this->curlOutput
             );
+        }
+
+        // Hook: Allow to modify $content and access to curlInfo, curlOutput before returning it!
+        foreach ($this->hookObjectsArray as $hookObject) {
+            if ($hookObject instanceof tx_avalex_PostApiRequestHookInterface) {
+                $hookObject->postApiRequest($content, $this);
+            }
         }
 
         return $content;

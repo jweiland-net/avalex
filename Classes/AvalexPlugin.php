@@ -48,7 +48,7 @@ class tx_avalex_AvalexPlugin
     protected function checkEndpoint($endpoint)
     {
         $endpoint = (string)$endpoint;
-        if (in_array($endpoint, array('datenschutzerklaerung', 'imprint', 'bedingungen', 'widerruf'), true)) {
+        if (in_array($endpoint, array('avx-datenschutzerklaerung', 'avx-impressum', 'avx-bedingungen', 'avx-widerruf'), true)) {
             return $endpoint;
         }
         throw new InvalidArgumentException(sprintf('The endpoint "%s" is invalid!', $endpoint), 1582029646660);
