@@ -54,4 +54,5 @@ avalex
 
 	Introduction/Index
 	Administrator/Index
+	Developer/Index
 	Links
