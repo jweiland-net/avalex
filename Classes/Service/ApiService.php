@@ -20,6 +20,7 @@ use JWeiland\Avalex\Hooks\ApiService\PreApiRequestHookInterface;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * API service class for avalex API requests
@@ -117,10 +118,10 @@ class ApiService
             $content = $this->curlOutput;
         } else {
             // render error message wrapped with translated notice in frontend if request !== 200
-            $content = sprintf(
-                $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang.xlf:error.request_failed'),
-                (int)$this->curlInfo['http_code'],
-                $this->curlOutput
+            $content = LocalizationUtility::translate(
+                'error.request_failed',
+                'avalex',
+                [(int)$this->curlInfo['http_code'], $this->curlOutput]
             );
         }
 

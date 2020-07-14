@@ -70,32 +70,50 @@ class DataHandler
     {
         $isValid = true;
         $apiKey = (string)$apiKey;
-        $response = @file_get_contents(AvalexUtility::getApiUrl() . 'api_keys/is_configured.json?apikey=' . $apiKey);
-        $responseArray = json_decode($response, true);
-        if ($responseArray && array_key_exists('message', $responseArray) && $responseArray['message'] === 'OK') {
-            // API key valid
-            if (array_key_exists('domain', $responseArray)) {
-                $domain = (string)$responseArray['domain'];
-            } else {
-                $domain = '-';
+        $curlResource = curl_init();
+
+        curl_setopt_array($curlResource, array(
+            CURLOPT_URL => AvalexUtility::getApiUrl() . 'api_keys/is_configured.json?apikey=' . $apiKey,
+            CURLOPT_RETURNTRANSFER => true,
+        ));
+
+        $curlOutput = (string)curl_exec($curlResource);
+        $curlInfo = curl_getinfo($curlResource);
+
+        curl_close($curlResource);
+
+        if ($curlInfo['http_code'] === 200) {
+            $responseArray = json_decode($curlOutput, true);
+            if ($responseArray && array_key_exists('message', $responseArray) && $responseArray['message'] === 'OK') {
+                // API key valid
+                if (array_key_exists('domain', $responseArray)) {
+                    $domain = (string)$responseArray['domain'];
+                } else {
+                    $domain = '-';
+                }
+                $severity = FlashMessage::OK;
+                $message = LocalizationUtility::translate(
+                    'flash_message.configuration.response_ok',
+                    'avalex',
+                    array($domain)
+                );
             }
-            $severity = FlashMessage::OK;
-            $message = LocalizationUtility::translate(
-                'flash_message.configuration.response_ok',
-                'avalex',
-                array($domain)
-            );
-        } elseif (strpos($http_response_header[0], '401')) {
+        } elseif ($curlInfo['http_code'] === 401) {
             // API key invalid
             $isValid = false;
             $severity = FlashMessage::ERROR;
             $message = LocalizationUtility::translate('flash_message.configuration.key_invalid', 'avalex');
         } else {
-            // Unknown
+            // render error message wrapped with translated notice if request !== 200
             $isValid = false;
             $severity = FlashMessage::ERROR;
-            $message = LocalizationUtility::translate('flash_message.configuration.response_unknown', 'avalex');
+            $message = LocalizationUtility::translate(
+                'error.request_failed',
+                'avalex',
+                [(int)$curlInfo['http_code'], $curlOutput]
+            );
         }
+
         /** @var FlashMessage $flashMessage */
         $flashMessage = GeneralUtility::makeInstance(
             'TYPO3\\CMS\\Core\\Messaging\\FlashMessage',

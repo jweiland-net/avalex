@@ -10,11 +10,7 @@
 			</trans-unit>
 			<trans-unit id="flash_message.configuration.key_invalid">
 				<source>The submitted API key is invalid, please check your input!</source>
-				<target>Der eingegebene API-Key ist ungültigt, bitte überprüfe die Eingabe!</target>
-			</trans-unit>
-			<trans-unit id="flash_message.configuration.response_unknown">
-				<source>Could not validate API key because API returned unknown content.</source>
-				<target>Der eingegebene API-Key konnte nicht geprüft werden, da die API eine unbekannte Antwort zurückgegeben hat!</target>
+				<target>Der eingegebene API-Key ist ungültig, bitte überprüfe die Eingabe!</target>
 			</trans-unit>
 			<trans-unit id="error.request_failed">
 				<source>Avalex returned the following message (%d): "%s"</source>
