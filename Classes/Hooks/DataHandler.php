@@ -1,18 +1,13 @@
 <?php
-namespace JWeiland\Avalex\Hooks;
 
 /*
- * This file is part of the avalex project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
+ * This file is part of the package jweiland/avalex.
  *
  * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
+ * LICENSE file that was distributed with this source code.
  */
+
+namespace JWeiland\Avalex\Hooks;
 
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
@@ -38,15 +33,13 @@ class DataHandler
      * @param string $table
      * @param string|int $id
      * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
-     * @return void
      */
     public function processDatamap_preProcessFieldArray(
         array &$incomingFieldArray,
         $table,
         $id,
         \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
-    )
-    {
+    ) {
         if ($table !== 'tx_avalex_configuration' || !array_key_exists('api_key', $incomingFieldArray)) {
             return;
         }

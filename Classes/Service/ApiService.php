@@ -1,18 +1,13 @@
 <?php
-namespace JWeiland\Avalex\Service;
 
 /*
- * This file is part of the avalex project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
+ * This file is part of the package jweiland/avalex.
  *
  * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
+ * LICENSE file that was distributed with this source code.
  */
+
+namespace JWeiland\Avalex\Service;
 
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Hooks\ApiService\PostApiRequestHookInterface;
@@ -127,9 +122,9 @@ class ApiService
 
         // Hook: Allow to modify $content and access to curlInfo, curlOutput before returning it!
         foreach ($this->hookObjectsArray as $hookObject) {
-           if ($hookObject instanceof PostApiRequestHookInterface) {
-               $hookObject->postApiRequest($content, $this);
-           }
+            if ($hookObject instanceof PostApiRequestHookInterface) {
+                $hookObject->postApiRequest($content, $this);
+            }
         }
 
         return $content;

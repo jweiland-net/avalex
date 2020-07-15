@@ -1,0 +1,69 @@
+# Adapted from https://github.com/TYPO3GmbH/blog/blob/master/.github/workflows/ci.yml
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        typo3: [^8.7, ^9.5, ^10.4]
+        php: ['7.2', '7.3', '7.4']
+        package: [typo3/cms-core]
+        os: [ubuntu-latest]
+        exclude:
+          - typo3: ^9.5
+            php: '7.0'
+          - typo3: ^9.5
+            php: '7.1'
+          - typo3: ^10.4
+            php: '7.0'
+          - typo3: ^10.4
+            php: '7.1'
+        include:
+          - typo3: ^6.2
+            php: '5.6'
+            package: typo3/cms
+            os: ubuntu-16.04
+          - typo3: ^7.6
+            php: '5.6'
+            package: typo3/cms
+            os: ubuntu-16.04
+          - typo3: ^7.6
+            php: '7.0'
+            package: typo3/cms
+            os: ubuntu-16.04
+          - typo3: ^7.6
+            php: '7.1'
+            package: typo3/cms
+            os: ubuntu-16.04
+          - typo3: ^7.6
+            php: '7.2'
+            package: typo3/cms
+            os: ubuntu-16.04
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up PHP Version ${{ matrix.php }}
+        run: |
+          sudo update-alternatives --set php /usr/bin/php${{ matrix.php }}
+          php -v
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Install dependencies with ${{ matrix.package }}:${{ matrix.typo3 }}
+        run: |
+          composer require ${{ matrix.package }}:${{ matrix.typo3 }} --no-progress
+          git checkout composer.json
+
+      - name: php-cs-fixer
+        run: composer ci:php:fixer
+
+      - name: Lint PHP
+        run: composer ci:php:lint
+

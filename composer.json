@@ -20,9 +20,26 @@
 	"require": {
 		"typo3/cms-core": "^6.2 || ^7.6 || ^8.7 || ^9.5.17 || ^10.4.2"
 	},
+	"require-dev": {
+		"friendsofphp/php-cs-fixer": "^2.14"
+	},
 	"autoload": {
 		"psr-4": {
 			"JWeiland\\Avalex\\": "Classes"
 		}
+	},
+	"config": {
+		"vendor-dir": ".build/vendor"
+	},
+	"extra": {
+		"typo3/cms": {
+			"app-dir": ".build",
+			"web-dir": ".build/public"
+		}
+	},
+	"scripts": {
+		"php:fix": ".build/vendor/bin/php-cs-fixer --config=Build/.php_cs.php fix Classes",
+		"ci:php:lint": "find *.php Classes Configuration -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l",
+		"ci:php:fixer": ".build/vendor/bin/php-cs-fixer --config=Build/.php_cs.php fix --dry-run -v --show-progress=dots --diff-format=udiff Classes"
 	}
 }
