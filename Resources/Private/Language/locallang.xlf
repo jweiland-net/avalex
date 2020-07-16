@@ -12,6 +12,9 @@
 			<trans-unit id="error.request_failed">
 				<source>Avalex returned the following message (%d): "%s"</source>
 			</trans-unit>
+			<trans-unit id="error.curl_request_failed">
+				<source>Requesting the Avalex API using curl failed. Error (%d): "%s"</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

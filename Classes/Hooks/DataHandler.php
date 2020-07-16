@@ -9,6 +9,7 @@
 
 namespace JWeiland\Avalex\Hooks;
 
+use JWeiland\Avalex\Service\CurlService;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
@@ -63,20 +64,21 @@ class DataHandler
     {
         $isValid = true;
         $apiKey = (string)$apiKey;
-        $curlResource = curl_init();
+        /** @var CurlService $curlService */
+        $curlService = GeneralUtility::makeInstance('JWeiland\\Avalex\\Service\\CurlService');
+        $requestSuccessful = $curlService->request(AvalexUtility::getApiUrl() . 'api_keys/is_configured.json?apikey=' . $apiKey);
 
-        curl_setopt_array($curlResource, array(
-            CURLOPT_URL => AvalexUtility::getApiUrl() . 'api_keys/is_configured.json?apikey=' . $apiKey,
-            CURLOPT_RETURNTRANSFER => true,
-        ));
-
-        $curlOutput = (string)curl_exec($curlResource);
-        $curlInfo = curl_getinfo($curlResource);
-
-        curl_close($curlResource);
-
-        if ($curlInfo['http_code'] === 200) {
-            $responseArray = json_decode($curlOutput, true);
+        if ($requestSuccessful === false) {
+            // curl error
+            $isValid = false;
+            $severity = FlashMessage::ERROR;
+            $message = LocalizationUtility::translate(
+                'error.curl_request_failed',
+                'avalex',
+                [$curlService->getCurlErrno(), $curlService->getCurlError()]
+            );
+        } elseif ($curlService->getCurlInfo()['http_code'] === 200) {
+            $responseArray = json_decode($curlService->getCurlOutput(), true);
             if ($responseArray && array_key_exists('message', $responseArray) && $responseArray['message'] === 'OK') {
                 // API key valid
                 if (array_key_exists('domain', $responseArray)) {
@@ -91,7 +93,7 @@ class DataHandler
                     array($domain)
                 );
             }
-        } elseif ($curlInfo['http_code'] === 401) {
+        } elseif ($curlService->getCurlInfo()['http_code'] === 401) {
             // API key invalid
             $isValid = false;
             $severity = FlashMessage::ERROR;
@@ -103,7 +105,7 @@ class DataHandler
             $message = LocalizationUtility::translate(
                 'error.request_failed',
                 'avalex',
-                [(int)$curlInfo['http_code'], $curlOutput]
+                [(int)$curlService->getCurlInfo()['http_code'], $curlService->getCurlOutput()]
             );
         }
 

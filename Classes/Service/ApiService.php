@@ -28,15 +28,9 @@ class ApiService
     protected $logger;
 
     /**
-     * @var array
+     * @var CurlService
      */
-    protected $curlInfo = array();
-
-    /**
-     * @var string
-     */
-    protected $curlOutput = '';
-
+    protected $curlService;
     /**
      * @var array
      */
@@ -45,31 +39,13 @@ class ApiService
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(__CLASS__);
+        $this->curlService = GeneralUtility::makeInstance('JWeiland\\Avalex\\Service\\CurlService');
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'] as $key => $classRef) {
                 $hookObject = GeneralUtility::makeInstance($classRef);
                 $this->hookObjectsArray[$key] = $hookObject;
             }
         }
-    }
-
-    /**
-     * Checks the JSON response
-     *
-     * @return bool Returns true if given data is valid or false in case of an error
-     */
-    public function checkResponse()
-    {
-        $success = true;
-        if ($this->curlInfo['http_code'] !== 200) {
-            $success = false;
-            $this->logger->error(sprintf(
-                'The avalex API answered with code "%d" and message: "%s".',
-                $this->curlInfo['http_code'],
-                $this->curlOutput
-            ));
-        }
-        return $success;
     }
 
     /**
@@ -97,26 +73,29 @@ class ApiService
             }
         }
 
-        $curlResource = curl_init();
-
-        curl_setopt_array($curlResource, array(
-            CURLOPT_URL => sprintf('%s%s?apikey=%s&domain=%s', AvalexUtility::getApiUrl(), $endpoint, $configuration['api_key'], $configuration['domain']),
-            CURLOPT_RETURNTRANSFER => true,
+        $requestSuccessful = $this->curlService->request(sprintf(
+            '%s%s?apikey=%s&domain=%s',
+            AvalexUtility::getApiUrl(),
+            $endpoint,
+            $configuration['api_key'],
+            $configuration['domain']
         ));
 
-        $this->curlOutput = (string)curl_exec($curlResource);
-        $this->curlInfo = curl_getinfo($curlResource);
-
-        curl_close($curlResource);
-
-        if ($this->checkResponse()) {
-            $content = $this->curlOutput;
+        if ($requestSuccessful === false) {
+            // curl error
+            $content = LocalizationUtility::translate(
+                'error.curl_request_failed',
+                'avalex',
+                [$this->curlService->getCurlErrno(), $this->curlService->getCurlError()]
+            );
+        } elseif ($this->curlService->getCurlInfo()['http_code'] === 200) {
+            $content = $this->curlService->getCurlOutput();
         } else {
             // render error message wrapped with translated notice in frontend if request !== 200
             $content = LocalizationUtility::translate(
                 'error.request_failed',
                 'avalex',
-                [(int)$this->curlInfo['http_code'], $this->curlOutput]
+                [(int)$this->curlService->getCurlInfo()['http_code'], $this->curlService->getCurlOutput()]
             );
         }
 
@@ -131,18 +110,37 @@ class ApiService
     }
 
     /**
+     * @deprecated use $this->getCurlService()->getCurlInfo()
      * @return array
      */
     public function getCurlInfo()
     {
-        return $this->curlInfo;
+        return $this->curlService->getCurlInfo();
     }
 
     /**
+     * @deprecated use $this->getCurlService()->getCurlOutput()
      * @return string
      */
     public function getCurlOutput()
     {
-        return $this->curlOutput;
+        return $this->curlService->getCurlOutput();
+    }
+
+    /**
+     * @deprecated use $this->getCurlService()->getCurlError()
+     * @return string
+     */
+    public function getCurlError()
+    {
+        return $this->curlService->getCurlError();
+    }
+
+    /**
+     * @return CurlService
+     */
+    public function getCurlService(): CurlService
+    {
+        return $this->curlService;
     }
 }
