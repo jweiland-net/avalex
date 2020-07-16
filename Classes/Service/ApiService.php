@@ -139,7 +139,7 @@ class ApiService
     /**
      * @return CurlService
      */
-    public function getCurlService(): CurlService
+    public function getCurlService()
     {
         return $this->curlService;
     }
