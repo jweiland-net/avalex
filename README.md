@@ -2,7 +2,7 @@
 
 ## Versions
 
-This extension provides two version branches! The `master` branch (avalex 6.x) is compatible with TYPO3 6.2 - 10.4.99.
+This extension provides two version branches! The `master` branch (avalex 6.x) is compatible with TYPO3 6.2 - 11.0.99.
 The `legacy` branch (avalex 4.x) is compatible with TYPO3 4.3 - 6.1.99 (dinosaur versions).
 
 ## Setup
