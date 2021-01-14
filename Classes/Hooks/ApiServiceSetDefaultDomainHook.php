@@ -36,7 +36,7 @@ class ApiServiceSetDefaultDomainHook implements PreApiRequestHookInterface
                 // API key valid
                 $configuration['domain'] = 'https://' . (string)$responseArray['domain'];
 
-                if (version_compare(TYPO3_version, '8.4', '>')) {
+                if (version_compare(AvalexUtility::getTypo3Version(), '8.4', '>')) {
                     GeneralUtility::makeInstance(ConnectionPool::class)
                         ->getConnectionForTable('tx_avalex_configuration')
                         ->update(

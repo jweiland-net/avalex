@@ -28,6 +28,8 @@ class AvalexUtility
      */
     protected static $apiUrl = 'https://avalex.de/';
 
+    protected static $typo3Version = '';
+
     /**
      * Returns the API url with trailing slash
      *
@@ -79,7 +81,7 @@ class AvalexUtility
      */
     public static function getExtensionConfiguration()
     {
-        if (version_compare(TYPO3_version, '9.0', '>=')) {
+        if (version_compare(static::getTypo3Version(), '9.0', '>=')) {
             /** @var ExtensionConfiguration $extensionConfiguration */
             $extensionConfiguration = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Configuration\\ExtensionConfiguration');
             $configuration = $extensionConfiguration->get('avalex');
@@ -99,5 +101,20 @@ class AvalexUtility
     public static function getListTypes()
     {
         return array('avalex_avalex', 'avalex_imprint', 'avalex_bedingungen', 'avalex_widerruf');
+    }
+
+    /**
+     * @return string
+     */
+    public static function getTypo3Version()
+    {
+        if (static::$typo3Version === '') {
+            if (class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)) {
+                static::$typo3Version = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Install\SystemInformation\Typo3VersionMessage::class)->getVersion();
+            } else {
+                static::$typo3Version = TYPO3_version;
+            }
+        }
+        return static::$typo3Version;
     }
 }

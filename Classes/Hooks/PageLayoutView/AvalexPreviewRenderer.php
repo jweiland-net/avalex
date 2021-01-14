@@ -73,7 +73,7 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
             'edit' => array('tx_avalex_configuration' => array($uid => 'edit')),
             'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
         );
-        if (version_compare(TYPO3_version, '7.4', '>')) {
+        if (version_compare(AvalexUtility::getTypo3Version(), '7.4', '>')) {
             /** @var UriBuilder $uriBuilder */
             $uriBuilder = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Routing\\UriBuilder');
             $link = (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
@@ -97,7 +97,7 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
             'edit' => array('tx_avalex_configuration' => array(0 => 'new')),
             'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
         );
-        if (version_compare(TYPO3_version, '7.4', '>')) {
+        if (version_compare(AvalexUtility::getTypo3Version(), '7.4', '>')) {
             /** @var UriBuilder $uriBuilder */
             $uriBuilder = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Routing\\UriBuilder');
             $link = (string)$uriBuilder->buildUriFromRoute('record_edit', $params);

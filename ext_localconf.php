@@ -10,7 +10,7 @@ $boot = function () {
 
     foreach (\JWeiland\Avalex\Utility\AvalexUtility::getListTypes() as $listType) {
         // Use IconRegistry for newer TYPO3 versions
-        if (version_compare(TYPO3_version, '7.4', '>')) {
+        if (version_compare(\JWeiland\Avalex\Utility\AvalexUtility::getTypo3Version(), '7.4', '>')) {
             $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Imaging\\IconRegistry');
             $iconRegistry->registerIcon(
                 $listType,

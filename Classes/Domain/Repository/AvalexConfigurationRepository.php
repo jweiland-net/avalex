@@ -9,6 +9,7 @@
 
 namespace JWeiland\Avalex\Domain\Repository;
 
+use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -25,7 +26,7 @@ class AvalexConfigurationRepository extends AbstractRepository
      */
     public function findAll()
     {
-        if (version_compare(TYPO3_version, '8.4', '>')) {
+        if (version_compare(AvalexUtility::getTypo3Version(), '8.4', '>')) {
             $result = $this->getQueryBuilder(self::TABLE)->select('*')->from(self::TABLE)->execute()->fetchAll();
         } else {
             $result = $this->getDatabaseConnection()->exec_SELECTgetRows(
@@ -45,7 +46,7 @@ class AvalexConfigurationRepository extends AbstractRepository
     public function findByWebsiteRoot($websiteRoot, $select = '*')
     {
         $websiteRoot = (int)$websiteRoot;
-        if (version_compare(TYPO3_version, '8.4', '>')) {
+        if (version_compare(AvalexUtility::getTypo3Version(), '8.4', '>')) {
             $result = $this
                 ->getQueryBuilder(self::TABLE)
                 ->select(...GeneralUtility::trimExplode(',', $select))

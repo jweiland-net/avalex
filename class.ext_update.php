@@ -13,6 +13,7 @@
  */
 
 use JWeiland\Avalex\Task\ImporterTask;
+use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
@@ -51,7 +52,7 @@ class ext_update {
         $required = false;
         // The old version was compatible with TYPO3 7.6 - 8.7, so the script needs to be executed
         // in that versions only.
-        if (version_compare(TYPO3_version, '7.6', '>=') && version_compare(TYPO3_version, '8.7', '<=')) {
+        if (version_compare(AvalexUtility::getTypo3Version(), '7.6', '>=') && version_compare(AvalexUtility::getTypo3Version(), '8.7', '<=')) {
             $this->init();
             $required = $this->apiKey && is_string($this->apiKey);
         }

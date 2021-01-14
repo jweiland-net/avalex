@@ -2,10 +2,10 @@
 $locallangTtc = 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:';
 $locallangGeneral = 'LLL:EXT:lang/locallang_general.xlf:';
 
-if (version_compare(TYPO3_version, '9.3', '>=')) {
+if (version_compare(\JWeiland\Avalex\Utility\AvalexUtility::getTypo3Version(), '9.3', '>=')) {
     $locallangGeneral = 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:';
 }
-if (version_compare(TYPO3_version, '7.4', '<')) {
+if (version_compare(\JWeiland\Avalex\Utility\AvalexUtility::getTypo3Version(), '7.4', '<')) {
     $locallangTtc = 'LLL:EXT:cms/locallang_ttc.xlf:';
 }
 
@@ -129,7 +129,7 @@ $tca = array(
     )
 );
 
-if (version_compare(TYPO3_version, '8.5', '<')) {
+if (version_compare(\JWeiland\Avalex\Utility\AvalexUtility::getTypo3Version(), '8.5', '<')) {
     $tca['ctrl']['versioning_followPages'] = true;
     $tca['ctrl']['versioningWS'] = 2;
 } else {
