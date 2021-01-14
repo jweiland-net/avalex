@@ -11,6 +11,7 @@ namespace JWeiland\Avalex\Utility;
 
 use JWeiland\Avalex\Exception\InvalidUidException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
@@ -110,7 +111,7 @@ class AvalexUtility
     {
         if (static::$typo3Version === '') {
             if (class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)) {
-                static::$typo3Version = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Install\SystemInformation\Typo3VersionMessage::class)->getVersion();
+                static::$typo3Version = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(Typo3Version::class)->getVersion();
             } else {
                 static::$typo3Version = TYPO3_version;
             }
