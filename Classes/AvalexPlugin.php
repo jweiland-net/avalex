@@ -12,6 +12,7 @@ namespace JWeiland\Avalex;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * Class AvalexPlugin
@@ -22,6 +23,11 @@ class AvalexPlugin
      * @var VariableFrontend
      */
     protected $cache;
+
+    /**
+     * @var ContentObjectRenderer
+     */
+    public $cObj;
 
     public function __construct()
     {
@@ -62,6 +68,7 @@ class AvalexPlugin
             if ($curlInfo['http_code'] === 200) {
                 // set cache for successful calls only
                 $configuration = AvalexUtility::getExtensionConfiguration();
+                $content = $this->encryptMailAddresses($content);
                 $this->cache->set(
                     $cacheIdentifier,
                     $content,
@@ -71,5 +78,17 @@ class AvalexPlugin
             }
         }
         return $content;
+    }
+
+    protected function encryptMailAddresses($content)
+    {
+        return preg_replace_callback(
+            '@<a href="mailto:(?P<mail>[^"\']+)">(?P<text>[^<]+)<\/a>@',
+            function ($match) {
+                $encrypted = $this->cObj->getMailTo($match['mail'], $match['text']);
+                return '<a href="' . $encrypted[0] . '">' . $encrypted[1] . '</a>';
+            },
+            $content
+        );
     }
 }
