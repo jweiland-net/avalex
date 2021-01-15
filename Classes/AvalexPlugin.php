@@ -22,6 +22,11 @@ class tx_avalex_AvalexPlugin
      */
     protected $cache;
 
+    /**
+     * @var tslib_cObj
+     */
+    public $cObj;
+
     protected function initializeLevel2Cache() {
         t3lib_cache::initializeCachingFramework();
         try {
@@ -76,6 +81,7 @@ class tx_avalex_AvalexPlugin
             if ($curlInfo['http_code'] === 200) {
                 // set cache for successful calls only
                 $configuration = tx_avalex_AvalexUtility::getExtensionConfiguration();
+                $content = $this->encryptMailAddresses($content);
                 $this->cache->set(
                     $cacheIdentifier,
                     $content,
@@ -84,5 +90,20 @@ class tx_avalex_AvalexPlugin
             }
         }
         return $content;
+    }
+
+    protected function encryptMailAddresses($content)
+    {
+        return preg_replace_callback(
+            '@<a href="mailto:(?P<mail>[^"\']+)">(?P<text>[^<]+)<\/a>@',
+            array($this, 'replaceMail'),
+            $content
+        );
+    }
+
+    private function replaceMail($match)
+    {
+        $encrypted = $this->cObj->getMailTo($match['mail'], $match['text']);
+        return '<a href="' . $encrypted[0] . '">' . $encrypted[1] . '</a>';
     }
 }
