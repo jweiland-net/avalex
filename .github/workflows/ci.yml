@@ -71,7 +71,6 @@ jobs:
           git checkout composer.json
 
       - name: php-cs-fixer
-        if: ${{ matrix.php != '5.3' && matrix.php != '5.3' && matrix.php != '5.4' && matrix.php != '5.5'  }}
         run: composer ci:php:fixer
 
       - name: Lint PHP
