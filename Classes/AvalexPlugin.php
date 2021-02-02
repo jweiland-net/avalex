@@ -58,7 +58,7 @@ class AvalexPlugin
     {
         $endpoint = $this->checkEndpoint($conf['endpoint']);
         $rootPage = AvalexUtility::getRootForPage();
-        $cacheIdentifier = sprintf('avalex_%s_%d', $endpoint, $rootPage);
+        $cacheIdentifier = sprintf('avalex_%s_%d_%d', $endpoint, $rootPage, $GLOBALS['TSFE']->id);
         if ($this->cache->has($cacheIdentifier)) {
             $content = (string)$this->cache->get($cacheIdentifier);
         } else {
@@ -68,7 +68,7 @@ class AvalexPlugin
             if ($curlInfo['http_code'] === 200) {
                 // set cache for successful calls only
                 $configuration = AvalexUtility::getExtensionConfiguration();
-                $content = $this->encryptMailAddresses($content);
+                $content = $this->processLinks($content);
                 $this->cache->set(
                     $cacheIdentifier,
                     $content,
@@ -80,13 +80,21 @@ class AvalexPlugin
         return $content;
     }
 
-    protected function encryptMailAddresses($content)
+    /**
+     * @param $content
+     * @return string
+     */
+    protected function processLinks($content)
     {
+        $requestUrl = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
         return preg_replace_callback(
-            '@<a href="mailto:(?P<mail>[^"\']+)">(?P<text>[^<]+)<\/a>@',
-            function ($match) {
-                $encrypted = $this->cObj->getMailTo($match['mail'], $match['text']);
-                return '<a href="' . $encrypted[0] . '">' . $encrypted[1] . '</a>';
+            '@<a href="(?P<href>(?P<type>mailto:|#)[^"\']+)">(?P<text>[^<]+)<\/a>@',
+            function ($match) use ($requestUrl) {
+                if ($match['type'] === 'mailto:') {
+                    $encrypted = $this->cObj->getMailTo(substr($match['href'], 7), $match['text']);
+                    return '<a href="' . $encrypted[0] . '">' . $encrypted[1] . '</a>';
+                }
+                return (string)str_replace($match['href'], $requestUrl . $match['href'], $match[0]);
             },
             $content
         );
