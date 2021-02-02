@@ -51,14 +51,6 @@ class ApiServiceSetDefaultDomainHook implements PreApiRequestHookInterface
                         array('domain' => $configuration['domain'])
                     );
                 }
-
-                /** @var \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler */
-                $dataHandler = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
-                $dataHandler->start(
-                    array('tx_avalex_configuration' => array($configuration['uid'] => array('domain' => $configuration['domain']))),
-                    array()
-                );
-                $dataHandler->process_datamap();
                 GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__)->log(
                     LogLevel::WARNING,
                     'Used "' . $configuration['domain'] . '" as domain for avalex API request and updated configuration record with uid "'
