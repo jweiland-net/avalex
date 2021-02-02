@@ -86,12 +86,13 @@ class AvalexPlugin
      */
     protected function processLinks($content)
     {
+        $cObj = $this->cObj;
         $requestUrl = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
         return preg_replace_callback(
             '@<a href="(?P<href>(?P<type>mailto:|#)[^"\']+)">(?P<text>[^<]+)<\/a>@',
-            function ($match) use ($requestUrl) {
+            function ($match) use ($cObj, $requestUrl) {
                 if ($match['type'] === 'mailto:') {
-                    $encrypted = $this->cObj->getMailTo(substr($match['href'], 7), $match['text']);
+                    $encrypted = $cObj->getMailTo(substr($match['href'], 7), $match['text']);
                     return '<a href="' . $encrypted[0] . '">' . $encrypted[1] . '</a>';
                 }
                 return (string)str_replace($match['href'], $requestUrl . $match['href'], $match[0]);
