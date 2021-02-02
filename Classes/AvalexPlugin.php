@@ -72,7 +72,7 @@ class AvalexPlugin
                 $this->cache->set(
                     $cacheIdentifier,
                     $content,
-                    [],
+                    array(),
                     $configuration['cacheLifetime'] ? $configuration['cacheLifetime'] : 3600
                 );
             }
