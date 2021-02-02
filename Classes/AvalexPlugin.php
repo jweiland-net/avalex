@@ -70,7 +70,7 @@ class tx_avalex_AvalexPlugin
     {
         $endpoint = $this->checkEndpoint($conf['endpoint']);
         $rootPage = tx_avalex_AvalexUtility::getRootForPage();
-        $cacheIdentifier = sprintf('avalex_%s_%d', $endpoint, $rootPage);
+        $cacheIdentifier = sprintf('avalex_%s_%d_%d', $endpoint, $rootPage, $GLOBALS['TSFE']->id);
         if ($this->cache->has($cacheIdentifier)) {
             $content = (string)$this->cache->get($cacheIdentifier);
         } else {
@@ -81,7 +81,7 @@ class tx_avalex_AvalexPlugin
             if ($curlInfo['http_code'] === 200) {
                 // set cache for successful calls only
                 $configuration = tx_avalex_AvalexUtility::getExtensionConfiguration();
-                $content = $this->encryptMailAddresses($content);
+                $content = $this->processLinks($content);
                 $this->cache->set(
                     $cacheIdentifier,
                     $content,
@@ -92,18 +92,29 @@ class tx_avalex_AvalexPlugin
         return $content;
     }
 
-    protected function encryptMailAddresses($content)
+    /**
+     * @param $content
+     * @return string
+     */
+    protected function processLinks($content)
     {
         return preg_replace_callback(
-            '@<a href="mailto:(?P<mail>[^"\']+)">(?P<text>[^<]+)<\/a>@',
-            array($this, 'replaceMail'),
+            '@<a href="(?P<href>(?P<type>mailto:|#)[^"\']+)">(?P<text>[^<]+)<\/a>@',
+            array($this, 'processLink'),
             $content
         );
     }
 
-    private function replaceMail($match)
+    /**
+     * @param $match
+     * @return string
+     */
+    private function processLink($match)
     {
-        $encrypted = $this->cObj->getMailTo($match['mail'], $match['text']);
-        return '<a href="' . $encrypted[0] . '">' . $encrypted[1] . '</a>';
+        if ($match['type'] === 'mailto:') {
+            $encrypted = $this->cObj->getMailTo(substr($match['href'], 7), $match['text']);
+            return '<a href="' . $encrypted[0] . '">' . $encrypted[1] . '</a>';
+        }
+        return (string)str_replace($match['href'], t3lib_div::getIndpEnv('TYPO3_REQUEST_URL') . $match['href'], $match[0]);
     }
 }
