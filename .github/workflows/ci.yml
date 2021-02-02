@@ -25,10 +25,16 @@ jobs:
         include:
           - typo3: ^6.2
             php: '5.3'
+            os: ubuntu-16.04
+            package: typo3/cms
           - typo3: ^6.2
             php: '5.4'
+            os: ubuntu-16.04
+            package: typo3/cms
           - typo3: ^6.2
             php: '5.5'
+            os: ubuntu-16.04
+            package: typo3/cms
           - typo3: ^6.2
             php: '5.6'
             package: typo3/cms
@@ -51,6 +57,8 @@ jobs:
             os: ubuntu-16.04
           - typo3: ^11.0
             php: '7.4'
+            os: ubuntu-latest
+            package: typo3/cms-core
     steps:
 
       - name: Checkout
