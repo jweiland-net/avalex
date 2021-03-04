@@ -33,6 +33,7 @@
 	},
 	"extra": {
 		"typo3/cms": {
+			"extension-key": "avalex",
 			"app-dir": ".build",
 			"web-dir": ".build/public"
 		}
