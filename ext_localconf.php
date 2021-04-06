@@ -36,7 +36,7 @@ t3lib_extMgm::addTypoScript(
     'avalex',
     'setup',
     'tt_content.list.20 {
-avalex_avalex = USER
+avalex_avalex = USER_INT
 avalex_avalex {
 userFunc = tx_avalex_AvalexPlugin->render
 endpoint = avx-datenschutzerklaerung
