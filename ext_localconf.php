@@ -50,7 +50,7 @@ $boot = function () {
         'avalex',
         'setup',
 'tt_content.list.20 {
-  avalex_avalex = USER
+  avalex_avalex = USER_INT
   avalex_avalex {
     includeLibs = EXT:avalex/Classes/AvalexPlugin.php
     userFunc = JWeiland\\Avalex\\AvalexPlugin->render
