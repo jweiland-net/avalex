@@ -9,6 +9,11 @@ if (version_compare(\JWeiland\Avalex\Utility\AvalexUtility::getTypo3Version(), '
     $locallangTtc = 'LLL:EXT:cms/locallang_ttc.xlf:';
 }
 
+$iconFile = 'EXT:avalex/Resources/Public/Icons/Extension.svg';
+if (version_compare(\JWeiland\Avalex\Utility\AvalexUtility::getTypo3Version(), '8.7', '<')) {
+    $iconFile = 'EXT:avalex/ext_icon.png';
+}
+
 $tca = array(
     'ctrl' => array(
         'title' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration',
@@ -25,7 +30,7 @@ $tca = array(
             'starttime' => 'starttime',
             'endtime' => 'endtime',
         ),
-        'iconfile' => 'EXT:avalex/ext_icon.png'
+        'iconfile' => $iconFile
     ),
     'interface' => array(
         'showRecordsFieldList' => 'hidden, api_key, website_root'
