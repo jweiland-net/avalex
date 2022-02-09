@@ -33,6 +33,8 @@ class AvalexUtility
 
     protected static $typo3Version = '';
 
+    protected static $frontendLocale = '';
+
     /**
      * Returns the API url with trailing slash
      *
@@ -121,20 +123,30 @@ class AvalexUtility
         return static::$typo3Version;
     }
 
+    /**
+     * @param string $frontendLocale
+     * @internal use only for tests!
+     */
+    public static function setFrontendLocale($frontendLocale)
+    {
+        static::$frontendLocale = (string)$frontendLocale;
+    }
+
     public static function getFrontendLocale()
     {
-        $locale = '';
-        if (
-            class_exists(SiteLanguage::class)
-            && isset($GLOBALS['TYPO3_REQUEST'])
-            && $GLOBALS['TYPO3_REQUEST'] instanceof ServerRequestInterface
-            && $GLOBALS['TYPO3_REQUEST']->getAttribute('language') instanceof SiteLanguage) {
-            /** @var SiteLanguage $siteLanguage */
-            $siteLanguage = $GLOBALS['TYPO3_REQUEST']->getAttribute('language');
-            $locale = $siteLanguage ? $siteLanguage->getTwoLetterIsoCode() : '';
-        } elseif (isset($GLOBALS['TSFE']->locale)) {
-            $locale = $GLOBALS['TSFE']->locale;
+        if (static::$frontendLocale === '') {
+            if (
+                class_exists(SiteLanguage::class)
+                && isset($GLOBALS['TYPO3_REQUEST'])
+                && $GLOBALS['TYPO3_REQUEST'] instanceof ServerRequestInterface
+                && $GLOBALS['TYPO3_REQUEST']->getAttribute('language') instanceof SiteLanguage) {
+                /** @var SiteLanguage $siteLanguage */
+                $siteLanguage = $GLOBALS['TYPO3_REQUEST']->getAttribute('language');
+                static::$frontendLocale = $siteLanguage ? $siteLanguage->getTwoLetterIsoCode() : '';
+            } elseif (isset($GLOBALS['TSFE']->locale)) {
+                static::$frontendLocale = $GLOBALS['TSFE']->locale;
+            }
         }
-        return $locale;
+        return static::$frontendLocale;
     }
 }

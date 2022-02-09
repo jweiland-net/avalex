@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+	<tx_avalex_configuration>
+		<uid>1</uid>
+		<pid>0</pid>
+		<api_key>demo-key-with-online-shop</api_key>
+		<domain>https://example.com</domain>
+		<global>1</global>
+		<description>Example Key</description>
+	</tx_avalex_configuration>
+</dataset>

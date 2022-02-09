@@ -22,15 +22,26 @@
 		"typo3/cms-core": "^6.2 || ^7.6 || ^8.7 || ^9.5.17 || ^10.4.2 || ^11.0"
 	},
 	"require-dev": {
-		"friendsofphp/php-cs-fixer": "^2.14"
+		"friendsofphp/php-cs-fixer": "^2.14",
+		"nimut/testing-framework": ">=2.0,<=6.0"
 	},
 	"autoload": {
 		"psr-4": {
 			"JWeiland\\Avalex\\": "Classes"
 		}
 	},
+	"autoload-dev": {
+		"psr-4": {
+			"JWeiland\\Avalex\\Tests\\": "Tests"
+		},
+		"exclude-from-classmap": ["/Tests/Functional/LegacyImports"]
+	},
 	"config": {
-		"vendor-dir": ".build/vendor"
+		"vendor-dir": ".build/vendor",
+		"allow-plugins": {
+			"typo3/cms-composer-installers": true,
+			"typo3/class-alias-loader": true
+		}
 	},
 	"extra": {
 		"typo3/cms": {
@@ -42,6 +53,14 @@
 	"scripts": {
 		"php:fix": ".build/vendor/bin/php-cs-fixer --config=Build/.php_cs.php fix Classes",
 		"ci:php:lint": "find *.php Classes Configuration -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l",
-		"ci:php:fixer": ".build/vendor/bin/php-cs-fixer --config=Build/.php_cs.php fix --dry-run -v --show-progress=dots --diff-format=udiff Classes"
+		"ci:php:fixer": ".build/vendor/bin/php-cs-fixer --config=Build/.php_cs.php fix --dry-run -v --show-progress=dots --diff-format=udiff Classes",
+		"ci:tests:functional": "find 'Tests/Functional' -wholename '*Test.php' | parallel --gnu 'echo; echo \"Running functional test suite {}\"; .build/vendor/bin/phpunit -c .build/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml {}';",
+		"link-extension": [
+			"@php -r 'is_dir($extFolder=__DIR__.\"/.build/public/typo3conf/ext/\") || mkdir($extFolder, 0777, true);'",
+			"@php -r 'file_exists($extFolder=__DIR__.\"/.build/public/typo3conf/ext/avalex\") || symlink(__DIR__,$extFolder);'"
+		],
+		"post-autoload-dump": [
+			"@link-extension"
+		]
 	}
 }
