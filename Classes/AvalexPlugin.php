@@ -10,12 +10,12 @@
 namespace JWeiland\Avalex;
 
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
+use JWeiland\Avalex\Service\ApiService;
 use JWeiland\Avalex\Service\LanguageService;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use JWeiland\Avalex\Service\ApiService;
 
 /**
  * Class AvalexPlugin

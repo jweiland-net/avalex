@@ -9,7 +9,6 @@
 
 namespace JWeiland\Avalex\Service;
 
-use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Hooks\ApiService\PostApiRequestHookInterface;
 use JWeiland\Avalex\Hooks\ApiService\PreApiRequestHookInterface;
 use JWeiland\Avalex\Utility\AvalexUtility;
