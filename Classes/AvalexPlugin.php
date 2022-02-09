@@ -9,10 +9,13 @@
 
 namespace JWeiland\Avalex;
 
+use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
+use JWeiland\Avalex\Service\LanguageService;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use JWeiland\Avalex\Service\ApiService;
 
 /**
  * Class AvalexPlugin
@@ -58,22 +61,31 @@ class AvalexPlugin
     {
         $endpoint = $this->checkEndpoint($conf['endpoint']);
         $rootPage = AvalexUtility::getRootForPage();
-        $cacheIdentifier = sprintf('avalex_%s_%d_%d', $endpoint, $rootPage, $GLOBALS['TSFE']->id);
+        $cacheIdentifier = sprintf(
+            'avalex_%s_%d_%d_%s',
+            $endpoint,
+            $rootPage,
+            $GLOBALS['TSFE']->id,
+            AvalexUtility::getFrontendLocale()
+        );
         if ($this->cache->has($cacheIdentifier)) {
             $content = (string)$this->cache->get($cacheIdentifier);
         } else {
-            $apiService = GeneralUtility::makeInstance('JWeiland\\Avalex\\Service\\ApiService');
-            $content = $apiService->getHtmlForCurrentRootPage($endpoint, $rootPage);
-            $curlInfo = $apiService->getCurlInfo();
+            $avalexConfigurationRepository = GeneralUtility::makeInstance(AvalexConfigurationRepository::class);
+            $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid, api_key, domain');
+            $language = GeneralUtility::makeInstance(LanguageService::class, $configuration)->getLanguageForEndpoint($endpoint);
+            $apiService = GeneralUtility::makeInstance(ApiService::class);
+            $content = $apiService->getHtmlForCurrentRootPage($endpoint, $language, $configuration);
+            $curlInfo = $apiService->getCurlService()->getCurlInfo();
             if ($curlInfo['http_code'] === 200) {
                 // set cache for successful calls only
-                $configuration = AvalexUtility::getExtensionConfiguration();
+                $extensionConfiguration = AvalexUtility::getExtensionConfiguration();
                 $content = $this->processLinks($content);
                 $this->cache->set(
                     $cacheIdentifier,
                     $content,
-                    array(),
-                    $configuration['cacheLifetime'] ? $configuration['cacheLifetime'] : 3600
+                    [],
+                    $extensionConfiguration['cacheLifetime'] ?: 3600
                 );
             }
         }
