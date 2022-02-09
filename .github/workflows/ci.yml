@@ -25,24 +25,35 @@ jobs:
           - typo3: ^6.2
             php: '5.6'
             package: typo3/cms
+            os: ubuntu-latest
           - typo3: ^7.6
             php: '5.6'
             package: typo3/cms
+            os: ubuntu-latest
           - typo3: ^7.6
             php: '7.0'
             package: typo3/cms
+            os: ubuntu-latest
           - typo3: ^7.6
             php: '7.1'
             package: typo3/cms
+            os: ubuntu-latest
           - typo3: ^7.6
             php: '7.2'
             package: typo3/cms
+            os: ubuntu-latest
           - typo3: ^11.0
             php: '7.4'
+            package: typo3/cms-core
+            os: ubuntu-latest
           - typo3: ^11.0
             php: '8.0'
+            package: typo3/cms-core
+            os: ubuntu-latest
           - typo3: ^11.0
             php: '8.1'
+            package: typo3/cms-core
+            os: ubuntu-latest
 
     services:
       mysql:
