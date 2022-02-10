@@ -77,8 +77,10 @@ class AvalexPlugin
             $language = GeneralUtility::makeInstance(LanguageService::class, $configuration)->getLanguageForEndpoint($endpoint);
             $apiService = GeneralUtility::makeInstance(ApiService::class);
             $content = $apiService->getHtmlForCurrentRootPage($endpoint, $language, $configuration);
-            $curlInfo = $apiService->getCurlService()->getCurlInfo();
-            if ($curlInfo['http_code'] === 200) {
+            if (
+                $apiService->getCurlService()->getCurlInfo()['http_code'] === 200
+                || strpos(AvalexUtility::getApiUrl(), 'file://') === 0
+            ) {
                 // set cache for successful calls only
                 $extensionConfiguration = AvalexUtility::getExtensionConfiguration();
                 $content = $this->processLinks($content);

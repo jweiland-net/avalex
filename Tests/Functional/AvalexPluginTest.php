@@ -12,6 +12,7 @@ namespace JWeiland\Avalex\Tests;
 use JWeiland\Avalex\AvalexPlugin;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
@@ -84,11 +85,35 @@ class AvalexPluginTest extends FunctionalTestCase
      */
     public function processLinksEncryptsMailToLinks()
     {
-        $cObj = $this->createMock(ContentObjectRenderer::class);
-        // the encryption itself is tested by TYPO3!
-        // we only need to check if that method gets called while rendering the plugin
-        $cObj->expects($this->atLeastOnce())->method('getMailTo');
-        $this->avalexPlugin->cObj = $cObj;
-        $this->avalexPlugin->render(null, ['endpoint' => 'avx-impressum']);
+        AvalexUtility::setApiUrl('file://' . __DIR__ . '/Fixtures/Requests/EncryptMailTo/');
+        $encryptedMail = $this->avalexPlugin->cObj->getMailTo('john@doe.tld', 'johns mail');
+        if (count($encryptedMail) === 3) {
+            // TYPO3 >= 11
+            $attributes = GeneralUtility::implodeAttributes($encryptedMail[2], true);
+            $expected = "<a href=\"$encryptedMail[0]\" $attributes>$encryptedMail[1]</a>";
+        } else {
+            $expected = "<a href=\"$encryptedMail[0]\">$encryptedMail[1]</a>";
+        }
+        static::assertStringContainsString(
+            $expected,
+            $this->avalexPlugin->render(null, ['endpoint' => 'avx-impressum'])
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function processLinksAddRequestUrlToAnchors()
+    {
+        AvalexUtility::setApiUrl('file://' . __DIR__ . '/Fixtures/Requests/AddRequestUrlToAnchors/');
+        $requestUri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
+        static::assertEquals(
+            <<<HTML
+<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="$requestUri#hello">Hello World</a>.</p>
+<p>Want another link? OK: <a href="$requestUri#world">Another one</a>. <a href="/test.html">Do not replace this</a> ok?</p>
+<p>And also do <a href="https://domain.tld">not replace this</a>.</p>\n
+HTML,
+            $this->avalexPlugin->render(null, ['endpoint' => 'avx-impressum'])
+        );
     }
 }

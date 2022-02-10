@@ -84,7 +84,10 @@ class ApiService
                 'avalex',
                 [$this->curlService->getCurlErrno(), $this->curlService->getCurlError()]
             );
-        } elseif ($this->curlService->getCurlInfo()['http_code'] === 200) {
+        } elseif (
+            $this->curlService->getCurlInfo()['http_code'] === 200
+            || strpos(AvalexUtility::getApiUrl(), 'file://') === 0
+        ) {
             $content = $this->curlService->getCurlOutput();
         } else {
             // render error message wrapped with translated notice in frontend if request !== 200

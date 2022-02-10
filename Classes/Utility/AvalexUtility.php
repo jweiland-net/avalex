@@ -42,7 +42,7 @@ class AvalexUtility
      */
     public static function getApiUrl()
     {
-        return self::$apiUrl;
+        return static::$apiUrl;
     }
 
     /**
@@ -123,15 +123,6 @@ class AvalexUtility
         return static::$typo3Version;
     }
 
-    /**
-     * @param string $frontendLocale
-     * @internal use only for tests!
-     */
-    public static function setFrontendLocale($frontendLocale)
-    {
-        static::$frontendLocale = (string)$frontendLocale;
-    }
-
     public static function getFrontendLocale()
     {
         if (static::$frontendLocale === '') {
@@ -148,5 +139,25 @@ class AvalexUtility
             }
         }
         return static::$frontendLocale;
+    }
+
+    // methods for unit/functional tests
+
+    /**
+     * @param $apiUrl
+     * @internal use only for tests!
+     */
+    public static function setApiUrl($apiUrl)
+    {
+        static::$apiUrl = (string)$apiUrl;
+    }
+
+    /**
+     * @param string $frontendLocale
+     * @internal use only for tests!
+     */
+    public static function setFrontendLocale($frontendLocale)
+    {
+        static::$frontendLocale = (string)$frontendLocale;
     }
 }
