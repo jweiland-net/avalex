@@ -5,7 +5,6 @@ on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -26,29 +25,43 @@ jobs:
           - typo3: ^6.2
             php: '5.6'
             package: typo3/cms
-            os: ubuntu-16.04
+            os: ubuntu-latest
           - typo3: ^7.6
             php: '5.6'
             package: typo3/cms
-            os: ubuntu-16.04
+            os: ubuntu-latest
           - typo3: ^7.6
             php: '7.0'
             package: typo3/cms
-            os: ubuntu-16.04
+            os: ubuntu-latest
           - typo3: ^7.6
             php: '7.1'
             package: typo3/cms
-            os: ubuntu-16.04
+            os: ubuntu-latest
           - typo3: ^7.6
             php: '7.2'
             package: typo3/cms
-            os: ubuntu-16.04
+            os: ubuntu-latest
           - typo3: ^11.0
             php: '7.4'
-            os: ubuntu-latest
             package: typo3/cms-core
-    steps:
+            os: ubuntu-latest
+          - typo3: ^11.0
+            php: '8.0'
+            package: typo3/cms-core
+            os: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.6
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: test
+        ports:
+          - 3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
+    steps:
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -76,3 +89,13 @@ jobs:
       - name: Lint PHP
         run: composer ci:php:lint
 
+      - name: Functional Tests
+        if: matrix.php > 7.0
+        env:
+          typo3DatabaseName: test
+          typo3DatabaseUsername: root
+          typo3DatabasePassword: password
+          typo3DatabaseHost: 127.0.0.1
+          typo3DatabasePort: ${{ job.services.mysql.ports['3306'] }}
+        run: |
+          composer ci:tests:functional

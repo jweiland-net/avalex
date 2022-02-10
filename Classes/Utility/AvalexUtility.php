@@ -10,8 +10,10 @@
 namespace JWeiland\Avalex\Utility;
 
 use JWeiland\Avalex\Exception\InvalidUidException;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Information\Typo3Version;
+use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
@@ -31,6 +33,8 @@ class AvalexUtility
 
     protected static $typo3Version = '';
 
+    protected static $frontendLocale = '';
+
     /**
      * Returns the API url with trailing slash
      *
@@ -38,7 +42,7 @@ class AvalexUtility
      */
     public static function getApiUrl()
     {
-        return self::$apiUrl;
+        return static::$apiUrl;
     }
 
     /**
@@ -117,5 +121,43 @@ class AvalexUtility
             }
         }
         return static::$typo3Version;
+    }
+
+    public static function getFrontendLocale()
+    {
+        if (static::$frontendLocale === '') {
+            if (
+                class_exists(SiteLanguage::class)
+                && isset($GLOBALS['TYPO3_REQUEST'])
+                && $GLOBALS['TYPO3_REQUEST'] instanceof ServerRequestInterface
+                && $GLOBALS['TYPO3_REQUEST']->getAttribute('language') instanceof SiteLanguage) {
+                /** @var SiteLanguage $siteLanguage */
+                $siteLanguage = $GLOBALS['TYPO3_REQUEST']->getAttribute('language');
+                static::$frontendLocale = $siteLanguage ? $siteLanguage->getTwoLetterIsoCode() : '';
+            } elseif (isset($GLOBALS['TSFE']->locale)) {
+                static::$frontendLocale = $GLOBALS['TSFE']->locale;
+            }
+        }
+        return static::$frontendLocale;
+    }
+
+    // methods for unit/functional tests
+
+    /**
+     * @param $apiUrl
+     * @internal use only for tests!
+     */
+    public static function setApiUrl($apiUrl)
+    {
+        static::$apiUrl = (string)$apiUrl;
+    }
+
+    /**
+     * @param string $frontendLocale
+     * @internal use only for tests!
+     */
+    public static function setFrontendLocale($frontendLocale)
+    {
+        static::$frontendLocale = (string)$frontendLocale;
     }
 }

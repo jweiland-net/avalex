@@ -9,7 +9,6 @@
 
 namespace JWeiland\Avalex\Service;
 
-use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Hooks\ApiService\PostApiRequestHookInterface;
 use JWeiland\Avalex\Hooks\ApiService\PreApiRequestHookInterface;
 use JWeiland\Avalex\Utility\AvalexUtility;
@@ -52,19 +51,15 @@ class ApiService
      * Get HTML content for current page
      *
      * @param string $endpoint API endpoint to be used e.g. imprint
-     * @param int $rootPage
+     * @param string $language two digit iso code (en, de, ...)
+     * @param array  $configuration required values: api_key: '', domain: ''
+     *
      * @return string
      */
-    public function getHtmlForCurrentRootPage($endpoint, $rootPage)
+    public function getHtmlForCurrentRootPage($endpoint, $language, array $configuration)
     {
         $endpoint = (string)$endpoint;
-        $rootPage = (int)$rootPage;
-
-        /** @var AvalexConfigurationRepository $avalexConfigurationRepository */
-        $avalexConfigurationRepository = GeneralUtility::makeInstance(
-            'JWeiland\\Avalex\\Domain\\Repository\\AvalexConfigurationRepository'
-        );
-        $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid, api_key, domain');
+        $language = (string)$language;
 
         // Hook: Allow to modify $apiKey and $domain before curl sends the request to avalex
         foreach ($this->hookObjectsArray as $hookObject) {
@@ -74,11 +69,12 @@ class ApiService
         }
 
         $requestSuccessful = $this->curlService->request(sprintf(
-            '%s%s?apikey=%s&domain=%s',
+            '%s%s?apikey=%s&domain=%s&lang=%s',
             AvalexUtility::getApiUrl(),
             $endpoint,
             $configuration['api_key'],
-            $configuration['domain']
+            $configuration['domain'],
+            $language
         ));
 
         if ($requestSuccessful === false) {
@@ -88,7 +84,10 @@ class ApiService
                 'avalex',
                 [$this->curlService->getCurlErrno(), $this->curlService->getCurlError()]
             );
-        } elseif ($this->curlService->getCurlInfo()['http_code'] === 200) {
+        } elseif (
+            $this->curlService->getCurlInfo()['http_code'] === 200
+            || strpos(AvalexUtility::getApiUrl(), 'file://') === 0
+        ) {
             $content = $this->curlService->getCurlOutput();
         } else {
             // render error message wrapped with translated notice in frontend if request !== 200

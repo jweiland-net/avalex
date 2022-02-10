@@ -1,0 +1,3 @@
+<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="#hello">Hello World</a>.</p>
+<p>Want another link? OK: <a href="#world">Another one</a>. <a href="/test.html">Do not replace this</a> ok?</p>
+<p>And also do <a href="https://domain.tld">not replace this</a>.</p>

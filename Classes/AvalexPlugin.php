@@ -9,7 +9,11 @@
 
 namespace JWeiland\Avalex;
 
+use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
+use JWeiland\Avalex\Service\ApiService;
+use JWeiland\Avalex\Service\LanguageService;
 use JWeiland\Avalex\Utility\AvalexUtility;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -31,7 +35,7 @@ class AvalexPlugin
 
     public function __construct()
     {
-        $this->cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('avalex_content');
+        $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('avalex_content');
     }
 
     /**
@@ -58,22 +62,33 @@ class AvalexPlugin
     {
         $endpoint = $this->checkEndpoint($conf['endpoint']);
         $rootPage = AvalexUtility::getRootForPage();
-        $cacheIdentifier = sprintf('avalex_%s_%d_%d', $endpoint, $rootPage, $GLOBALS['TSFE']->id);
+        $cacheIdentifier = sprintf(
+            'avalex_%s_%d_%d_%s',
+            $endpoint,
+            $rootPage,
+            $GLOBALS['TSFE']->id,
+            AvalexUtility::getFrontendLocale()
+        );
         if ($this->cache->has($cacheIdentifier)) {
             $content = (string)$this->cache->get($cacheIdentifier);
         } else {
-            $apiService = GeneralUtility::makeInstance('JWeiland\\Avalex\\Service\\ApiService');
-            $content = $apiService->getHtmlForCurrentRootPage($endpoint, $rootPage);
-            $curlInfo = $apiService->getCurlInfo();
-            if ($curlInfo['http_code'] === 200) {
+            $avalexConfigurationRepository = GeneralUtility::makeInstance(AvalexConfigurationRepository::class);
+            $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid, api_key, domain');
+            $language = GeneralUtility::makeInstance(LanguageService::class, $configuration)->getLanguageForEndpoint($endpoint);
+            $apiService = GeneralUtility::makeInstance(ApiService::class);
+            $content = $apiService->getHtmlForCurrentRootPage($endpoint, $language, $configuration);
+            if (
+                $apiService->getCurlService()->getCurlInfo()['http_code'] === 200
+                || strpos(AvalexUtility::getApiUrl(), 'file://') === 0
+            ) {
                 // set cache for successful calls only
-                $configuration = AvalexUtility::getExtensionConfiguration();
+                $extensionConfiguration = AvalexUtility::getExtensionConfiguration();
                 $content = $this->processLinks($content);
                 $this->cache->set(
                     $cacheIdentifier,
                     $content,
-                    array(),
-                    $configuration['cacheLifetime'] ? $configuration['cacheLifetime'] : 3600
+                    [],
+                    $extensionConfiguration['cacheLifetime'] ?: 3600
                 );
             }
         }
@@ -93,7 +108,15 @@ class AvalexPlugin
             function ($match) use ($cObj, $requestUrl) {
                 if ($match['type'] === 'mailto:') {
                     $encrypted = $cObj->getMailTo(substr($match['href'], 7), $match['text']);
-                    return '<a href="' . $encrypted[0] . '">' . $encrypted[1] . '</a>';
+                    if (count($encrypted) === 3) {
+                        // TYPO3 >= 11
+                        $html = '<a href="' . $encrypted[0] . '" '
+                            . GeneralUtility::implodeAttributes($encrypted[2], true)
+                            . '>' . $encrypted[1] . '</a>';
+                    } else {
+                        $html = '<a href="' . $encrypted[0] . '">' . $encrypted[1] . '</a>';
+                    }
+                    return $html;
                 }
                 return (string)str_replace($match['href'], $requestUrl . $match['href'], $match[0]);
             },
