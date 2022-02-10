@@ -13,6 +13,7 @@ use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Service\ApiService;
 use JWeiland\Avalex\Service\LanguageService;
 use JWeiland\Avalex\Utility\AvalexUtility;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -34,7 +35,7 @@ class AvalexPlugin
 
     public function __construct()
     {
-        $this->cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('avalex_content');
+        $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('avalex_content');
     }
 
     /**
@@ -105,7 +106,15 @@ class AvalexPlugin
             function ($match) use ($cObj, $requestUrl) {
                 if ($match['type'] === 'mailto:') {
                     $encrypted = $cObj->getMailTo(substr($match['href'], 7), $match['text']);
-                    return '<a href="' . $encrypted[0] . '">' . $encrypted[1] . '</a>';
+                    if (count($encrypted) === 3) {
+                        // TYPO3 >= 11
+                        $html = '<a href="' . $encrypted[0] . '" '
+                            . GeneralUtility::implodeAttributes($encrypted[2], true)
+                            . '>' . $encrypted[1] . '</a>';
+                    } else {
+                        $html = '<a href="' . $encrypted[0] . '">' . $encrypted[1] . '</a>';
+                    }
+                    return $html;
                 }
                 return (string)str_replace($match['href'], $requestUrl . $match['href'], $match[0]);
             },
