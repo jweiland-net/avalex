@@ -18,14 +18,9 @@
 class tx_avalex_ApiService
 {
     /**
-     * @var array
+     * @var tx_avalex_CurlService
      */
-    protected $curlInfo = array();
-
-    /**
-     * @var string
-     */
-    protected $curlOutput = '';
+    protected $curlService;
 
     /**
      * @var array
@@ -40,47 +35,22 @@ class tx_avalex_ApiService
                 $this->hookObjectsArray[$key] = $hookObject;
             }
         }
-    }
-
-    /**
-     * Checks the JSON response
-     *
-     * @return bool Returns true if given data is valid or false in case of an error
-     */
-    public function checkResponse()
-    {
-        $success = true;
-        if ($this->curlInfo['http_code'] !== 200) {
-            $success = false;
-            t3lib_div::sysLog(
-                sprintf(
-                    'The avalex API answered with code "%d" and message: "%s".',
-                    $this->curlInfo['http_code'],
-                    $this->curlOutput
-                ),
-                t3lib_div::SYSLOG_SEVERITY_ERROR
-            );
-        }
-        return $success;
+        $this->curlService = t3lib_div::makeInstance('tx_avalex_CurlService');
     }
 
     /**
      * Get HTML content for current page
      *
-     * @param string $endpoint API endpoint to be used e.g. imprint
-     * @param int $rootPage
+     * @param string $endpoint      API endpoint to be used e.g. imprint
+     * @param string $language      two digit iso code (en, de, ...)
+     * @param array  $configuration required values: api_key: '', domain: ''
+     *
      * @return string
      */
-    public function getHtmlForCurrentRootPage($endpoint, $rootPage)
+    public function getHtmlForCurrentRootPage($endpoint, $language, array $configuration)
     {
         $endpoint = (string)$endpoint;
-        $rootPage = (int)$rootPage;
-
-        /** @var tx_avalex_AvalexConfigurationRepository $avalexConfigurationRepository */
-        $avalexConfigurationRepository = t3lib_div::makeInstance(
-            'tx_avalex_AvalexConfigurationRepository'
-        );
-        $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid, api_key, domain');
+        $language = (string)$language;
 
         // Hook: Allow to modify $apiKey and $domain before curl sends the request to avalex
         foreach ($this->hookObjectsArray as $hookObject) {
@@ -89,32 +59,32 @@ class tx_avalex_ApiService
             }
         }
 
-        $curlResource = curl_init();
-
-        curl_setopt_array($curlResource, array(
-            CURLOPT_URL => sprintf(
-                '%s%s?apikey=%s&domain=%s',
-                tx_avalex_AvalexUtility::getApiUrl(),
-                $endpoint,
-                $configuration['api_key'],
-                $configuration['domain']
-            ),
-            CURLOPT_RETURNTRANSFER => true,
+        $requestSuccessful = $this->curlService->request(sprintf(
+            '%s%s?apikey=%s&domain=%s&lang=%s',
+            tx_avalex_AvalexUtility::getApiUrl(),
+            $endpoint,
+            $configuration['api_key'],
+            $configuration['domain'],
+            $language
         ));
 
-        $this->curlOutput = (string)curl_exec($curlResource);
-        $this->curlInfo = curl_getinfo($curlResource);
+        $curlInfo = $this->curlService->getCurlInfo();
 
-        curl_close($curlResource);
-
-        if ($this->checkResponse()) {
-            $content = $this->curlOutput;
+        if ($requestSuccessful === false) {
+            // curl error
+            $content = sprintf(
+                $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang.xml:error.request_failed'),
+                $this->curlService->getCurlErrno(),
+                $this->curlService->getCurlError()
+            );
+        } elseif ((int)$curlInfo['http_code'] === 200) {
+            $content = $this->curlService->getCurlOutput();
         } else {
             // render error message wrapped with translated notice in frontend if request !== 200
             $content = sprintf(
                 $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang.xml:error.request_failed'),
-                (int)$this->curlInfo['http_code'],
-                $this->curlOutput
+                (int)$curlInfo['http_code'],
+                $this->curlService->getCurlOutput()
             );
         }
 
@@ -129,18 +99,10 @@ class tx_avalex_ApiService
     }
 
     /**
-     * @return array
+     * @return tx_avalex_CurlService
      */
-    public function getCurlInfo()
+    public function getCurlService()
     {
-        return $this->curlInfo;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCurlOutput()
-    {
-        return $this->curlOutput;
+        return $this->curlService;
     }
 }

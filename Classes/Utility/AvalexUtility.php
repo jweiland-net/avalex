@@ -89,4 +89,9 @@ class tx_avalex_AvalexUtility
     {
         return array('avalex_avalex', 'avalex_imprint', 'avalex_bedingungen', 'avalex_widerruf');
     }
+
+    public static function getFrontendLocale()
+    {
+        return strtolower($GLOBALS['TSFE']->sys_language_isocode);
+    }
 }

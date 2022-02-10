@@ -71,6 +71,20 @@ if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations
     }
 }
 
+if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_languages'])) {
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_languages'] = array(
+        'frontend' => 't3lib_cache_frontend_VariableFrontend',
+        'backend' => 't3lib_cache_backend_DbBackend',
+        'options' => array()
+    );
+    if (version_compare(TYPO3_version, '4.6', '<')) {
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_languages']['options'] = array(
+            'cacheTable' => 'tx_avalex_languages_cache',
+            'tagsTable' => 'tx_avalex_languages_cache_tags',
+        );
+    }
+}
+
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['avalex_newcontentelement'] = 'tx_avalex_AvalexPreviewRenderer';
 
 if (!is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'])) {

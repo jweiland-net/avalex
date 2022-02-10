@@ -13,5 +13,7 @@ return array(
     'tx_avalex_postapirequesthookinterface' => $extensionClassesPath . 'Hooks/ApiService/PostApiRequestHookInterface.php',
     'tx_avalex_preapirequesthookinterface' => $extensionClassesPath . 'Hooks/ApiService/PreApiRequestHookInterface.php',
     'tx_avalex_apiservicesetdefaultdomainhook' => $extensionClassesPath . 'Hooks/ApiServiceSetDefaultDomainHook.php',
-    'tx_avalex_domainevaluation' => $extensionClassesPath . 'Evaluation/DomainEvaluation.php'
+    'tx_avalex_domainevaluation' => $extensionClassesPath . 'Evaluation/DomainEvaluation.php',
+    'tx_avalex_curlservice' => $extensionClassesPath . 'Service/CurlService.php',
+    'tx_avalex_languageservice' => $extensionClassesPath . 'Service/LanguageService.php'
 );

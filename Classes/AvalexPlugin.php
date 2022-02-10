@@ -70,14 +70,26 @@ class tx_avalex_AvalexPlugin
     {
         $endpoint = $this->checkEndpoint($conf['endpoint']);
         $rootPage = tx_avalex_AvalexUtility::getRootForPage();
-        $cacheIdentifier = sprintf('avalex_%s_%d_%d', $endpoint, $rootPage, $GLOBALS['TSFE']->id);
+        $cacheIdentifier = sprintf(
+            'avalex_%s_%d_%d_%s',
+            $endpoint,
+            $rootPage,
+            $GLOBALS['TSFE']->id,
+            tx_avalex_AvalexUtility::getFrontendLocale()
+        );
         if ($this->cache->has($cacheIdentifier)) {
             $content = (string)$this->cache->get($cacheIdentifier);
         } else {
+            /** @var tx_avalex_AvalexConfigurationRepository $avalexConfigurationRepository */
+            $avalexConfigurationRepository = t3lib_div::makeInstance(
+                'tx_avalex_AvalexConfigurationRepository'
+            );
+            $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid, api_key, domain');
+            $language = t3lib_div::makeInstance('tx_avalex_LanguageService', $configuration)->getLanguageForEndpoint($endpoint);
             /** @var tx_avalex_ApiService $apiService */
             $apiService = t3lib_div::makeInstance('tx_avalex_ApiService');
-            $content = $apiService->getHtmlForCurrentRootPage($endpoint, $rootPage);
-            $curlInfo = $apiService->getCurlInfo();
+            $content = $apiService->getHtmlForCurrentRootPage($endpoint, $language, $configuration);
+            $curlInfo = $apiService->getCurlService()->getCurlInfo();
             if ($curlInfo['http_code'] === 200) {
                 // set cache for successful calls only
                 $configuration = tx_avalex_AvalexUtility::getExtensionConfiguration();
@@ -86,7 +98,8 @@ class tx_avalex_AvalexPlugin
                     $cacheIdentifier,
                     $content,
                     array(),
-                    $configuration['cacheLifetime'] ? $configuration['cacheLifetime'] : 3600);
+                    $configuration['cacheLifetime'] ? $configuration['cacheLifetime'] : 3600
+                );
             }
         }
         return $content;
