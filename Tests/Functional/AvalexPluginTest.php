@@ -112,7 +112,7 @@ class AvalexPluginTest extends FunctionalTestCase
             <<<HTML
 <p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="$requestUri#hello">Hello World</a>.</p>
 <p>Want another link? OK: <a href="$requestUri#world">Another one</a>. <a href="/test.html">Do not replace this</a> ok?</p>
-<p>And also do <a href="https://domain.tld">not replace this</a>.</p>
+<p>And also do <a href="https://domain.tld">not replace this</a>.</p>\n
 HTML
             ,
             $this->avalexPlugin->render(null, ['endpoint' => 'avx-impressum'])
