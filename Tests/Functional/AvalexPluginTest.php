@@ -12,6 +12,7 @@ namespace JWeiland\Avalex\Tests;
 use JWeiland\Avalex\AvalexPlugin;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
+use PHPUnit\Framework\Constraint\StringContains;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
@@ -73,9 +74,9 @@ class AvalexPluginTest extends FunctionalTestCase
     public function renderEndpoint($endpoint, $language, $expected, $message): void
     {
         AvalexUtility::setFrontendLocale($language);
-        static::assertStringContainsString(
-            $expected,
+        static::assertThat(
             $this->avalexPlugin->render(null, ['endpoint' => $endpoint]),
+            new StringContains($expected),
             $message
         );
     }
@@ -94,9 +95,9 @@ class AvalexPluginTest extends FunctionalTestCase
         } else {
             $expected = "<a href=\"$encryptedMail[0]\">$encryptedMail[1]</a>";
         }
-        static::assertStringContainsString(
-            $expected,
-            $this->avalexPlugin->render(null, ['endpoint' => 'avx-impressum'])
+        static::assertThat(
+            $this->avalexPlugin->render(null, ['endpoint' => 'avx-impressum']),
+            new StringContains($expected)
         );
     }
 
