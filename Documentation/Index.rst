@@ -23,13 +23,13 @@ avalex
 		en
 
 	:Description:
-		The Avalex extension allows to display an automatically generated and updated „Data Privacy Statement” within a TYPO3 web site.
+		The avalex extension allows to display automatically generated and updated legal texts within a TYPO3 website, specifically imprint, privacy statement, cancellation notice as well as terms and conditions.
 
 	:Keywords:
 		avalex,dsgvo,gdpr
 
 	:Copyright:
-		2018
+		2022
 
 	:Author:
 		jweiland.net

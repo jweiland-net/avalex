@@ -25,12 +25,6 @@ Administrator Manual
    :width: 300px
    :alt: Detected services
 
-- In addition to selecting the used services you have to answer a few questions (use of newsletters, registration, contact forms, etc.).
-
-.. figure:: ../Images/AddServices.png
-   :width: 300px
-   :alt: Add services manually
-
 - After completing the data you can download the TYPO3 extension directly from the Avalex site, however we recommend always using the latest version from the TYPO3 Extension Repository (TER), Github or Packagist.
 
 - In the next step install the extension (Note: when upgrading from version 1.0.0 of the extension, please run the update script in the extension manager).
