@@ -5,13 +5,13 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+
     strategy:
       matrix:
         typo3: [^9.5, ^10.4]
         php: ['7.3', '7.4']
         package: [typo3/cms-core]
-        os: [ubuntu-latest]
         include:
           - typo3: ^6.2
             php: '5.6'
