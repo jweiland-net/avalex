@@ -32,7 +32,7 @@ class CurlService
     /**
      * @var array
      */
-    protected $curlInfo = array();
+    protected $curlInfo = [];
 
     /**
      * @var string
@@ -62,10 +62,10 @@ class CurlService
     {
         $curlResource = curl_init();
 
-        curl_setopt_array($curlResource, array(
+        curl_setopt_array($curlResource, [
             CURLOPT_URL => (string)$url,
             CURLOPT_RETURNTRANSFER => true,
-        ));
+        ]);
 
         $this->curlOutput = (string)curl_exec($curlResource);
         $this->curlInfo = curl_getinfo($curlResource);

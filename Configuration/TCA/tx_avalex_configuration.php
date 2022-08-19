@@ -14,8 +14,8 @@ if (version_compare(\JWeiland\Avalex\Utility\AvalexUtility::getTypo3Version(), '
     $iconFile = 'EXT:avalex/ext_icon.png';
 }
 
-$tca = array(
-    'ctrl' => array(
+$tca = [
+    'ctrl' => [
         'title' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration',
         'adminOnly' => 1,
         'rootLevel' => 1,
@@ -25,70 +25,70 @@ $tca = array(
         'cruser_id' => 'cruser_id',
         'dividers2tabs' => true,
         'delete' => 'deleted',
-        'enablecolumns' => array(
+        'enablecolumns' => [
             'disabled' => 'hidden',
             'starttime' => 'starttime',
             'endtime' => 'endtime',
-        ),
+        ],
         'iconfile' => $iconFile
-    ),
-    'interface' => array(
+    ],
+    'interface' => [
         'showRecordsFieldList' => 'hidden, api_key, website_root'
-    ),
-    'types' => array(
-        '1' => array('showitem' => 'hidden, api_key, domain, website_root, global, description, --div--;' . $locallangTtc . 'tabs.access, starttime, endtime')
-    ),
-    'columns' => array(
-        't3ver_label' => array(
+    ],
+    'types' => [
+        '1' => ['showitem' => 'hidden, api_key, domain, website_root, global, description, --div--;' . $locallangTtc . 'tabs.access, starttime, endtime']
+    ],
+    'columns' => [
+        't3ver_label' => [
             'label' => $locallangGeneral . 'LGL.versionLabel',
-            'config' => array(
+            'config' => [
                 'type' => 'input',
                 'size' => 30,
                 'max' => 255,
-            ),
-        ),
-        'hidden' => array(
+            ],
+        ],
+        'hidden' => [
             'exclude' => true,
             'label' => $locallangGeneral . 'LGL.hidden',
-            'config' => array(
+            'config' => [
                 'type' => 'check',
-            ),
-        ),
-        'starttime' => array(
+            ],
+        ],
+        'starttime' => [
             'exclude' => true,
             'label' => $locallangGeneral . 'LGL.starttime',
-            'config' => array(
+            'config' => [
                 'type' => 'input',
                 'size' => 13,
                 'eval' => 'datetime',
                 'checkbox' => 0,
                 'default' => 0,
-                'range' => array(
+                'range' => [
                     'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y')),
-                ),
+                ],
                 'renderType' => 'inputDateTime',
-            ),
-        ),
-        'endtime' => array(
+            ],
+        ],
+        'endtime' => [
             'exclude' => true,
             'label' => $locallangGeneral . 'LGL.endtime',
-            'config' => array(
+            'config' => [
                 'type' => 'input',
                 'size' => 13,
                 'eval' => 'datetime',
                 'checkbox' => 0,
                 'default' => 0,
-                'range' => array(
+                'range' => [
                     'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y')),
-                ),
+                ],
                 'renderType' => 'inputDateTime',
-            ),
-        ),
-        'website_root' => array(
+            ],
+        ],
+        'website_root' => [
             'exclude' => true,
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.website_root',
             'displayCond' => 'FIELD:global:REQ:false',
-            'config' => array(
+            'config' => [
                 'type' => 'select',
                 'renderType' => 'selectMultipleSideBySide',
                 'foreign_table' => 'pages',
@@ -96,43 +96,43 @@ $tca = array(
                 'size' => 3,
                 'minitems' => 0,
                 'maxitems' => 999
-            )
-        ),
-        'global' => array(
+            ]
+        ],
+        'global' => [
             'exclude' => true,
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.global',
             'onChange' => 'reload',
-            'config' => array(
+            'config' => [
                 'type' => 'check',
                 'default' => '0'
-            )
-        ),
-        'api_key' => array(
+            ]
+        ],
+        'api_key' => [
             'exclude' => true,
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.api_key',
-            'config' => array(
+            'config' => [
                 'required' => true,
                 'type' => 'input'
-            )
-        ),
-        'domain' => array(
+            ]
+        ],
+        'domain' => [
             'exclude' => true,
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.domain',
-            'config' => array(
+            'config' => [
                 'required' => true,
                 'type' => 'input',
                 'eval' => 'JWeiland\\Avalex\\Evaluation\\DomainEvaluation'
-            )
-        ),
-        'description' => array(
+            ]
+        ],
+        'description' => [
             'exclude' => true,
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.description',
-            'config' => array(
+            'config' => [
                 'type' => 'input'
-            )
-        )
-    )
-);
+            ]
+        ]
+    ]
+];
 
 if (version_compare(\JWeiland\Avalex\Utility\AvalexUtility::getTypo3Version(), '8.5', '<')) {
     $tca['ctrl']['versioning_followPages'] = true;

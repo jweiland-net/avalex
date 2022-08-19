@@ -90,7 +90,7 @@ class DataHandler
                 $message = LocalizationUtility::translate(
                     'flash_message.configuration.response_ok',
                     'avalex',
-                    array($domain)
+                    [$domain]
                 );
             }
         } elseif ($curlService->getCurlInfo()['http_code'] === 401) {

@@ -33,7 +33,7 @@ class ApiService
     /**
      * @var array
      */
-    protected $hookObjectsArray = array();
+    protected $hookObjectsArray = [];
 
     public function __construct()
     {

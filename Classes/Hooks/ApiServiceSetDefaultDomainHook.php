@@ -41,14 +41,14 @@ class ApiServiceSetDefaultDomainHook implements PreApiRequestHookInterface
                         ->getConnectionForTable('tx_avalex_configuration')
                         ->update(
                             'tx_avalex_configuration',
-                            array('domain' => $configuration['domain']),
-                            array('uid' => (int)$configuration['uid'])
+                            ['domain' => $configuration['domain']],
+                            ['uid' => (int)$configuration['uid']]
                         );
                 } else {
                     $this->getDatabaseConnection()->exec_UPDATEquery(
                         'tx_avalex_configuration',
                         'uid = ' . (int)$configuration['uid'],
-                        array('domain' => $configuration['domain'])
+                        ['domain' => $configuration['domain']]
                     );
                 }
                 GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__)->log(

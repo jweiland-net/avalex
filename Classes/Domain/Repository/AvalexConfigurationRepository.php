@@ -35,7 +35,7 @@ class AvalexConfigurationRepository extends AbstractRepository
                 substr($this->getAdditionalWhereClause(self::TABLE), 5)
             );
         }
-        return ($result !== null) ? $result : array();
+        return ($result !== null) ? $result : [];
     }
 
     /**
@@ -66,6 +66,6 @@ class AvalexConfigurationRepository extends AbstractRepository
                 )
             );
         }
-        return ($result !== null) ? $result : array();
+        return ($result !== null) ? $result : [];
     }
 }

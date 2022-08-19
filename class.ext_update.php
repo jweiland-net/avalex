@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the avalex project.
  *
@@ -30,7 +31,7 @@ class ext_update {
      *
      * @var array
      */
-    protected $messageArray = array();
+    protected $messageArray = [];
 
     /**
      * @var TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility
@@ -107,11 +108,11 @@ class ext_update {
             // so we gonna remove him
             $this->removeApiKeyFromExtConf();
         } catch (\Exception $exception) {
-            $this->messageArray[] = array(
+            $this->messageArray[] = [
                 FlashMessage::ERROR,
                 'Updater run into an exception',
                 $exception->getMessage()
-            );
+            ];
             $success = false;
         }
         return $success;
@@ -125,32 +126,32 @@ class ext_update {
     protected function migrateApiKeyToDb()
     {
         $success = true;
-        $data = array('tx_avalex_configuration' => array());
-        $data['tx_avalex_configuration']['NEW2018'] = array(
+        $data = ['tx_avalex_configuration' => []];
+        $data['tx_avalex_configuration']['NEW2018'] = [
             'pid' => 0,
             'description' => 'Main',
             'global' => true,
             'api_key' => (string)$this->apiKey
-        );
+        ];
         /** @var DataHandler $dataHandler */
         $dataHandler = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
-        $dataHandler->start($data, array());
+        $dataHandler->start($data, []);
         $dataHandler->process_datamap();
         if ($dataHandler->errorLog) {
             foreach ($dataHandler->errorLog as $logEntry) {
-                $this->messageArray[] = array(
+                $this->messageArray[] = [
                     FlashMessage::ERROR,
                     'Error while running DataHandler',
                     $logEntry
-                );
+                ];
             }
             $success = false;
         } else {
-            $this->messageArray[] = array(
+            $this->messageArray[] = [
                 FlashMessage::OK,
                 '',
                 'Successfully migrated API key from extension configuration to TCA record on page 0'
-            );
+            ];
         }
         return $success;
     }
@@ -165,22 +166,22 @@ class ext_update {
         $success = true;
         $importerTask = new ImporterTask();
         if ($importerTask->execute()) {
-            $this->messageArray[] = array(
+            $this->messageArray[] = [
                 FlashMessage::OK,
                 '',
                 'Successfully run scheduler task manually to fetch the latest privacy content'
-            );
-            $this->messageArray[] = array(
+            ];
+            $this->messageArray[] = [
                 FlashMessage::INFO,
                 'Important information',
                 'Please open the Scheduler module, create a new avalex importer task and remove the old one!'
-            );
+            ];
         } else {
-            $this->messageArray[] = array(
+            $this->messageArray[] = [
                 FlashMessage::ERROR,
                 '',
                 'Failed to run scheduler task manually! Please check your API key.'
-            );
+            ];
             $success = false;
         }
         return $success;
@@ -197,11 +198,11 @@ class ext_update {
         unset($configuration['apiKey']);
         $this->configurationUtility->writeConfiguration($configuration, 'avalex');
 
-        $this->messageArray[] = array(
+        $this->messageArray[] = [
             FlashMessage::OK,
             '',
             'Successfully removed api key from extension configuration.'
-        );
+        ];
     }
 
     /**
