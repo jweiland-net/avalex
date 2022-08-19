@@ -10,6 +10,7 @@
 namespace JWeiland\Avalex\Service;
 
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -51,7 +52,7 @@ class CurlService
 
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(__CLASS__);
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
     }
 
     /**
@@ -77,7 +78,8 @@ class CurlService
         if ($this->curlError) {
             $this->logger->error(
                 sprintf(
-                    'JWeiland\\Avalex\\Service\\CurlService::request with URL "%s" failed! Curl error (%d): "%s"',
+                    '%s::request with URL "%s" failed! Curl error (%d): "%s"',
+                    __CLASS__,
                     $url,
                     $this->curlErrno,
                     $this->curlError

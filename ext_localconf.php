@@ -1,7 +1,7 @@
 <?php
 defined('TYPO3_MODE') || die('Access denied.');
 
-$boot = function () {
+call_user_func(static function () {
 
     $wizardItems = 'mod.wizards.newContentElement.wizardItems {
     tx_avalex {
@@ -11,10 +11,10 @@ $boot = function () {
     foreach (\JWeiland\Avalex\Utility\AvalexUtility::getListTypes() as $listType) {
         // Use IconRegistry for newer TYPO3 versions
         if (version_compare(\JWeiland\Avalex\Utility\AvalexUtility::getTypo3Version(), '7.4', '>')) {
-            $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Imaging\\IconRegistry');
+            $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);
             $iconRegistry->registerIcon(
                 $listType,
-                'TYPO3\\CMS\\Core\\Imaging\\IconProvider\\SvgIconProvider',
+                TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
                 ['source' => 'EXT:avalex/Resources/Public/Icons/' . $listType . '.svg']
             );
             $elementIcon = 'iconIdentifier = ' . $listType;
@@ -49,11 +49,11 @@ $boot = function () {
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript(
         'avalex',
         'setup',
-'tt_content.list.20 {
+        'tt_content.list.20 {
   avalex_avalex = USER_INT
   avalex_avalex {
     includeLibs = EXT:avalex/Classes/AvalexPlugin.php
-    userFunc = JWeiland\\Avalex\\AvalexPlugin->render
+    userFunc = ' . \JWeiland\Avalex\AvalexPlugin::class . '->render
     endpoint = avx-datenschutzerklaerung
   }
 
@@ -71,7 +71,7 @@ $boot = function () {
 
     // Use hook to check API key while saving the record
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['avalex'] =
-        'JWeiland\\Avalex\\Hooks\\DataHandler';
+        \JWeiland\Avalex\Hooks\DataHandler::class;
 
     if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_languages'])) {
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_languages'] = [];
@@ -81,15 +81,12 @@ $boot = function () {
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_content'] = [];
     }
 
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['avalex_newcontentelement'] = 'JWeiland\\Avalex\\Hooks\\PageLayoutView\\AvalexPreviewRenderer';
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['avalex_newcontentelement'] = \JWeiland\Avalex\Hooks\PageLayoutView\AvalexPreviewRenderer::class;
 
-    if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'])) {
-        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'] = [];
+    if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class])) {
+        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class] = [];
     }
 
-    $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'][] = 'JWeiland\\Avalex\\Hooks\\ApiServiceSetDefaultDomainHook';
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals']['JWeiland\\Avalex\\Evaluation\\DomainEvaluation'] = '';
-};
-
-$boot();
-unset($boot);
+    $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class][] = \JWeiland\Avalex\Hooks\ApiServiceSetDefaultDomainHook::class;
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals'][\JWeiland\Avalex\Evaluation\DomainEvaluation::class] = '';
+});

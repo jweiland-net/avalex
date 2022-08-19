@@ -15,6 +15,7 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -44,9 +45,8 @@ class DataHandler
         if ($table !== 'tx_avalex_configuration' || !array_key_exists('api_key', $incomingFieldArray)) {
             return;
         }
-        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-        /** @var FlashMessageService $flashMessageService */
-        $flashMessageService = $objectManager->get('TYPO3\\CMS\Core\\Messaging\\FlashMessageService');
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        $flashMessageService = $objectManager->get(FlashMessageService::class);
         $this->flashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
         if (!$this->checkApiKey($incomingFieldArray['api_key'])) {
             // prevent save because key is invalid
@@ -64,8 +64,7 @@ class DataHandler
     {
         $isValid = true;
         $apiKey = (string)$apiKey;
-        /** @var CurlService $curlService */
-        $curlService = GeneralUtility::makeInstance('JWeiland\\Avalex\\Service\\CurlService');
+        $curlService = GeneralUtility::makeInstance(CurlService::class);
         $requestSuccessful = $curlService->request(AvalexUtility::getApiUrl() . 'api_keys/is_configured.json?apikey=' . $apiKey);
 
         if ($requestSuccessful === false) {
@@ -109,9 +108,8 @@ class DataHandler
             );
         }
 
-        /** @var FlashMessage $flashMessage */
         $flashMessage = GeneralUtility::makeInstance(
-            'TYPO3\\CMS\\Core\\Messaging\\FlashMessage',
+            FlashMessage::class,
             $message,
             '',
             $severity

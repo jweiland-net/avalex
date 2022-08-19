@@ -29,7 +29,7 @@ Example:
 
 .. code-block:: php
 
-  $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'][] = 'Your\\Extension\\Hooks\\YourCustomAvalexHook';
+  $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class][] = \Your\Extension\Hooks\YourCustomAvalexHook::class;
 
 Modify the configuration before sending the request
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -13,7 +13,7 @@ use JWeiland\Avalex\Service\ApiService;
 
 /**
  * Interface to be used for
- * $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService']->postApiRequest hook
+ * $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class]->postApiRequest hook
  */
 interface PostApiRequestHookInterface
 {

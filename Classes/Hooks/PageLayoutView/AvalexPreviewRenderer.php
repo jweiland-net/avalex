@@ -27,9 +27,8 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
     {
         if (strpos($row['list_type'], 'avalex') !== false) {
             $rootPage = AvalexUtility::getRootForPage($parentObject->id);
-            /** @var AvalexConfigurationRepository $avalexConfigurationRepository */
             $avalexConfigurationRepository = GeneralUtility::makeInstance(
-                'JWeiland\\Avalex\\Domain\\Repository\\AvalexConfigurationRepository'
+                AvalexConfigurationRepository::class
             );
             $itemContent .= sprintf(
                 '<p><b>Avalex: %s</b></p>',
@@ -74,8 +73,7 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
             'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
         ];
         if (version_compare(AvalexUtility::getTypo3Version(), '7.4', '>')) {
-            /** @var UriBuilder $uriBuilder */
-            $uriBuilder = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Routing\\UriBuilder');
+            $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
             $link = (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
         } else {
             $link = sprintf(
@@ -98,8 +96,7 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
             'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
         ];
         if (version_compare(AvalexUtility::getTypo3Version(), '7.4', '>')) {
-            /** @var UriBuilder $uriBuilder */
-            $uriBuilder = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Routing\\UriBuilder');
+            $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
             $link = (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
         } else {
             $link = sprintf(

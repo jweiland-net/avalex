@@ -16,11 +16,9 @@
 use JWeiland\Avalex\Task\ImporterTask;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
-use TYPO3\CMS\Core\Messaging\FlashMessage;
-use TYPO3\CMS\Core\Messaging\FlashMessageService;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
  * Update class for the extension manager.
@@ -34,7 +32,7 @@ class ext_update {
     protected $messageArray = [];
 
     /**
-     * @var TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility
+     * @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility
      */
     protected $configurationUtility;
 
@@ -78,11 +76,8 @@ class ext_update {
      */
     protected function init()
     {
-        /** @var ObjectManager $objectManager */
-        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-        $this->configurationUtility = $objectManager->get(
-            'TYPO3\\CMS\\Extensionmanager\\Utility\\ConfigurationUtility'
-        );
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        $this->configurationUtility = $objectManager->get(\TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility::class);
         $configuration = $this->configurationUtility->getCurrentConfiguration('avalex');
         $this->apiKey = isset($configuration['apiKey']['value']) ? $configuration['apiKey']['value'] : '';
     }
@@ -109,7 +104,7 @@ class ext_update {
             $this->removeApiKeyFromExtConf();
         } catch (\Exception $exception) {
             $this->messageArray[] = [
-                FlashMessage::ERROR,
+                AbstractMessage::ERROR,
                 'Updater run into an exception',
                 $exception->getMessage()
             ];
@@ -133,14 +128,13 @@ class ext_update {
             'global' => true,
             'api_key' => (string)$this->apiKey
         ];
-        /** @var DataHandler $dataHandler */
-        $dataHandler = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
+        $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
         $dataHandler->start($data, []);
         $dataHandler->process_datamap();
         if ($dataHandler->errorLog) {
             foreach ($dataHandler->errorLog as $logEntry) {
                 $this->messageArray[] = [
-                    FlashMessage::ERROR,
+                    AbstractMessage::ERROR,
                     'Error while running DataHandler',
                     $logEntry
                 ];
@@ -148,7 +142,7 @@ class ext_update {
             $success = false;
         } else {
             $this->messageArray[] = [
-                FlashMessage::OK,
+                AbstractMessage::OK,
                 '',
                 'Successfully migrated API key from extension configuration to TCA record on page 0'
             ];
@@ -167,18 +161,18 @@ class ext_update {
         $importerTask = new ImporterTask();
         if ($importerTask->execute()) {
             $this->messageArray[] = [
-                FlashMessage::OK,
+                AbstractMessage::OK,
                 '',
                 'Successfully run scheduler task manually to fetch the latest privacy content'
             ];
             $this->messageArray[] = [
-                FlashMessage::INFO,
+                AbstractMessage::INFO,
                 'Important information',
                 'Please open the Scheduler module, create a new avalex importer task and remove the old one!'
             ];
         } else {
             $this->messageArray[] = [
-                FlashMessage::ERROR,
+                AbstractMessage::ERROR,
                 '',
                 'Failed to run scheduler task manually! Please check your API key.'
             ];
@@ -199,7 +193,7 @@ class ext_update {
         $this->configurationUtility->writeConfiguration($configuration, 'avalex');
 
         $this->messageArray[] = [
-            FlashMessage::OK,
+            AbstractMessage::OK,
             '',
             'Successfully removed api key from extension configuration.'
         ];
@@ -209,27 +203,24 @@ class ext_update {
      * Generates output by using flash messages
      *
      * @return string
-     *
      * @throws \Exception
      */
     protected function generateOutput()
     {
-        /** @var FlashMessageService $flashMessageService */
-        $flashMessageService = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService');
+        $flashMessageService = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Messaging\FlashMessageService::class);
         $flashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
-        /** @var StandaloneView $view */
-        $view = GeneralUtility::makeInstance('TYPO3\\CMS\\Fluid\\View\\StandaloneView');
+        $view = GeneralUtility::makeInstance(\TYPO3\CMS\Fluid\View\StandaloneView::class);
         $view->setTemplateSource('<f:flashMessages queueIdentifier="core.template.flashMessages" />');
         foreach ($this->messageArray as $messageItem) {
-            /** @var FlashMessage $flashMessage */
             $flashMessage = GeneralUtility::makeInstance(
-                'TYPO3\\CMS\\Core\\Messaging\\FlashMessage',
+                \TYPO3\CMS\Core\Messaging\FlashMessage::class,
                 $messageItem[2],
                 $messageItem[1],
                 $messageItem[0]
             );
             $flashMessageQueue->enqueue($flashMessage);
         }
+
         return $view->render();
     }
 
