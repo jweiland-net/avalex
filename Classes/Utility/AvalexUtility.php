@@ -18,7 +18,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**

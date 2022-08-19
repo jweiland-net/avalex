@@ -14,7 +14,6 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Service\EnvironmentService;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
