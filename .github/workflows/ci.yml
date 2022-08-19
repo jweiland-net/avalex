@@ -10,6 +10,7 @@ jobs:
       matrix:
         typo3: [^8.7, ^9.5, ^10.4]
         php: ['7.2', '7.3', '7.4']
+        composer: ['1', '2', '2']
         package: [typo3/cms-core]
         os: [ubuntu-latest]
         exclude:
@@ -24,30 +25,37 @@ jobs:
         include:
           - typo3: ^6.2
             php: '5.6'
+            composer: '1'
             package: typo3/cms
             os: ubuntu-latest
           - typo3: ^7.6
             php: '5.6'
+            composer: '1'
             package: typo3/cms
             os: ubuntu-latest
           - typo3: ^7.6
             php: '7.0'
+            composer: '1'
             package: typo3/cms
             os: ubuntu-latest
           - typo3: ^7.6
             php: '7.1'
+            composer: '1'
             package: typo3/cms
             os: ubuntu-latest
           - typo3: ^7.6
             php: '7.2'
+            composer: '1'
             package: typo3/cms
             os: ubuntu-latest
           - typo3: ^11.0
             php: '7.4'
+            composer: '2'
             package: typo3/cms-core
             os: ubuntu-latest
           - typo3: ^11.0
             php: '8.0'
+            composer: '2'
             package: typo3/cms-core
             os: ubuntu-latest
     services:
@@ -70,6 +78,10 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
 
+      - name: Use correct composer version for specific TYPO3 version
+        run: |
+          composer self-update --${{ matrix.composer }}
+
       - name: Environment Check
         run: |
           php --version
@@ -81,7 +93,6 @@ jobs:
       - name: Install dependencies with ${{ matrix.package }}:${{ matrix.typo3 }}
         run: |
           composer require ${{ matrix.package }}:${{ matrix.typo3 }} --no-progress
-          composer require typo3/cms-composer-installers:^1.4 --no-progress
           git checkout composer.json
 
       - name: php-cs-fixer
