@@ -10,10 +10,10 @@
 namespace JWeiland\Avalex\Domain\Repository;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Service\EnvironmentService;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
@@ -48,7 +48,7 @@ abstract class AbstractRepository
      */
     protected function getQueryBuilder($table)
     {
-        return GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Database\\ConnectionPool')
+        return GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable($table);
     }
 
@@ -61,8 +61,7 @@ abstract class AbstractRepository
     protected function getAdditionalWhereClause($table)
     {
         $table = trim($table);
-        /** @var EnvironmentService $environmentService */
-        $environmentService = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Service\\EnvironmentService');
+        $environmentService = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Service\EnvironmentService::class);
         if ($environmentService->isEnvironmentInFrontendMode()) {
             $whereClause =  $this->getTypoScriptFrontendController()->sys_page->deleteClause($table)
                 . $this->getTypoScriptFrontendController()->sys_page->enableFields($table);

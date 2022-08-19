@@ -121,7 +121,7 @@ $tca = [
             'config' => [
                 'required' => true,
                 'type' => 'input',
-                'eval' => 'JWeiland\\Avalex\\Evaluation\\DomainEvaluation'
+                'eval' => \JWeiland\Avalex\Evaluation\DomainEvaluation::class
             ]
         ],
         'description' => [

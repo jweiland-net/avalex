@@ -5,51 +5,51 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        typo3: [^8.7, ^9.5, ^10.4]
-        php: ['7.2', '7.3', '7.4']
+        typo3: [^9.5, ^10.4]
+        php: ['7.3', '7.4']
         package: [typo3/cms-core]
-        os: [ubuntu-latest]
-        exclude:
-          - typo3: ^9.5
-            php: '7.0'
-          - typo3: ^9.5
-            php: '7.1'
-          - typo3: ^10.4
-            php: '7.0'
-          - typo3: ^10.4
-            php: '7.1'
         include:
           - typo3: ^6.2
             php: '5.6'
+            composer: '1'
             package: typo3/cms
-            os: ubuntu-latest
           - typo3: ^7.6
             php: '5.6'
+            composer: '1'
             package: typo3/cms
-            os: ubuntu-latest
           - typo3: ^7.6
             php: '7.0'
+            composer: '1'
             package: typo3/cms
-            os: ubuntu-latest
           - typo3: ^7.6
             php: '7.1'
+            composer: '1'
             package: typo3/cms
-            os: ubuntu-latest
-          - typo3: ^7.6
+          - typo3: ^8.7
+            php: '7.0'
+            composer: '1'
+            package: typo3/cms-core
+          - typo3: ^8.7
+            php: '7.1'
+            composer: '1'
+            package: typo3/cms-core
+          - typo3: ^8.7
             php: '7.2'
-            package: typo3/cms
-            os: ubuntu-latest
+            composer: '1'
+            package: typo3/cms-core
           - typo3: ^11.0
             php: '7.4'
+            composer: '2'
             package: typo3/cms-core
-            os: ubuntu-latest
           - typo3: ^11.0
             php: '8.0'
+            composer: '2'
             package: typo3/cms-core
-            os: ubuntu-latest
+            # Do not test against PHP 8.1. php-cs-fixer 2.19 does not work with PHP 8.1
     services:
       mysql:
         image: mysql:5.6
@@ -69,6 +69,10 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+
+      - name: Use correct composer version for specific TYPO3 version
+        run: |
+          composer self-update --${{ matrix.composer }}
 
       - name: Environment Check
         run: |

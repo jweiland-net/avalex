@@ -11,7 +11,7 @@ namespace JWeiland\Avalex\Hooks\ApiService;
 
 /**
  * Interface to be used for
- * $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService']->preApiRequest hook
+ * $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class]->preApiRequest hook
  */
 interface PreApiRequestHookInterface
 {

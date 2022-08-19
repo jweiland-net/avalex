@@ -13,6 +13,7 @@ use JWeiland\Avalex\Hooks\ApiService\PostApiRequestHookInterface;
 use JWeiland\Avalex\Hooks\ApiService\PreApiRequestHookInterface;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -37,10 +38,10 @@ class ApiService
 
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(__CLASS__);
-        $this->curlService = GeneralUtility::makeInstance('JWeiland\\Avalex\\Service\\CurlService');
-        if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'])) {
-            foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex']['JWeiland\\Avalex\\Service\\ApiService'] as $key => $classRef) {
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
+        $this->curlService = GeneralUtility::makeInstance(CurlService::class);
+        if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][__CLASS__])) {
+            foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][__CLASS__] as $key => $classRef) {
                 $hookObject = GeneralUtility::makeInstance($classRef);
                 $this->hookObjectsArray[$key] = $hookObject;
             }
