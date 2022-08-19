@@ -8,56 +8,55 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        typo3: [^8.7, ^9.5, ^10.4]
-        php: ['7.2', '7.3', '7.4']
-        composer: ['1', '2', '2']
+        typo3: [^9.5, ^10.4]
+        php: ['7.3', '7.4']
         package: [typo3/cms-core]
         os: [ubuntu-latest]
-        exclude:
-          - typo3: ^9.5
-            php: '7.0'
-          - typo3: ^9.5
-            php: '7.1'
-          - typo3: ^10.4
-            php: '7.0'
-          - typo3: ^10.4
-            php: '7.1'
         include:
           - typo3: ^6.2
             php: '5.6'
             composer: '1'
             package: typo3/cms
-            os: ubuntu-latest
           - typo3: ^7.6
             php: '5.6'
             composer: '1'
             package: typo3/cms
-            os: ubuntu-latest
           - typo3: ^7.6
             php: '7.0'
             composer: '1'
             package: typo3/cms
-            os: ubuntu-latest
           - typo3: ^7.6
             php: '7.1'
             composer: '1'
             package: typo3/cms
-            os: ubuntu-latest
           - typo3: ^7.6
             php: '7.2'
             composer: '1'
             package: typo3/cms
-            os: ubuntu-latest
+          - typo3: ^8.7
+            php: '7.0'
+            composer: '1'
+            package: typo3/cms-core
+          - typo3: ^8.7
+            php: '7.1'
+            composer: '1'
+            package: typo3/cms-core
+          - typo3: ^8.7
+            php: '7.2'
+            composer: '1'
+            package: typo3/cms-core
           - typo3: ^11.0
             php: '7.4'
             composer: '2'
             package: typo3/cms-core
-            os: ubuntu-latest
           - typo3: ^11.0
             php: '8.0'
             composer: '2'
             package: typo3/cms-core
-            os: ubuntu-latest
+          - typo3: ^11.0
+            php: '8.1'
+            composer: '2'
+            package: typo3/cms-core
     services:
       mysql:
         image: mysql:5.6
