@@ -53,10 +53,7 @@ jobs:
             php: '8.0'
             composer: '2'
             package: typo3/cms-core
-          - typo3: ^11.0
-            php: '8.1'
-            composer: '2'
-            package: typo3/cms-core
+            # Do not test against PHP 8.1. php-cs-fixer 2.19 does not work with PHP 8.1
     services:
       mysql:
         image: mysql:5.6
