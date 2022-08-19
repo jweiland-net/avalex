@@ -128,8 +128,8 @@ class AvalexUtility
                 && $GLOBALS['TYPO3_REQUEST']->getAttribute('language') instanceof SiteLanguage) {
                 $siteLanguage = $GLOBALS['TYPO3_REQUEST']->getAttribute('language');
                 static::$frontendLocale = $siteLanguage ? $siteLanguage->getTwoLetterIsoCode() : '';
-            } elseif (isset($GLOBALS['TSFE']->locale)) {
-                static::$frontendLocale = $GLOBALS['TSFE']->locale;
+            } elseif (isset($GLOBALS['TSFE']->lang)) {
+                static::$frontendLocale = $GLOBALS['TSFE']->lang;
             }
         }
         return static::$frontendLocale;
