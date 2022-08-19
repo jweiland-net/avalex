@@ -55,9 +55,9 @@ class AvalexPluginTest extends FunctionalTestCase
             ['avx-datenschutzerklaerung', 'de', 'Weitere Einzelheiten zur verantwortlichen Stelle', 'Fetch datenschutzerklaerung in german'],
             ['avx-datenschutzerklaerung', 'abcde', 'Weitere Einzelheiten zur verantwortlichen Stelle', 'Fetch datenschutzerklaerung in german because language is invalid'],
             ['avx-datenschutzerklaerung', 'en', 'In the following, we inform you about the collection of personal data when using our website', 'Fetch datenschutzerklaerung in english'],
-            ['avx-impressum', 'de', 'Geschäftsführer', 'Fetch impressum in german'],
-            ['avx-impressum', 'abcde', 'Geschäftsführer', 'Fetch impressum in german because language is invalid'],
-            ['avx-impressum', 'en', 'Managing Director', 'Fetch impressum in english'],
+            ['avx-impressum', 'de', 'Wirtschaftsidentifikationsnummer', 'Fetch impressum in german'],
+            ['avx-impressum', 'abcde', 'Wirtschaftsidentifikationsnummer', 'Fetch impressum in german because language is invalid'],
+            ['avx-impressum', 'en', 'Business identification number', 'Fetch impressum in english'],
             ['avx-bedingungen', 'de', 'Die nachfolgenden Allgemeinen Geschäftsbedingungen', 'Fetch bedingungen in german'],
             ['avx-bedingungen', 'abcde', 'Die nachfolgenden Allgemeinen Geschäftsbedingungen', 'Fetch bedingungen in german because language is invalid'],
             //['avx-bedingungen', 'en', 'The following General Terms and Conditions', 'Fetch bedingungen in english'],
@@ -69,11 +69,14 @@ class AvalexPluginTest extends FunctionalTestCase
 
     /**
      * @test
+     *
      * @dataProvider renderEndpointProvider
      */
     public function renderEndpoint($endpoint, $language, $expected, $message): void
     {
+        AvalexUtility::setApiUrl('https://dev.avalex.de/');
         AvalexUtility::setFrontendLocale($language);
+
         static::assertThat(
             $this->avalexPlugin->render(null, ['endpoint' => $endpoint]),
             new StringContains($expected),

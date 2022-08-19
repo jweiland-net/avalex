@@ -56,14 +56,14 @@ class LanguageService
         $endpointWithoutPrefix = substr((string)$endpoint, 4);
         // avalex default language
         $language = 'de';
-        $avalexLanguageResponse = $this->getLanguageResponseFromCache()
-            ?: $this->fetchLanguageResponse();
+        $avalexLanguageResponse = $this->getLanguageResponseFromCache() ?: $this->fetchLanguageResponse();
         if (
             array_key_exists($this->frontendLanguage, $avalexLanguageResponse)
             && array_key_exists($endpointWithoutPrefix, $avalexLanguageResponse[$this->frontendLanguage])
         ) {
             $language = $this->frontendLanguage;
         }
+
         return $language;
     }
 
