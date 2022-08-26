@@ -43,7 +43,6 @@ interface RequestInterface
 
     /**
      * @param array $parameters
-     * @return void
      */
     public function setParameters(array $parameters);
 

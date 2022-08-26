@@ -183,8 +183,6 @@ class ext_update {
 
     /**
      * Remove api key from extension configuration
-     *
-     * @return void
      */
     protected function removeApiKeyFromExtConf()
     {

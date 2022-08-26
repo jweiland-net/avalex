@@ -23,7 +23,6 @@ interface ResponseInterface
 
     /**
      * @param bool$isJsonResponse
-     * @return void
      */
     public function setIsJsonResponse($isJsonResponse);
 

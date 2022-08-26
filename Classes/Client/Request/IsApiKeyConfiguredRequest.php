@@ -38,7 +38,6 @@ class IsApiKeyConfiguredRequest extends AbstractRequest
      * uses this one. This solution is only valid for just this class!
      *
      * @param string $apiKey
-     * @return void
      */
     public function setApiKey($apiKey)
     {

@@ -37,7 +37,6 @@ class MessageHelper
      * @param string $message
      * @param string $title
      * @param int $severity
-     * @return void
      */
     public function addFlashMessage($message, $title = '', $severity = AbstractMessage::OK)
     {
