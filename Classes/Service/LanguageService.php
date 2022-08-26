@@ -9,6 +9,9 @@
 
 namespace JWeiland\Avalex\Service;
 
+use JWeiland\Avalex\Client\AvalexClient;
+use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
+use JWeiland\Avalex\Client\Request\LocalizeableRequestInterface;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
@@ -30,6 +33,11 @@ class LanguageService
     protected $frontendLanguage = '';
 
     /**
+     * @var AvalexClient
+     */
+    protected $avalexClient;
+
+    /**
      * @var array required values: api_key: '', domain: ''
      */
     protected $configuration = [];
@@ -41,30 +49,26 @@ class LanguageService
     {
         $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('avalex_languages');
         $this->frontendLanguage = AvalexUtility::getFrontendLocale();
+        $this->avalexClient = GeneralUtility::makeInstance(AvalexClient::class);
         $this->configuration = [
             'domain' => (string)$configuration['domain'],
             'api_key' => (string)$configuration['api_key']
         ];
     }
 
-    /**
-     * @param string $endpoint
-     * @return string
-     */
-    public function getLanguageForEndpoint($endpoint)
+    public function addLanguageToEndpoint(LocalizeableRequestInterface $endpointRequest)
     {
-        $endpointWithoutPrefix = substr((string)$endpoint, 4);
         // avalex default language
         $language = 'de';
         $avalexLanguageResponse = $this->getLanguageResponseFromCache() ?: $this->fetchLanguageResponse();
         if (
             array_key_exists($this->frontendLanguage, $avalexLanguageResponse)
-            && array_key_exists($endpointWithoutPrefix, $avalexLanguageResponse[$this->frontendLanguage])
+            && array_key_exists($endpointRequest->getEndpointWithoutPrefix(), $avalexLanguageResponse[$this->frontendLanguage])
         ) {
             $language = $this->frontendLanguage;
         }
 
-        return $language;
+        $endpointRequest->setLang($language);
     }
 
     /**
@@ -77,6 +81,7 @@ class LanguageService
         if ($this->cache->has($cacheIdentifier)) {
             $language = (array)$this->cache->get($cacheIdentifier);
         }
+
         return $language;
     }
 
@@ -85,25 +90,18 @@ class LanguageService
      */
     protected function fetchLanguageResponse()
     {
-        // avalex default language
         $response = [];
-        $curlService = GeneralUtility::makeInstance(CurlService::class);
-        if ($curlService->request(sprintf(
-            '%savx-get-domain-langs?apikey=%s&domain=%s&version=3.0.1',
-            AvalexUtility::getApiUrl(),
-            $this->configuration['api_key'],
-            $this->configuration['domain']
-        ))) {
-            $response = json_decode($curlService->getCurlOutput(), true);
-            if (is_array($response)) {
-                $this->cache->set($this->getCacheIdentifier(), $response, [], 21600);
-            } else {
-                $response = [];
-            }
-        }
-        return $response;
+        $getDomainLanguagesRequest = GeneralUtility::makeInstance(GetDomainLanguagesRequest::class);
+        $getDomainLanguagesRequest->setDomain($this->configuration['domain']);
+        $result = $this->avalexClient->processRequest($getDomainLanguagesRequest)->getBody();
+        $this->cache->set($this->getCacheIdentifier(), $response, [], 21600);
+
+        return $result;
     }
 
+    /**
+     * @return string
+     */
     protected function getCacheIdentifier()
     {
         return md5(sprintf('%s_%s', $this->configuration['domain'], $this->configuration['api_key']));

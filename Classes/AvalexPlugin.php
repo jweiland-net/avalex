@@ -9,6 +9,12 @@
 
 namespace JWeiland\Avalex;
 
+use JWeiland\Avalex\Client\Request\BedingungenRequest;
+use JWeiland\Avalex\Client\Request\DatenschutzerklaerungRequest;
+use JWeiland\Avalex\Client\Request\ImpressumRequest;
+use JWeiland\Avalex\Client\Request\LocalizeableRequestInterface;
+use JWeiland\Avalex\Client\Request\RequestInterface;
+use JWeiland\Avalex\Client\Request\WiderrufRequest;
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Service\ApiService;
 use JWeiland\Avalex\Service\LanguageService;
@@ -29,6 +35,16 @@ class AvalexPlugin
     protected $cache;
 
     /**
+     * @var ApiService
+     */
+    protected $apiService;
+
+    /**
+     * @var AvalexConfigurationRepository
+     */
+    protected $avalexConfigurationRepository;
+
+    /**
      * @var ContentObjectRenderer
      */
     public $cObj;
@@ -36,19 +52,8 @@ class AvalexPlugin
     public function __construct()
     {
         $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('avalex_content');
-    }
-
-    /**
-     * @param string $endpoint
-     * @return string
-     */
-    protected function checkEndpoint($endpoint)
-    {
-        $endpoint = (string)$endpoint;
-        if (in_array($endpoint, ['avx-datenschutzerklaerung', 'avx-impressum', 'avx-bedingungen', 'avx-widerruf'], true)) {
-            return $endpoint;
-        }
-        throw new \InvalidArgumentException(sprintf('The endpoint "%s" is invalid!', $endpoint), 1582029646660);
+        $this->apiService = GeneralUtility::makeInstance(ApiService::class);
+        $this->avalexConfigurationRepository = GeneralUtility::makeInstance(AvalexConfigurationRepository::class);
     }
 
     /**
@@ -57,42 +62,79 @@ class AvalexPlugin
      * @param string $_ empty string
      * @param array $conf TypoScript configuration
      * @return string
+     * @throws Exception\InvalidUidException
      */
     public function render($_, $conf)
     {
-        $endpoint = $this->checkEndpoint($conf['endpoint']);
-        $rootPage = AvalexUtility::getRootForPage();
-        $cacheIdentifier = sprintf(
+        $endpointRequest = $this->getRequestForEndpoint($conf['endpoint']);
+        $cacheIdentifier = $this->getCacheIdentifier($endpointRequest);
+        if ($this->cache->has($cacheIdentifier)) {
+            return (string)$this->cache->get($cacheIdentifier);
+        }
+
+        $configuration = $this->avalexConfigurationRepository->findByWebsiteRoot(
+            AvalexUtility::getRootForPage(),
+            'uid, api_key, domain'
+        );
+        $this->getLanguageService($configuration)->addLanguageToEndpoint($endpointRequest);
+        $content = $this->apiService->getHtmlForCurrentRootPage($endpointRequest, $configuration);
+        if ($content !== '') {
+            // set cache for successful calls only
+            $content = $this->processLinks($content);
+            $this->cache->set($cacheIdentifier, $content, [], 21600);
+        }
+
+        return $content;
+    }
+
+    /**
+     * @param string $endpoint
+     * @return RequestInterface|LocalizeableRequestInterface
+     */
+    protected function getRequestForEndpoint($endpoint)
+    {
+        if (!is_string($endpoint)) {
+            throw new \InvalidArgumentException(
+                sprintf('The endpoint "%s" must be of type "string"!', $endpoint),
+                1661512525
+            );
+        }
+
+        switch ($endpoint) {
+            case 'avx-datenschutzerklaerung':
+                $requestClass = DatenschutzerklaerungRequest::class;
+                break;
+            case 'avx-impressum':
+                $requestClass = ImpressumRequest::class;
+                break;
+            case 'avx-bedingungen':
+                $requestClass = BedingungenRequest::class;
+                break;
+            case 'avx-widerruf':
+                $requestClass = WiderrufRequest::class;
+                break;
+            default:
+                throw new \InvalidArgumentException(
+                    sprintf('The endpoint "%s" is invalid!', $endpoint),
+                    1661512662
+                );
+        }
+
+        return GeneralUtility::makeInstance($requestClass);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCacheIdentifier(RequestInterface $endpointRequest)
+    {
+        return sprintf(
             'avalex_%s_%d_%d_%s',
-            $endpoint,
-            $rootPage,
+            $endpointRequest->getEndpoint(),
+            AvalexUtility::getRootForPage(),
             $GLOBALS['TSFE']->id,
             AvalexUtility::getFrontendLocale()
         );
-        if ($this->cache->has($cacheIdentifier)) {
-            $content = (string)$this->cache->get($cacheIdentifier);
-        } else {
-            $avalexConfigurationRepository = GeneralUtility::makeInstance(AvalexConfigurationRepository::class);
-            $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid, api_key, domain');
-            $language = GeneralUtility::makeInstance(LanguageService::class, $configuration)->getLanguageForEndpoint($endpoint);
-            $apiService = GeneralUtility::makeInstance(ApiService::class);
-            $content = $apiService->getHtmlForCurrentRootPage($endpoint, $language, $configuration);
-            if (
-                $apiService->getCurlService()->getCurlInfo()['http_code'] === 200
-                || strpos(AvalexUtility::getApiUrl(), 'file://') === 0
-            ) {
-                // set cache for successful calls only
-                $extensionConfiguration = AvalexUtility::getExtensionConfiguration();
-                $content = $this->processLinks($content);
-                $this->cache->set(
-                    $cacheIdentifier,
-                    $content,
-                    [],
-                    $extensionConfiguration['cacheLifetime'] ?: 3600
-                );
-            }
-        }
-        return $content;
     }
 
     /**
@@ -105,7 +147,7 @@ class AvalexPlugin
         $requestUrl = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
         return preg_replace_callback(
             '@<a href="(?P<href>(?P<type>mailto:|#)[^"\']+)">(?P<text>[^<]+)<\/a>@',
-            function ($match) use ($cObj, $requestUrl) {
+            static function ($match) use ($cObj, $requestUrl) {
                 if ($match['type'] === 'mailto:') {
                     $encrypted = $cObj->getMailTo(substr($match['href'], 7), $match['text']);
                     if (count($encrypted) === 3) {
@@ -122,5 +164,14 @@ class AvalexPlugin
             },
             $content
         );
+    }
+
+    /**
+     * @param array $configuration
+     * @return LanguageService
+     */
+    protected function getLanguageService(array $configuration)
+    {
+        return GeneralUtility::makeInstance(LanguageService::class, $configuration);
     }
 }

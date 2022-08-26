@@ -6,3 +6,14 @@ services:
 
   JWeiland\Avalex\:
     resource: '../Classes/*'
+
+  JWeiland\Avalex\Client\AvalexClient:
+    public: true
+  JWeiland\Avalex\Client\Request\BedingungenRequest:
+    public: true
+  JWeiland\Avalex\Client\Request\DatenschutzerklaerungRequest:
+    public: true
+  JWeiland\Avalex\Client\Request\ImpressumRequest:
+    public: true
+  JWeiland\Avalex\Client\Request\WiderrufRequest:
+    public: true
