@@ -9,10 +9,10 @@
 
 namespace JWeiland\Avalex\Client;
 
+use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Client\Response\ResponseInterface;
 use JWeiland\Avalex\Helper\MessageHelper;
-use JWeiland\Avalex\Client\Request\RequestInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
