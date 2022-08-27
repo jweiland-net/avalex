@@ -12,10 +12,6 @@
 				<source>The submitted API key is invalid, please check your input!</source>
 				<target>Der eingegebene API-Key ist ungültig, bitte überprüfe die Eingabe!</target>
 			</trans-unit>
-			<trans-unit id="error.request_failed">
-				<source>Avalex returned the following message (%d): "%s"</source>
-				<target>Avalex gab folgende Nachricht zurück (%d): "%s"</target>
-			</trans-unit>
 		</body>
 	</file>
 </xliff>

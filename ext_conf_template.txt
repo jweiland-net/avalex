@@ -1,2 +1,0 @@
-# cat=Cache; type=int; label=Cache lifetime for avalex content (privacy statement, imprint, ...)
-cacheLifetime = 21600

@@ -11,13 +11,10 @@ namespace JWeiland\Avalex\Utility;
 
 use JWeiland\Avalex\Exception\InvalidUidException;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
@@ -58,17 +55,20 @@ class AvalexUtility
         }
         $rootLineUtility = GeneralUtility::makeInstance(RootlineUtility::class, $currentPageUid);
         $rootLine = $rootLineUtility->get();
+
         $rootPageUid = 0;
         foreach ($rootLine as $page) {
             if ($page['is_siteroot']) {
-                $rootPageUid = $page['uid'];
+                $rootPageUid = (int)$page['uid'];
                 break;
             }
         }
-        if (!MathUtility::canBeInterpretedAsInteger($rootPageUid) && $rootPageUid > 0) {
+
+        if ($rootPageUid === 0) {
             throw new InvalidUidException('Could not determine root page uid of current page id!', 1525270267);
         }
-        return (int)$rootPageUid;
+
+        return $rootPageUid;
     }
 
     /**
@@ -77,22 +77,6 @@ class AvalexUtility
     public static function getTypoScriptFrontendController()
     {
         return $GLOBALS['TSFE'];
-    }
-
-    /**
-     * @return array
-     */
-    public static function getExtensionConfiguration()
-    {
-        if (version_compare(static::getTypo3Version(), '9.0', '>=')) {
-            $extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class);
-            $configuration = $extensionConfiguration->get('avalex');
-        } else {
-            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-            $configurationUtility = $objectManager->get(\TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility::class);
-            $configuration = $configurationUtility->getCurrentConfiguration('avalex');
-        }
-        return (array)$configuration;
     }
 
     /**

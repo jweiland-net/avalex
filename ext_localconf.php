@@ -87,6 +87,5 @@ call_user_func(static function () {
         $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class] = [];
     }
 
-    $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class][] = \JWeiland\Avalex\Hooks\ApiServiceSetDefaultDomainHook::class;
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals'][\JWeiland\Avalex\Evaluation\DomainEvaluation::class] = '';
 });

@@ -9,13 +9,10 @@
 
 namespace JWeiland\Avalex\Hooks;
 
-use JWeiland\Avalex\Service\CurlService;
-use JWeiland\Avalex\Utility\AvalexUtility;
-use TYPO3\CMS\Core\Messaging\FlashMessage;
-use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
-use TYPO3\CMS\Core\Messaging\FlashMessageService;
+use JWeiland\Avalex\Client\AvalexClient;
+use JWeiland\Avalex\Client\Request\IsApiKeyConfiguredRequest;
+use JWeiland\Avalex\Helper\MessageHelper;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -24,97 +21,81 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 class DataHandler
 {
     /**
-     * @var FlashMessageQueue
+     * @var MessageHelper
      */
-    protected $flashMessageQueue;
+    protected $messageHelper;
+
+    /**
+     * @var AvalexClient
+     */
+    protected $avalexClient;
+
+    public function __construct()
+    {
+        $this->messageHelper = GeneralUtility::makeInstance(MessageHelper::class);
+        $this->avalexClient = GeneralUtility::makeInstance(AvalexClient::class);
+    }
 
     /**
      * Check API keys on save
      *
-     * @param array $incomingFieldArray reference
-     * @param string $table
-     * @param string|int $id
      * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
      */
-    public function processDatamap_preProcessFieldArray(
-        array &$incomingFieldArray,
-        $table,
-        $id,
-        \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
-    ) {
-        if ($table !== 'tx_avalex_configuration' || !array_key_exists('api_key', $incomingFieldArray)) {
-            return;
-        }
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $flashMessageService = $objectManager->get(FlashMessageService::class);
-        $this->flashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
-        if (!$this->checkApiKey($incomingFieldArray['api_key'])) {
-            // prevent save because key is invalid
-            unset($incomingFieldArray['api_key']);
+    public function processDatamap_afterAllOperations(\TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler)
+    {
+        if (array_key_exists('tx_avalex_configuration', $dataHandler->datamap)) {
+            foreach ($dataHandler->datamap['tx_avalex_configuration'] as $avalexConfigurationRecord) {
+                if (
+                    array_key_exists('api_key', $avalexConfigurationRecord)
+                    && !$this->checkApiKey($avalexConfigurationRecord['api_key'])
+                ) {
+                    $this->messageHelper->addFlashMessage(
+                        LocalizationUtility::translate(
+                            'flash_message.configuration.key_invalid',
+                            'avalex'
+                        )
+                    );
+                }
+            }
         }
     }
 
     /**
      * Check API key using Avalex API
      *
-     * @param $apiKey
+     * @param string $apiKey
      * @return bool true if key is valid
      */
     protected function checkApiKey($apiKey)
     {
         $isValid = true;
-        $apiKey = (string)$apiKey;
-        $curlService = GeneralUtility::makeInstance(CurlService::class);
-        $requestSuccessful = $curlService->request(AvalexUtility::getApiUrl() . 'api_keys/is_configured.json?apikey=' . $apiKey);
+        $isApiKeyConfiguredRequest = GeneralUtility::makeInstance(IsApiKeyConfiguredRequest::class);
+        $isApiKeyConfiguredRequest->setApiKey($apiKey);
 
-        if ($requestSuccessful === false) {
-            // curl error
-            $isValid = false;
-            $severity = FlashMessage::ERROR;
-            $message = LocalizationUtility::translate(
-                'error.curl_request_failed',
-                'avalex',
-                [$curlService->getCurlErrno(), $curlService->getCurlError()]
-            );
-        } elseif ($curlService->getCurlInfo()['http_code'] === 200) {
-            $responseArray = json_decode($curlService->getCurlOutput(), true);
-            if ($responseArray && array_key_exists('message', $responseArray) && $responseArray['message'] === 'OK') {
-                // API key valid
-                if (array_key_exists('domain', $responseArray)) {
-                    $domain = (string)$responseArray['domain'];
-                } else {
-                    $domain = '-';
-                }
-                $severity = FlashMessage::OK;
-                $message = LocalizationUtility::translate(
+        $avalexResponse = $this->avalexClient->processRequest($isApiKeyConfiguredRequest);
+        $result = $avalexResponse->getBody();
+        if (
+            array_key_exists('message', $result)
+            && $result['message'] === 'OK'
+        ) {
+            // API key valid
+            if (array_key_exists('domain', $result)) {
+                $domain = (string)$result['domain'];
+            } else {
+                $domain = '-';
+            }
+
+            $this->messageHelper->addFlashMessage(
+                LocalizationUtility::translate(
                     'flash_message.configuration.response_ok',
                     'avalex',
                     [$domain]
-                );
-            }
-        } elseif ($curlService->getCurlInfo()['http_code'] === 401) {
-            // API key invalid
-            $isValid = false;
-            $severity = FlashMessage::ERROR;
-            $message = LocalizationUtility::translate('flash_message.configuration.key_invalid', 'avalex');
-        } else {
-            // render error message wrapped with translated notice if request !== 200
-            $isValid = false;
-            $severity = FlashMessage::ERROR;
-            $message = LocalizationUtility::translate(
-                'error.request_failed',
-                'avalex',
-                [(int)$curlService->getCurlInfo()['http_code'], $curlService->getCurlOutput()]
+                )
             );
+        } else {
+            $isValid = false;
         }
 
-        $flashMessage = GeneralUtility::makeInstance(
-            FlashMessage::class,
-            $message,
-            '',
-            $severity
-        );
-        $this->flashMessageQueue->enqueue($flashMessage);
         return $isValid;
     }
 }

@@ -9,13 +9,13 @@
 
 namespace JWeiland\Avalex\Service;
 
+use JWeiland\Avalex\Client\AvalexClient;
+use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Hooks\ApiService\PostApiRequestHookInterface;
 use JWeiland\Avalex\Hooks\ApiService\PreApiRequestHookInterface;
-use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * API service class for avalex API requests
@@ -28,9 +28,9 @@ class ApiService
     protected $logger;
 
     /**
-     * @var CurlService
+     * @var AvalexClient
      */
-    protected $curlService;
+    protected $avalexClient;
     /**
      * @var array
      */
@@ -39,7 +39,8 @@ class ApiService
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
-        $this->curlService = GeneralUtility::makeInstance(CurlService::class);
+        $this->avalexClient = GeneralUtility::makeInstance(AvalexClient::class);
+
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][__CLASS__])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][__CLASS__] as $key => $classRef) {
                 $hookObject = GeneralUtility::makeInstance($classRef);
@@ -51,17 +52,12 @@ class ApiService
     /**
      * Get HTML content for current page
      *
-     * @param string $endpoint API endpoint to be used e.g. imprint
-     * @param string $language two digit iso code (en, de, ...)
+     * @param RequestInterface $endpointRequest API endpoint to be used e.g. imprint
      * @param array  $configuration required values: api_key: '', domain: ''
-     *
      * @return string
      */
-    public function getHtmlForCurrentRootPage($endpoint, $language, array $configuration)
+    public function getHtmlForCurrentRootPage(RequestInterface $endpointRequest, array $configuration)
     {
-        $endpoint = (string)$endpoint;
-        $language = (string)$language;
-
         // Hook: Allow to modify $apiKey and $domain before curl sends the request to avalex
         foreach ($this->hookObjectsArray as $hookObject) {
             if ($hookObject instanceof PreApiRequestHookInterface) {
@@ -69,37 +65,9 @@ class ApiService
             }
         }
 
-        $requestSuccessful = $this->curlService->request(sprintf(
-            '%s%s?apikey=%s&domain=%s&lang=%s',
-            AvalexUtility::getApiUrl(),
-            $endpoint,
-            $configuration['api_key'],
-            $configuration['domain'],
-            $language
-        ));
+        $content = $this->avalexClient->processRequest($endpointRequest)->getBody();
 
-        if ($requestSuccessful === false) {
-            // curl error
-            $content = LocalizationUtility::translate(
-                'error.curl_request_failed',
-                'avalex',
-                [$this->curlService->getCurlErrno(), $this->curlService->getCurlError()]
-            );
-        } elseif (
-            $this->curlService->getCurlInfo()['http_code'] === 200
-            || strpos(AvalexUtility::getApiUrl(), 'file://') === 0
-        ) {
-            $content = $this->curlService->getCurlOutput();
-        } else {
-            // render error message wrapped with translated notice in frontend if request !== 200
-            $content = LocalizationUtility::translate(
-                'error.request_failed',
-                'avalex',
-                [(int)$this->curlService->getCurlInfo()['http_code'], $this->curlService->getCurlOutput()]
-            );
-        }
-
-        // Hook: Allow to modify $content and access to curlInfo, curlOutput before returning it!
+        // Hook: Allow to modify $content
         foreach ($this->hookObjectsArray as $hookObject) {
             if ($hookObject instanceof PostApiRequestHookInterface) {
                 $hookObject->postApiRequest($content, $this);
@@ -107,40 +75,5 @@ class ApiService
         }
 
         return $content;
-    }
-
-    /**
-     * @deprecated use $this->getCurlService()->getCurlInfo()
-     * @return array
-     */
-    public function getCurlInfo()
-    {
-        return $this->curlService->getCurlInfo();
-    }
-
-    /**
-     * @deprecated use $this->getCurlService()->getCurlOutput()
-     * @return string
-     */
-    public function getCurlOutput()
-    {
-        return $this->curlService->getCurlOutput();
-    }
-
-    /**
-     * @deprecated use $this->getCurlService()->getCurlError()
-     * @return string
-     */
-    public function getCurlError()
-    {
-        return $this->curlService->getCurlError();
-    }
-
-    /**
-     * @return CurlService
-     */
-    public function getCurlService()
-    {
-        return $this->curlService;
     }
 }

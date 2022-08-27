@@ -10,9 +10,15 @@
 namespace JWeiland\Avalex\Tests;
 
 use JWeiland\Avalex\AvalexPlugin;
-use JWeiland\Avalex\Utility\AvalexUtility;
+use JWeiland\Avalex\Client\AvalexClient;
+use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
+use JWeiland\Avalex\Client\Request\ImpressumRequest;
+use JWeiland\Avalex\Client\Response\AvalexResponse;
+use JWeiland\Avalex\Service\ApiService;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use PHPUnit\Framework\Constraint\StringContains;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
@@ -22,65 +28,60 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class AvalexPluginTest extends FunctionalTestCase
 {
-    protected $testExtensionsToLoad = ['typo3conf/ext/avalex'];
+    /**
+     * @var ImpressumRequest
+     */
+    protected $impressumRequest;
+
+    /**
+     * @var ApiService|ObjectProphecy
+     */
+    protected $apiServiceProphecy;
+
+    /**
+     * @var AvalexClient|ObjectProphecy
+     */
+    protected $avalexClientProphecy;
 
     /**
      * @var AvalexPlugin
      */
-    protected $avalexPlugin;
+    protected $subject;
+
+    protected $testExtensionsToLoad = [
+        'typo3conf/ext/avalex'
+    ];
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->avalexPlugin = new AvalexPlugin();
-        $this->avalexPlugin->cObj = new ContentObjectRenderer();
-        $GLOBALS['TSFE'] = $this->createMock(TypoScriptFrontendController::class);
+        $this->importDataSet('ntf://Database/pages.xml');
+        $this->importDataSet(__DIR__ . '/Fixtures/tx_avalex_configuration.xml');
+
+        // Set is_siteroot to 1
+        parent::setUpFrontendRootPage(1);
+
+        /** @var TypoScriptFrontendController|ObjectProphecy $typoScriptFrontendController */
+        $typoScriptFrontendController = $this->prophesize(TypoScriptFrontendController::class);
+        $GLOBALS['TSFE'] = $typoScriptFrontendController->reveal();
         $GLOBALS['TSFE']->id = 1;
         $GLOBALS['TSFE']->spamProtectEmailAddresses = 1;
 
-        $this->importDataSet('ntf://Database/pages.xml');
-        $this->importDataSet(__DIR__ . '/Fixtures/tx_avalex_configuration.xml');
+        $this->impressumRequest = new ImpressumRequest();
+        $this->apiServiceProphecy = $this->prophesize(ApiService::class);
+        GeneralUtility::addInstance(ApiService::class, $this->apiServiceProphecy->reveal());
+        $this->avalexClientProphecy = $this->prophesize(AvalexClient::class);
+        GeneralUtility::addInstance(AvalexClient::class, $this->avalexClientProphecy->reveal());
+
+        $this->subject = new AvalexPlugin();
+        $this->subject->cObj = new ContentObjectRenderer();
     }
 
     protected function tearDown(): void
     {
-        unset($this->avalexPlugin, $GLOBALS['TSFE']);
-    }
-
-    public function renderEndpointProvider(): array
-    {
-        // TODO: Enable tests for english bedingungen and widerruf as soon as official demo key
-        //       contains an english version of them
-        return [
-            ['avx-datenschutzerklaerung', 'de', 'Weitere Einzelheiten zur verantwortlichen Stelle', 'Fetch datenschutzerklaerung in german'],
-            ['avx-datenschutzerklaerung', 'abcde', 'Weitere Einzelheiten zur verantwortlichen Stelle', 'Fetch datenschutzerklaerung in german because language is invalid'],
-            ['avx-datenschutzerklaerung', 'en', 'In the following, we inform you about the collection of personal data when using our website', 'Fetch datenschutzerklaerung in english'],
-            ['avx-impressum', 'de', 'Wirtschaftsidentifikationsnummer', 'Fetch impressum in german'],
-            ['avx-impressum', 'abcde', 'Wirtschaftsidentifikationsnummer', 'Fetch impressum in german because language is invalid'],
-            ['avx-impressum', 'en', 'Business identification number', 'Fetch impressum in english'],
-            ['avx-bedingungen', 'de', 'Die nachfolgenden Allgemeinen Geschäftsbedingungen', 'Fetch bedingungen in german'],
-            ['avx-bedingungen', 'abcde', 'Die nachfolgenden Allgemeinen Geschäftsbedingungen', 'Fetch bedingungen in german because language is invalid'],
-            //['avx-bedingungen', 'en', 'The following General Terms and Conditions', 'Fetch bedingungen in english'],
-            ['avx-widerruf', 'de', 'Widerrufsrecht bei Kaufverträgen', 'Fetch widerruf in german'],
-            ['avx-widerruf', 'abcde', 'Widerrufsrecht bei Kaufverträgen', 'Fetch widerruf in german because language is invalid'],
-            //['avx-widerruf', 'en', 'Right of withdrawal for sales contracts', 'Fetch widerruf in english']
-        ];
-    }
-
-    /**
-     * @test
-     *
-     * @dataProvider renderEndpointProvider
-     */
-    public function renderEndpoint($endpoint, $language, $expected, $message): void
-    {
-        AvalexUtility::setApiUrl('https://dev.avalex.de/');
-        AvalexUtility::setFrontendLocale($language);
-
-        static::assertThat(
-            $this->avalexPlugin->render(null, ['endpoint' => $endpoint]),
-            new StringContains($expected),
-            $message
+        unset(
+            $this->subject,
+            $GLOBALS['TSFE']
         );
     }
 
@@ -89,8 +90,29 @@ class AvalexPluginTest extends FunctionalTestCase
      */
     public function processLinksEncryptsMailToLinks()
     {
-        AvalexUtility::setApiUrl('file://' . __DIR__ . '/Fixtures/Requests/EncryptMailTo/');
-        $encryptedMail = $this->avalexPlugin->cObj->getMailTo('john@doe.tld', 'johns mail');
+        $avalexResponse = new AvalexResponse('{"de": {"avx-impressum": ""}}');
+        $avalexResponse->setIsJsonResponse(true);
+
+        $this->avalexClientProphecy
+            ->processRequest(Argument::type(GetDomainLanguagesRequest::class))
+            ->shouldBeCalled()
+            ->willReturn($avalexResponse);
+
+        $this->apiServiceProphecy
+            ->getHtmlForCurrentRootPage(
+                Argument::type(ImpressumRequest::class),
+                [
+                    'uid' => 1,
+                    'api_key' => 'demo-key-with-online-shop',
+                    'domain' => 'https://example.com',
+                ]
+            )
+            ->shouldBeCalled()
+            ->willReturn(
+                '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="mailto:john@doe.tld">johns mail</a></p>'
+            );
+
+        $encryptedMail = $this->subject->cObj->getMailTo('john@doe.tld', 'johns mail');
         if (count($encryptedMail) === 3) {
             // TYPO3 >= 11
             $attributes = GeneralUtility::implodeAttributes($encryptedMail[2], true);
@@ -98,8 +120,9 @@ class AvalexPluginTest extends FunctionalTestCase
         } else {
             $expected = "<a href=\"$encryptedMail[0]\">$encryptedMail[1]</a>";
         }
+
         static::assertThat(
-            $this->avalexPlugin->render(null, ['endpoint' => 'avx-impressum']),
+            $this->subject->render(null, ['endpoint' => 'avx-impressum']),
             new StringContains($expected)
         );
     }
@@ -107,18 +130,41 @@ class AvalexPluginTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function processLinksAddRequestUrlToAnchors()
+    public function processLinksAddRequestUrlToAnchors(): void
     {
-        AvalexUtility::setApiUrl('file://' . __DIR__ . '/Fixtures/Requests/AddRequestUrlToAnchors/');
+        $avalexResponse = new AvalexResponse('{"de": {"avx-impressum": ""}}');
+        $avalexResponse->setIsJsonResponse(true);
+
+        $this->avalexClientProphecy
+            ->processRequest(Argument::type(GetDomainLanguagesRequest::class))
+            ->shouldBeCalled()
+            ->willReturn($avalexResponse);
+
+        $this->apiServiceProphecy
+            ->getHtmlForCurrentRootPage(
+                Argument::type(ImpressumRequest::class),
+                [
+                    'uid' => 1,
+                    'api_key' => 'demo-key-with-online-shop',
+                    'domain' => 'https://example.com',
+                ]
+            )
+            ->shouldBeCalled()
+            ->willReturn(
+                '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="#hello">Hello World</a>.</p>' . chr(10)
+                . '<p>Want another link? OK: <a href="#world">Another one</a>. <a href="/test.html">Do not replace this</a> ok?</p>' . chr(10)
+                . '<p>And also do <a href="https://domain.tld">not replace this</a>.</p>'
+            );
+
         $requestUri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
-        static::assertEquals(
-            <<<HTML
-<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="$requestUri#hello">Hello World</a>.</p>
-<p>Want another link? OK: <a href="$requestUri#world">Another one</a>. <a href="/test.html">Do not replace this</a> ok?</p>
-<p>And also do <a href="https://domain.tld">not replace this</a>.</p>\n
-HTML
-            ,
-            $this->avalexPlugin->render(null, ['endpoint' => 'avx-impressum'])
+        $expected = [];
+        $expected[] = '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="$requestUri#hello">Hello World</a>.</p>';
+        $expected[] = '<p>Want another link? OK: <a href="$requestUri#world">Another one</a>. <a href="/test.html">Do not replace this</a> ok?</p>';
+        $expected[] = '<p>And also do <a href="https://domain.tld">not replace this</a>.</p>';
+
+        self::assertEquals(
+            str_replace('$requestUri', $requestUri, implode(chr(10), $expected)),
+            $this->subject->render(null, ['endpoint' => 'avx-impressum'])
         );
     }
 }
