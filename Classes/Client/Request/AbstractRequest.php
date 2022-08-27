@@ -22,7 +22,7 @@ abstract class AbstractRequest implements RequestInterface
     /**
      * @var string
      */
-    private $apiDomain = 'dev.avalex.de';
+    private $apiDomain = 'avalex.de';
 
     /**
      * @var string
