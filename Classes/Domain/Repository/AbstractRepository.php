@@ -22,25 +22,6 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 abstract class AbstractRepository
 {
     /**
-     * Get DatabaseConnection.
-     * Only for < TYPO3 8.5
-     *
-     * @return DatabaseConnection
-     */
-    protected function getDatabaseConnection()
-    {
-        return $GLOBALS['TYPO3_DB'];
-    }
-
-    /**
-     * @return TypoScriptFrontendController
-     */
-    protected function getTypoScriptFrontendController()
-    {
-        return $GLOBALS['TSFE'];
-    }
-
-    /**
      * Get query builder
      *
      * @param string $table will use TABLE constant as default table
@@ -69,5 +50,24 @@ abstract class AbstractRepository
             $whereClause = BackendUtility::deleteClause($table) . BackendUtility::BEenableFields($table);
         }
         return $whereClause;
+    }
+
+    /**
+     * Get DatabaseConnection.
+     * Only for < TYPO3 8.5
+     *
+     * @return DatabaseConnection
+     */
+    protected function getDatabaseConnection()
+    {
+        return $GLOBALS['TYPO3_DB'];
+    }
+
+    /**
+     * @return TypoScriptFrontendController
+     */
+    protected function getTypoScriptFrontendController()
+    {
+        return $GLOBALS['TSFE'];
     }
 }
