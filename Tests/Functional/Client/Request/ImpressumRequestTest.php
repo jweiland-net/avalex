@@ -47,7 +47,6 @@ class ImpressumRequestTest extends FunctionalTestCase
         $GLOBALS['TSFE']->id = 1;
         $GLOBALS['TSFE']->spamProtectEmailAddresses = 1;
 
-
         $this->subject = new ImpressumRequest();
     }
 
