@@ -66,6 +66,6 @@ class AvalexConfigurationRepository extends AbstractRepository
                 )
             );
         }
-        return ($result !== null) ? $result : [];
+        return ($result === null || $result === false) ? [] : $result;
     }
 }
