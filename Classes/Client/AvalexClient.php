@@ -32,10 +32,10 @@ class AvalexClient
      */
     protected $messageHelper;
 
-    public function __construct(RequestFactory $requestFactory, MessageHelper $messageHelper)
+    public function __construct()
     {
-        $this->requestFactory = $requestFactory;
-        $this->messageHelper = $messageHelper;
+        $this->requestFactory = GeneralUtility::makeInstance(RequestFactory::class);
+        $this->messageHelper = GeneralUtility::makeInstance(MessageHelper::class);
     }
 
     /**
