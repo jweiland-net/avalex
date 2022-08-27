@@ -9,6 +9,7 @@
 
 namespace JWeiland\Avalex\Domain\Repository;
 
+use JWeiland\Avalex\Exception\AvalexConfigurationNotFoundException;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -42,6 +43,8 @@ class AvalexConfigurationRepository extends AbstractRepository
      * @param int $websiteRoot
      * @param string $select
      * @return array
+     * @throws AvalexConfigurationNotFoundException
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function findByWebsiteRoot($websiteRoot, $select = '*')
     {
@@ -66,6 +69,13 @@ class AvalexConfigurationRepository extends AbstractRepository
                 )
             );
         }
-        return ($result === null || $result === false) ? [] : $result;
+
+        if ($result === null || $result === false) {
+            throw new AvalexConfigurationNotFoundException(
+                'No Avalex configuration could be found in database for page UID: ' . $websiteRoot
+            );
+        }
+
+        return $result;
     }
 }
