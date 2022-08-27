@@ -18,7 +18,6 @@ use JWeiland\Avalex\Service\ApiService;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use PHPUnit\Framework\Constraint\StringContains;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -29,8 +28,6 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class AvalexPluginTest extends FunctionalTestCase
 {
-    use ProphecyTrait;
-
     /**
      * @var ImpressumRequest
      */

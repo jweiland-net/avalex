@@ -9,10 +9,8 @@
 
 namespace JWeiland\Avalex\Tests\Functional\Client\Request;
 
-use JWeiland\Avalex\Client\Request\BedingungenRequest;
 use JWeiland\Avalex\Client\Request\ImpressumRequest;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
@@ -21,8 +19,6 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class ImpressumRequestTest extends FunctionalTestCase
 {
-    use ProphecyTrait;
-
     protected $testExtensionsToLoad = [
         'typo3conf/ext/avalex'
     ];

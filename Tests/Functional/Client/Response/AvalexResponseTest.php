@@ -9,7 +9,6 @@
 
 namespace JWeiland\Avalex\Tests\Functional\Client\Request;
 
-use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -21,8 +20,6 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class AvalexResponseTest extends FunctionalTestCase
 {
-    use ProphecyTrait;
-
     protected $testExtensionsToLoad = [
         'typo3conf/ext/avalex'
     ];
