@@ -196,10 +196,13 @@ abstract class AbstractRequest implements RequestInterface
                         && array_key_exists('domain', $avalexConfigurationRecord)
                     ) {
                         $domain = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
-                        if ($avalexConfigurationRecord['domain']) {
+                        if ($this->hasParameter('domain')) {
+                            // Override value of TYPO3_REQUEST_HOST. Useful for own request objects or test cases
+                            $domain = $this->getParameter('domain');
+                        } elseif ($avalexConfigurationRecord['domain']) {
+                            // Maybe this parameter will be removed in the future. Working with TYPO3_REQUEST_HOST is the way to go.
                             $domain = $avalexConfigurationRecord['domain'];
                         }
-
                         $this->addParameter('domain', $domain);
                     }
 
