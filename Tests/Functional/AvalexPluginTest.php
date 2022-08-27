@@ -10,9 +10,12 @@
 namespace JWeiland\Avalex\Tests;
 
 use JWeiland\Avalex\AvalexPlugin;
+use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use PHPUnit\Framework\Constraint\StringContains;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
@@ -22,65 +25,41 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class AvalexPluginTest extends FunctionalTestCase
 {
-    protected $testExtensionsToLoad = ['typo3conf/ext/avalex'];
+    use ProphecyTrait;
+
+    protected $testExtensionsToLoad = [
+        'typo3conf/ext/avalex'
+    ];
 
     /**
      * @var AvalexPlugin
      */
-    protected $avalexPlugin;
+    protected $subject;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->avalexPlugin = new AvalexPlugin();
-        $this->avalexPlugin->cObj = new ContentObjectRenderer();
-        $GLOBALS['TSFE'] = $this->createMock(TypoScriptFrontendController::class);
+        $this->importDataSet('ntf://Database/pages.xml');
+        $this->importDataSet(__DIR__ . '/../../Fixtures/tx_avalex_configuration.xml');
+
+        // Set is_siteroot to 1
+        parent::setUpFrontendRootPage(1);
+
+        /** @var TypoScriptFrontendController|ObjectProphecy $typoScriptFrontendController */
+        $typoScriptFrontendController = $this->prophesize(TypoScriptFrontendController::class);
+        $GLOBALS['TSFE'] = $typoScriptFrontendController->reveal();
         $GLOBALS['TSFE']->id = 1;
         $GLOBALS['TSFE']->spamProtectEmailAddresses = 1;
 
-        $this->importDataSet('ntf://Database/pages.xml');
-        $this->importDataSet(__DIR__ . '/Fixtures/tx_avalex_configuration.xml');
+        $this->subject = new AvalexPlugin();
+        $this->subject->cObj = new ContentObjectRenderer();
     }
 
     protected function tearDown(): void
     {
-        unset($this->avalexPlugin, $GLOBALS['TSFE']);
-    }
-
-    public function renderEndpointProvider(): array
-    {
-        // TODO: Enable tests for english bedingungen and widerruf as soon as official demo key
-        //       contains an english version of them
-        return [
-            ['avx-datenschutzerklaerung', 'de', 'Weitere Einzelheiten zur verantwortlichen Stelle', 'Fetch datenschutzerklaerung in german'],
-            ['avx-datenschutzerklaerung', 'abcde', 'Weitere Einzelheiten zur verantwortlichen Stelle', 'Fetch datenschutzerklaerung in german because language is invalid'],
-            ['avx-datenschutzerklaerung', 'en', 'In the following, we inform you about the collection of personal data when using our website', 'Fetch datenschutzerklaerung in english'],
-            ['avx-impressum', 'de', 'Wirtschaftsidentifikationsnummer', 'Fetch impressum in german'],
-            ['avx-impressum', 'abcde', 'Wirtschaftsidentifikationsnummer', 'Fetch impressum in german because language is invalid'],
-            ['avx-impressum', 'en', 'Business identification number', 'Fetch impressum in english'],
-            ['avx-bedingungen', 'de', 'Die nachfolgenden Allgemeinen Geschäftsbedingungen', 'Fetch bedingungen in german'],
-            ['avx-bedingungen', 'abcde', 'Die nachfolgenden Allgemeinen Geschäftsbedingungen', 'Fetch bedingungen in german because language is invalid'],
-            //['avx-bedingungen', 'en', 'The following General Terms and Conditions', 'Fetch bedingungen in english'],
-            ['avx-widerruf', 'de', 'Widerrufsrecht bei Kaufverträgen', 'Fetch widerruf in german'],
-            ['avx-widerruf', 'abcde', 'Widerrufsrecht bei Kaufverträgen', 'Fetch widerruf in german because language is invalid'],
-            //['avx-widerruf', 'en', 'Right of withdrawal for sales contracts', 'Fetch widerruf in english']
-        ];
-    }
-
-    /**
-     * @test
-     *
-     * @dataProvider renderEndpointProvider
-     */
-    public function renderEndpoint($endpoint, $language, $expected, $message): void
-    {
-        AvalexUtility::setApiUrl('https://dev.avalex.de/');
-        AvalexUtility::setFrontendLocale($language);
-
-        static::assertThat(
-            $this->avalexPlugin->render(null, ['endpoint' => $endpoint]),
-            new StringContains($expected),
-            $message
+        unset(
+            $this->subject,
+            $GLOBALS['TSFE']
         );
     }
 
@@ -90,7 +69,7 @@ class AvalexPluginTest extends FunctionalTestCase
     public function processLinksEncryptsMailToLinks()
     {
         AvalexUtility::setApiUrl('file://' . __DIR__ . '/Fixtures/Requests/EncryptMailTo/');
-        $encryptedMail = $this->avalexPlugin->cObj->getMailTo('john@doe.tld', 'johns mail');
+        $encryptedMail = $this->subject->cObj->getMailTo('john@doe.tld', 'johns mail');
         if (count($encryptedMail) === 3) {
             // TYPO3 >= 11
             $attributes = GeneralUtility::implodeAttributes($encryptedMail[2], true);
@@ -99,7 +78,7 @@ class AvalexPluginTest extends FunctionalTestCase
             $expected = "<a href=\"$encryptedMail[0]\">$encryptedMail[1]</a>";
         }
         static::assertThat(
-            $this->avalexPlugin->render(null, ['endpoint' => 'avx-impressum']),
+            $this->subject->render(null, ['endpoint' => 'avx-impressum']),
             new StringContains($expected)
         );
     }
@@ -107,7 +86,7 @@ class AvalexPluginTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function processLinksAddRequestUrlToAnchors()
+    public function processLinksAddRequestUrlToAnchors(): void
     {
         AvalexUtility::setApiUrl('file://' . __DIR__ . '/Fixtures/Requests/AddRequestUrlToAnchors/');
         $requestUri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
@@ -118,7 +97,7 @@ class AvalexPluginTest extends FunctionalTestCase
 <p>And also do <a href="https://domain.tld">not replace this</a>.</p>\n
 HTML
             ,
-            $this->avalexPlugin->render(null, ['endpoint' => 'avx-impressum'])
+            $this->subject->render(null, ['endpoint' => 'avx-impressum'])
         );
     }
 }
