@@ -13,6 +13,7 @@ use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Client\Response\ResponseInterface;
 use JWeiland\Avalex\Helper\MessageHelper;
+use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -23,18 +24,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class AvalexClient
 {
     /**
-     * @var RequestFactory
-     */
-    protected $requestFactory;
-
-    /**
      * @var MessageHelper
      */
     protected $messageHelper;
 
     public function __construct()
     {
-        $this->requestFactory = GeneralUtility::makeInstance(RequestFactory::class);
         $this->messageHelper = GeneralUtility::makeInstance(MessageHelper::class);
     }
 
@@ -54,12 +49,30 @@ class AvalexClient
             return new AvalexResponse('');
         }
 
-        $avalexResponse = new AvalexResponse(GeneralUtility::getUrl($request->buildUri()));
-        $avalexResponse->setIsJsonResponse($request->isJsonRequest());
+        $avalexResponse = $this->request($request);
 
         if ($this->hasResponseErrors($avalexResponse)) {
             $avalexResponse = new AvalexResponse('');
         }
+
+        return $avalexResponse;
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @return AvalexResponse
+     */
+    protected function request(RequestInterface $request)
+    {
+        if (version_compare(AvalexUtility::getTypo3Version(), '8.1', '>=')) {
+            $requestFactory = GeneralUtility::makeInstance(RequestFactory::class);
+            $content = (string)$requestFactory->request($request->buildUri())->getBody();
+        } else {
+            $content = GeneralUtility::getUrl($request->buildUri());
+        }
+
+        $avalexResponse = new AvalexResponse($content);
+        $avalexResponse->setIsJsonResponse($request->isJsonRequest());
 
         return $avalexResponse;
     }
