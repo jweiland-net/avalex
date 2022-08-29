@@ -15,6 +15,7 @@ use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
@@ -22,24 +23,9 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class AvalexUtility
 {
-    /**
-     * @var string
-     */
-    protected static $apiUrl = 'https://avalex.de/';
-
     protected static $typo3Version = '';
 
     protected static $frontendLocale = '';
-
-    /**
-     * Returns the API url with trailing slash
-     *
-     * @return string
-     */
-    public static function getApiUrl()
-    {
-        return static::$apiUrl;
-    }
 
     /**
      * Returns the uid of the site root of current page
@@ -53,6 +39,7 @@ class AvalexUtility
         if ($currentPageUid === 0) {
             $currentPageUid = (int)self::getTypoScriptFrontendController()->id;
         }
+
         $rootLineUtility = GeneralUtility::makeInstance(RootlineUtility::class, $currentPageUid);
         $rootLine = $rootLineUtility->get();
 
@@ -65,7 +52,13 @@ class AvalexUtility
         }
 
         if ($rootPageUid === 0) {
-            throw new InvalidUidException('Could not determine root page uid of current page id!', 1525270267);
+            throw new InvalidUidException(
+                LocalizationUtility::translate(
+                    'error.couldNotDetermineRootPage',
+                    'avalex'
+                ),
+                1525270267
+            );
         }
 
         return $rootPageUid;
@@ -117,25 +110,5 @@ class AvalexUtility
             }
         }
         return static::$frontendLocale;
-    }
-
-    // methods for unit/functional tests
-
-    /**
-     * @param $apiUrl
-     * @internal use only for tests!
-     */
-    public static function setApiUrl($apiUrl)
-    {
-        static::$apiUrl = (string)$apiUrl;
-    }
-
-    /**
-     * @param string $frontendLocale
-     * @internal use only for tests!
-     */
-    public static function setFrontendLocale($frontendLocale)
-    {
-        static::$frontendLocale = (string)$frontendLocale;
     }
 }

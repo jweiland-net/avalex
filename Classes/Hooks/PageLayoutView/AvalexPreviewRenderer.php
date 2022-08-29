@@ -10,6 +10,7 @@
 namespace JWeiland\Avalex\Hooks\PageLayoutView;
 
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
+use JWeiland\Avalex\Exception\InvalidUidException;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
@@ -26,7 +27,17 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
     public function preProcess(\TYPO3\CMS\Backend\View\PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row)
     {
         if (strpos($row['list_type'], 'avalex') !== false) {
-            $rootPage = AvalexUtility::getRootForPage($parentObject->id);
+            try {
+                $rootPage = AvalexUtility::getRootForPage($parentObject->id);
+            } catch (InvalidUidException $invalidUidException) {
+                $itemContent .= sprintf(
+                    '<p><b>Avalex: %s</b></p>',
+                    $invalidUidException->getMessage()
+                );
+                $drawItem = false;
+                return;
+            }
+
             $avalexConfigurationRepository = GeneralUtility::makeInstance(
                 AvalexConfigurationRepository::class
             );

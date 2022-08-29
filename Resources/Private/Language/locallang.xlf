@@ -9,6 +9,9 @@
 			<trans-unit id="flash_message.configuration.key_invalid">
 				<source>The submitted API key is invalid, please check your input!</source>
 			</trans-unit>
+			<trans-unit id="error.couldNotDetermineRootPage">
+				<source>The beginning of the website could not be determined! Maybe you forgot to activate the option "Use as start of website" in the page properties of the start page.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
