@@ -22,24 +22,9 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class AvalexUtility
 {
-    /**
-     * @var string
-     */
-    protected static $apiUrl = 'https://avalex.de/';
-
     protected static $typo3Version = '';
 
     protected static $frontendLocale = '';
-
-    /**
-     * Returns the API url with trailing slash
-     *
-     * @return string
-     */
-    public static function getApiUrl()
-    {
-        return static::$apiUrl;
-    }
 
     /**
      * Returns the uid of the site root of current page
@@ -117,25 +102,5 @@ class AvalexUtility
             }
         }
         return static::$frontendLocale;
-    }
-
-    // methods for unit/functional tests
-
-    /**
-     * @param $apiUrl
-     * @internal use only for tests!
-     */
-    public static function setApiUrl($apiUrl)
-    {
-        static::$apiUrl = (string)$apiUrl;
-    }
-
-    /**
-     * @param string $frontendLocale
-     * @internal use only for tests!
-     */
-    public static function setFrontendLocale($frontendLocale)
-    {
-        static::$frontendLocale = (string)$frontendLocale;
     }
 }
