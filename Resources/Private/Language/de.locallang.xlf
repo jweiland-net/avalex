@@ -12,6 +12,10 @@
 				<source>The submitted API key is invalid, please check your input!</source>
 				<target>Der eingegebene API-Key ist ungültig, bitte überprüfe die Eingabe!</target>
 			</trans-unit>
+			<trans-unit id="error.couldNotDetermineRootPage">
+				<source>The beginning of the website could not be determined! Maybe you forgot to activate the option "Use as start of website" in the page properties of the start page.</source>
+				<target>Anfang der Webseite konnte nicht ermittelt werden! Evtl. wurde vergessen in den Seiteneigenschaften der Startseite die Option "Als Anfang der Website benutzen" zu aktivieren.</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

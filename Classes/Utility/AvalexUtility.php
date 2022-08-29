@@ -15,6 +15,7 @@ use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
@@ -38,6 +39,7 @@ class AvalexUtility
         if ($currentPageUid === 0) {
             $currentPageUid = (int)self::getTypoScriptFrontendController()->id;
         }
+
         $rootLineUtility = GeneralUtility::makeInstance(RootlineUtility::class, $currentPageUid);
         $rootLine = $rootLineUtility->get();
 
@@ -50,7 +52,13 @@ class AvalexUtility
         }
 
         if ($rootPageUid === 0) {
-            throw new InvalidUidException('Could not determine root page uid of current page id!', 1525270267);
+            throw new InvalidUidException(
+                LocalizationUtility::translate(
+                    'error.couldNotDetermineRootPage',
+                    'avalex'
+                ),
+                1525270267
+            );
         }
 
         return $rootPageUid;
