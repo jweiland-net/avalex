@@ -50,7 +50,7 @@ class AvalexResponse implements ResponseInterface
 
         if (is_array($headers)) {
             $this->setArrayHeaders($headers);
-        } elseif(is_string($headers)) {
+        } elseif (is_string($headers)) {
             $this->setStringHeaders($headers);
         }
 
