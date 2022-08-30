@@ -11,7 +11,6 @@ namespace JWeiland\Avalex\Tests\Functional\Client\Request;
 
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
@@ -80,6 +79,126 @@ class AvalexResponseTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function getBodyReturnsContentAsArray(): void
+    {
+        $this->subject = new AvalexResponse('{"firstname":"stefan"}');
+        $this->subject->setIsJsonResponse(true);
+        self::assertSame(
+            [
+                'firstname' => 'stefan'
+            ],
+            $this->subject->getBody()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function getHeadersReturnsEmptyArray(): void
+    {
+        $this->subject = new AvalexResponse('test123', []);
+        self::assertSame(
+            [],
+            $this->subject->getHeaders()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function getHeadersWithStringReturnsArray(): void
+    {
+        $this->subject = new AvalexResponse(
+            '',
+            'Expires: 0' . CRLF . 'Content-Length: 123'
+        );
+        self::assertSame(
+            [
+                'Expires' => [
+                    0 => '0'
+                ],
+                'Content-Length' => [
+                    0 => '123'
+                ]
+            ],
+            $this->subject->getHeaders()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function getHeadersWithSimpleArrayReturnsArray(): void
+    {
+        $this->subject = new AvalexResponse(
+            '',
+            [
+                'Expires' => '0',
+                'Content-Length' => '123',
+            ]
+        );
+        self::assertSame(
+            [
+                'Expires' => [
+                    0 => '0'
+                ],
+                'Content-Length' => [
+                    0 => '123'
+                ]
+            ],
+            $this->subject->getHeaders()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function getHeadersWithComplexArrayReturnsArray(): void
+    {
+        $headers = [
+            'Expires' => [
+                0 => '0',
+                1 => '2',
+            ],
+            'Content-Length' => [
+                0 => '123',
+                1 => '321',
+            ]
+        ];
+        $this->subject = new AvalexResponse('', $headers);
+        self::assertSame(
+            $headers,
+            $this->subject->getHeaders()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function getStatusCodeReturnsInitially200(): void
+    {
+        $this->subject = new AvalexResponse();
+        self::assertSame(
+            200,
+            $this->subject->getStatusCode()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function getStatusCodeReturns401(): void
+    {
+        $this->subject = new AvalexResponse('', [], 401);
+        self::assertSame(
+            401,
+            $this->subject->getStatusCode()
+        );
+    }
+
+    /**
+     * @test
+     */
     public function isJsonResponseInitiallyReturnsFalse(): void
     {
         $this->subject = new AvalexResponse('');
@@ -97,21 +216,6 @@ class AvalexResponseTest extends FunctionalTestCase
         $this->subject->setIsJsonResponse(true);
         self::assertTrue(
             $this->subject->isJsonResponse()
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function getBodyReturnsContentAsArray(): void
-    {
-        $this->subject = new AvalexResponse('{"firstname":"stefan"}');
-        $this->subject->setIsJsonResponse(true);
-        self::assertSame(
-            [
-                'firstname' => 'stefan'
-            ],
-            $this->subject->getBody()
         );
     }
 }
