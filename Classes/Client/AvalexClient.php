@@ -46,13 +46,12 @@ class AvalexClient
                 AbstractMessage::ERROR
             );
 
-            return new AvalexResponse('');
+            return new AvalexResponse();
         }
 
         $avalexResponse = $this->request($request);
-
         if ($this->hasResponseErrors($avalexResponse)) {
-            $avalexResponse = new AvalexResponse('');
+            $avalexResponse = new AvalexResponse();
         }
 
         return $avalexResponse;
@@ -66,12 +65,18 @@ class AvalexClient
     {
         if (version_compare(AvalexUtility::getTypo3Version(), '8.1', '>=')) {
             $requestFactory = GeneralUtility::makeInstance(RequestFactory::class);
-            $content = (string)$requestFactory->request($request->buildUri())->getBody();
+            $response = $requestFactory->request($request->buildUri());
+            $content = (string)$response->getBody();
+            $headers = $response->getHeaders();
+            $status = $response->getStatusCode();
         } else {
-            $content = GeneralUtility::getUrl($request->buildUri());
+            $result = [];
+            $response = GeneralUtility::getUrl($request->buildUri(), 1, null, $result);
+            list($headers, $content) = explode(CRLF . CRLF, $response);
+            $status = isset($result['http_code']) ? $result['http_code'] : 0;
         }
 
-        $avalexResponse = new AvalexResponse($content);
+        $avalexResponse = new AvalexResponse($content, $headers, $status);
         $avalexResponse->setIsJsonResponse($request->isJsonRequest());
 
         return $avalexResponse;
@@ -121,13 +126,9 @@ class AvalexClient
                 return true;
             }
 
-            // Since TYPO3 8 GU::getUrl() can not return header data anymore
-            // Currently don't have time to build 2 different request approaches
-            // Maybe it's easier to remove old TYPO3 6 and 7 compatibility
-            $lines = explode(PHP_EOL, $response->getBody());
-            if (count($lines) === 1) {
+            if ($response->getStatusCode() !== 200) {
                 $this->messageHelper->addFlashMessage(
-                    $lines[0],
+                    $response->getBody(),
                     'Avalex Response Error',
                     AbstractMessage::ERROR
                 );

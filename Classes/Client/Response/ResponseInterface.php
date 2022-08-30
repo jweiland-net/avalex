@@ -22,6 +22,16 @@ interface ResponseInterface
     public function getBody();
 
     /**
+     * @return array
+     */
+    public function getHeaders();
+
+    /**
+     * @return int
+     */
+    public function getStatusCode();
+
+    /**
      * @param bool$isJsonResponse
      */
     public function setIsJsonResponse($isJsonResponse);
