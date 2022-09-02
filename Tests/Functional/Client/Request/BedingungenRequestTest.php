@@ -19,6 +19,9 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class BedingungenRequestTest extends FunctionalTestCase
 {
+    /**
+     * @var string[]
+     */
     protected $testExtensionsToLoad = [
         'typo3conf/ext/avalex'
     ];

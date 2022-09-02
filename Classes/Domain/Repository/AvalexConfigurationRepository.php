@@ -28,7 +28,12 @@ class AvalexConfigurationRepository extends AbstractRepository
     public function findAll()
     {
         if (version_compare(AvalexUtility::getTypo3Version(), '8.4', '>')) {
-            $result = $this->getQueryBuilder(self::TABLE)->select('*')->from(self::TABLE)->execute()->fetchAll();
+            $result = $this
+                ->getQueryBuilder(self::TABLE)
+                ->select('*')
+                ->from(self::TABLE)
+                ->execute()
+                ->fetchAll();
         } else {
             $result = $this->getDatabaseConnection()->exec_SELECTgetRows(
                 '*',
@@ -48,6 +53,7 @@ class AvalexConfigurationRepository extends AbstractRepository
      */
     public function findByWebsiteRoot($websiteRoot, $select = '*')
     {
+        // Order by "global" to get the individual configuration records first.
         $websiteRoot = (int)$websiteRoot;
         if (version_compare(AvalexUtility::getTypo3Version(), '8.4', '>')) {
             $result = $this
@@ -56,6 +62,7 @@ class AvalexConfigurationRepository extends AbstractRepository
                 ->from(self::TABLE)
                 ->where($this->getQueryBuilder(self::TABLE)->expr()->inSet('website_root', $websiteRoot))
                 ->orWhere($this->getQueryBuilder(self::TABLE)->expr()->eq('global', 1))
+                ->orderBy('global', 'ASC')
                 ->execute()
                 ->fetch();
         } else {
@@ -66,7 +73,9 @@ class AvalexConfigurationRepository extends AbstractRepository
                     '(FIND_IN_SET(%d, website_root) OR global = 1) %s',
                     $websiteRoot,
                     $this->getAdditionalWhereClause(self::TABLE)
-                )
+                ),
+                '',
+                'global ASC'
             );
         }
 
