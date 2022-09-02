@@ -7,7 +7,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\Avalex\Tests;
+namespace JWeiland\Avalex\Tests\Functional;
 
 use JWeiland\Avalex\AvalexPlugin;
 use JWeiland\Avalex\Client\AvalexClient;
@@ -48,6 +48,9 @@ class AvalexPluginTest extends FunctionalTestCase
      */
     protected $subject;
 
+    /**
+     * @var string[]
+     */
     protected $testExtensionsToLoad = [
         'typo3conf/ext/avalex'
     ];
