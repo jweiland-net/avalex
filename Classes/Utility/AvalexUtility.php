@@ -22,6 +22,13 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class AvalexUtility
 {
+    const LIST_TYPES = [
+        'avalex_avalex',
+        'avalex_imprint',
+        'avalex_bedingungen',
+        'avalex_widerruf'
+    ];
+
     protected static $frontendLocale = '';
 
     /**
@@ -67,14 +74,6 @@ class AvalexUtility
     protected static function getTypoScriptFrontendController()
     {
         return $GLOBALS['TSFE'];
-    }
-
-    /**
-     * @return array
-     */
-    public static function getListTypes()
-    {
-        return ['avalex_avalex', 'avalex_imprint', 'avalex_bedingungen', 'avalex_widerruf'];
     }
 
     public static function getFrontendLocale()
