@@ -45,6 +45,16 @@ class AvalexPlugin
     protected $avalexConfigurationRepository;
 
     /**
+     * @var array
+     */
+    protected $configuration = [];
+
+    /**
+     * @var LanguageService
+     */
+    protected $languageService;
+
+    /**
      * @var ContentObjectRenderer
      */
     public $cObj;
@@ -54,6 +64,13 @@ class AvalexPlugin
         $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('avalex_content');
         $this->apiService = GeneralUtility::makeInstance(ApiService::class);
         $this->avalexConfigurationRepository = GeneralUtility::makeInstance(AvalexConfigurationRepository::class);
+
+        $this->configuration = $this->avalexConfigurationRepository->findByWebsiteRoot(
+            AvalexUtility::getRootForPage(),
+            'uid, api_key, domain'
+        );
+
+        $this->languageService = $this->getLanguageService($this->configuration);
     }
 
     /**
@@ -72,12 +89,12 @@ class AvalexPlugin
             return (string)$this->cache->get($cacheIdentifier);
         }
 
-        $configuration = $this->avalexConfigurationRepository->findByWebsiteRoot(
-            AvalexUtility::getRootForPage(),
-            'uid, api_key, domain'
+        $this->languageService->addLanguageToEndpoint($endpointRequest);
+        $content = $this->apiService->getHtmlForCurrentRootPage(
+            $endpointRequest,
+            $this->configuration
         );
-        $this->getLanguageService($configuration)->addLanguageToEndpoint($endpointRequest);
-        $content = $this->apiService->getHtmlForCurrentRootPage($endpointRequest, $configuration);
+
         if ($content !== '') {
             // set cache for successful calls only
             $content = $this->processLinks($content);
@@ -89,6 +106,7 @@ class AvalexPlugin
 
     /**
      * @param string $endpoint
+     *
      * @return RequestInterface|LocalizeableRequestInterface
      */
     protected function getRequestForEndpoint($endpoint)
@@ -125,6 +143,8 @@ class AvalexPlugin
 
     /**
      * @return string
+     *
+     * @throws Exception\InvalidUidException
      */
     protected function getCacheIdentifier(RequestInterface $endpointRequest)
     {
@@ -133,12 +153,13 @@ class AvalexPlugin
             $endpointRequest->getEndpoint(),
             AvalexUtility::getRootForPage(),
             $GLOBALS['TSFE']->id,
-            AvalexUtility::getFrontendLocale()
+            $this->languageService->getFrontendLocale()
         );
     }
 
     /**
-     * @param $content
+     * @param string $content
+     *
      * @return string
      */
     protected function processLinks($content)
@@ -168,6 +189,7 @@ class AvalexPlugin
 
     /**
      * @param array $configuration
+     *
      * @return LanguageService
      */
     protected function getLanguageService(array $configuration)

@@ -10,8 +10,6 @@
 namespace JWeiland\Avalex\Utility;
 
 use JWeiland\Avalex\Exception\InvalidUidException;
-use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -28,8 +26,6 @@ class AvalexUtility
         'avalex_bedingungen',
         'avalex_widerruf'
     ];
-
-    protected static $frontendLocale = '';
 
     /**
      * Returns the uid of the site root of current page
@@ -74,22 +70,5 @@ class AvalexUtility
     protected static function getTypoScriptFrontendController()
     {
         return $GLOBALS['TSFE'];
-    }
-
-    public static function getFrontendLocale()
-    {
-        if (static::$frontendLocale === '') {
-            if (
-                class_exists(SiteLanguage::class)
-                && isset($GLOBALS['TYPO3_REQUEST'])
-                && $GLOBALS['TYPO3_REQUEST'] instanceof ServerRequestInterface
-                && $GLOBALS['TYPO3_REQUEST']->getAttribute('language') instanceof SiteLanguage) {
-                $siteLanguage = $GLOBALS['TYPO3_REQUEST']->getAttribute('language');
-                static::$frontendLocale = $siteLanguage ? $siteLanguage->getTwoLetterIsoCode() : '';
-            } elseif (isset($GLOBALS['TSFE']->lang)) {
-                static::$frontendLocale = $GLOBALS['TSFE']->lang;
-            }
-        }
-        return static::$frontendLocale;
     }
 }
