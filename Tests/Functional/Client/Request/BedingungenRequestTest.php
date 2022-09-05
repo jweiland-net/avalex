@@ -15,7 +15,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
- * Test BedingungenRequest
+ * Test case.
  */
 class BedingungenRequestTest extends FunctionalTestCase
 {

@@ -13,7 +13,7 @@ use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Client\Response\ResponseInterface;
 use JWeiland\Avalex\Helper\MessageHelper;
-use JWeiland\Avalex\Utility\AvalexUtility;
+use JWeiland\Avalex\Utility\Typo3Utility;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -63,7 +63,7 @@ class AvalexClient
      */
     protected function request(RequestInterface $request)
     {
-        if (version_compare(AvalexUtility::getTypo3Version(), '8.1', '>=')) {
+        if (version_compare(Typo3Utility::getTypo3Version(), '8.1', '>=')) {
             $requestFactory = GeneralUtility::makeInstance(RequestFactory::class);
             $response = $requestFactory->request($request->buildUri());
             $content = (string)$response->getBody();

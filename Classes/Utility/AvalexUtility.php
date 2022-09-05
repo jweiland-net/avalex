@@ -10,9 +10,6 @@
 namespace JWeiland\Avalex\Utility;
 
 use JWeiland\Avalex\Exception\InvalidUidException;
-use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Information\Typo3Version;
-use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -23,9 +20,12 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class AvalexUtility
 {
-    protected static $typo3Version = '';
-
-    protected static $frontendLocale = '';
+    const LIST_TYPES = [
+        'avalex_avalex',
+        'avalex_imprint',
+        'avalex_bedingungen',
+        'avalex_widerruf'
+    ];
 
     /**
      * Returns the uid of the site root of current page
@@ -67,48 +67,8 @@ class AvalexUtility
     /**
      * @return TypoScriptFrontendController
      */
-    public static function getTypoScriptFrontendController()
+    protected static function getTypoScriptFrontendController()
     {
         return $GLOBALS['TSFE'];
-    }
-
-    /**
-     * @return array
-     */
-    public static function getListTypes()
-    {
-        return ['avalex_avalex', 'avalex_imprint', 'avalex_bedingungen', 'avalex_widerruf'];
-    }
-
-    /**
-     * @return string
-     */
-    public static function getTypo3Version()
-    {
-        if (static::$typo3Version === '') {
-            if (class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)) {
-                static::$typo3Version = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(Typo3Version::class)->getVersion();
-            } else {
-                static::$typo3Version = TYPO3_version;
-            }
-        }
-        return static::$typo3Version;
-    }
-
-    public static function getFrontendLocale()
-    {
-        if (static::$frontendLocale === '') {
-            if (
-                class_exists(SiteLanguage::class)
-                && isset($GLOBALS['TYPO3_REQUEST'])
-                && $GLOBALS['TYPO3_REQUEST'] instanceof ServerRequestInterface
-                && $GLOBALS['TYPO3_REQUEST']->getAttribute('language') instanceof SiteLanguage) {
-                $siteLanguage = $GLOBALS['TYPO3_REQUEST']->getAttribute('language');
-                static::$frontendLocale = $siteLanguage ? $siteLanguage->getTwoLetterIsoCode() : '';
-            } elseif (isset($GLOBALS['TSFE']->lang)) {
-                static::$frontendLocale = $GLOBALS['TSFE']->lang;
-            }
-        }
-        return static::$frontendLocale;
     }
 }

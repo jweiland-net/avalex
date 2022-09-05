@@ -24,7 +24,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
- * Test the main functionality of this extension: the output of legal texts
+ * Test case.
  */
 class AvalexPluginTest extends FunctionalTestCase
 {
@@ -91,7 +91,7 @@ class AvalexPluginTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function processLinksEncryptsMailToLinks()
+    public function processLinksEncryptsMailToLinks(): void
     {
         $avalexResponse = new AvalexResponse('{"de": {"avx-impressum": ""}}');
         $avalexResponse->setIsJsonResponse(true);
