@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('TYPO3_MODE')) {
+    die('Access denied.');
+}
+
 $locallangTtc = 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:';
 $locallangGeneral = 'LLL:EXT:lang/locallang_general.xlf:';
 

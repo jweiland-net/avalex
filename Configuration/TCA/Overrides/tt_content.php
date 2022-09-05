@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('TYPO3_MODE')) {
+    die('Access denied.');
+}
+
 foreach (\JWeiland\Avalex\Utility\AvalexUtility::getListTypes() as $listType) {
     // Register frontend plugin
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(
