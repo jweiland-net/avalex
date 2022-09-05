@@ -12,6 +12,7 @@ namespace JWeiland\Avalex\Hooks\PageLayoutView;
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Exception\InvalidUidException;
 use JWeiland\Avalex\Utility\AvalexUtility;
+use JWeiland\Avalex\Utility\Typo3Utility;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -83,7 +84,7 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
             'edit' => ['tx_avalex_configuration' => [$uid => 'edit']],
             'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
         ];
-        if (version_compare(AvalexUtility::getTypo3Version(), '7.4', '>')) {
+        if (version_compare(Typo3Utility::getTypo3Version(), '7.4', '>')) {
             $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
             $link = (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
         } else {
@@ -106,7 +107,7 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
             'edit' => ['tx_avalex_configuration' => [0 => 'new']],
             'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
         ];
-        if (version_compare(AvalexUtility::getTypo3Version(), '7.4', '>')) {
+        if (version_compare(Typo3Utility::getTypo3Version(), '7.4', '>')) {
             $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
             $link = (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
         } else {

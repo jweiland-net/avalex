@@ -10,7 +10,7 @@
 namespace JWeiland\Avalex\Domain\Repository;
 
 use JWeiland\Avalex\Exception\AvalexConfigurationNotFoundException;
-use JWeiland\Avalex\Utility\AvalexUtility;
+use JWeiland\Avalex\Utility\Typo3Utility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -27,7 +27,7 @@ class AvalexConfigurationRepository extends AbstractRepository
      */
     public function findAll()
     {
-        if (version_compare(AvalexUtility::getTypo3Version(), '8.4', '>')) {
+        if (version_compare(Typo3Utility::getTypo3Version(), '8.4', '>')) {
             $result = $this
                 ->getQueryBuilder(self::TABLE)
                 ->select('*')
@@ -55,7 +55,7 @@ class AvalexConfigurationRepository extends AbstractRepository
     {
         // Order by "global" to get the individual configuration records first.
         $websiteRoot = (int)$websiteRoot;
-        if (version_compare(AvalexUtility::getTypo3Version(), '8.4', '>')) {
+        if (version_compare(Typo3Utility::getTypo3Version(), '8.4', '>')) {
             $result = $this
                 ->getQueryBuilder(self::TABLE)
                 ->select(...GeneralUtility::trimExplode(',', $select))
