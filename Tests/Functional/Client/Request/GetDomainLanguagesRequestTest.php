@@ -15,7 +15,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
- * Test GetDomainLanguagesRequest
+ * Test case.
  */
 class GetDomainLanguagesRequestTest extends FunctionalTestCase
 {

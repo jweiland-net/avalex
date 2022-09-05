@@ -15,7 +15,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
- * Test DatenschutzRequest
+ * Test case.
  */
 class DatenschutzerklaerungRequestTest extends FunctionalTestCase
 {
