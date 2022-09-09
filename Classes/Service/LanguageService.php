@@ -94,7 +94,7 @@ class LanguageService
         $getDomainLanguagesRequest = GeneralUtility::makeInstance(GetDomainLanguagesRequest::class);
         $getDomainLanguagesRequest->setDomain($this->configuration['domain']);
         $result = $this->avalexClient->processRequest($getDomainLanguagesRequest)->getBody();
-        $this->cache->set($this->getCacheIdentifier(), $response, [], 21600);
+        $this->cache->set($this->getCacheIdentifier(), $result, [], 21600);
 
         return $result;
     }
