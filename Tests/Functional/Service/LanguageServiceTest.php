@@ -46,7 +46,7 @@ class LanguageServiceTest extends FunctionalTestCase
     {
         parent::setUp();
         $this->importDataSet('ntf://Database/pages.xml');
-        $this->importDataSet(__DIR__ . '/Fixtures/tx_avalex_configuration.xml');
+        $this->importDataSet(__DIR__ . '/../Fixtures/tx_avalex_configuration.xml');
 
         // Set is_siteroot to 1
         parent::setUpFrontendRootPage(1);
