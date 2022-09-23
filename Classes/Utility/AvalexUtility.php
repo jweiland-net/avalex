@@ -28,6 +28,32 @@ class AvalexUtility
     ];
 
     /**
+     * This method is here to just solve a problem while upgrading EXT:avalex from 6.* to 7.*.
+     * As long as the cache for ext_localconf.php is NOT flushed, TYPO3 will throw error:
+     * "Call to undefined method JWeiland\Avalex\Utility\AvalexUtility::getListTypes()"
+     * As you can't log in to TYPO3 then, we keep this method, but please don't make use of it.
+     *
+     * @deprecated Please use self::LIST_TYPES
+     */
+    public static function getListTypes()
+    {
+        return self::LIST_TYPES;
+    }
+
+    /**
+     * This method is here to just solve a problem while upgrading EXT:avalex from 6.* to 7.*.
+     * As long as the cache for ext_localconf.php is NOT flushed, TYPO3 will throw error:
+     * "Call to undefined method JWeiland\Avalex\Utility\AvalexUtility::getTypo3Version()"
+     * As you can't log in to TYPO3 then, we keep this method, but please don't make use of it.
+     *
+     * @deprecated Please Typo3Utility::getTypo3Version instead
+     */
+    public static function getTypo3Version()
+    {
+        return Typo3Utility::getTypo3Version();
+    }
+
+    /**
      * Returns the uid of the site root of current page
      *
      * @param int $currentPageUid 0 = current TSFE id
