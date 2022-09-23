@@ -8,22 +8,14 @@ $EM_CONF[$_EXTKEY] = [
     'author_email' => 'support@jweiland.net',
     'author_company' => 'jweiland.net',
     'state' => 'stable',
-    'uploadfolder' => false,
-    'createDirs' => '',
-    'clearCacheOnLoad' => 0,
-    'version' => '6.5.0',
-    'constraints' =>
-        [
-            'depends' =>
-                [
-                    'php' => '5.6.0-0.0.0',
-                    'typo3' => '6.2.0-11.5.99',
-                    'extbase' => '1.0.0-0.0.0'
-                ],
-            'conflicts' =>
-                [],
-            'suggests' =>
-                [],
+    'version' => '7.0.0',
+    'constraints' => [
+        'depends' => [
+            'php' => '5.6.0-0.0.0',
+            'typo3' => '6.2.0-11.5.99',
+            'extbase' => '1.0.0-0.0.0',
         ],
-    'clearcacheonload' => false,
+        'conflicts' => [],
+        'suggests' => [],
+    ],
 ];
