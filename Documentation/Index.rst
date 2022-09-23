@@ -1,58 +1,55 @@
-﻿.. ==================================================
-.. FOR YOUR INFORMATION
-.. --------------------------------------------------
-.. -*- coding: utf-8 -*- with BOM.
+﻿.. include:: /Includes.rst.txt
 
-.. include:: Includes.txt
+=========
+<project>
+=========
 
-.. _start:
+:Extension key:
+   avalex
 
-=============================================================
-avalex
-=============================================================
+:Package name:
+   Avalex
 
-.. only:: html
+:Version:
+   |release|
 
-	:Classification:
-		avalex
+:Language:
+   en
 
-	:Version:
-		|release|
+:Author:
+   Stefan Froemken
 
-	:Language:
-		en
+:License:
+   This document is published under the
+   `Creative Commons BY 4.0 <https://creativecommons.org/licenses/by/4.0/>`__
+   license.
 
-	:Description:
-		The avalex extension allows to display automatically generated and updated legal texts within a TYPO3 website, specifically imprint, privacy statement, cancellation notice as well as terms and conditions.
+:Rendered:
+   |today|
 
-	:Keywords:
-		avalex,dsgvo,gdpr
+----
 
-	:Copyright:
-		2022
+The avalex extension allows to display automatically generated and updated
+legal texts within a TYPO3 website, specifically imprint, privacy statement,
+cancellation notice as well as terms and conditions.
 
-	:Author:
-		jweiland.net
+----
 
-	:Email:
-		support@jweiland.net
-
-	:License:
-		This document is published under the Open Content License
-		available from http://www.opencontent.org/opl.shtml
-
-	:Rendered:
-		|today|
-
-	The content of this document is related to TYPO3,
-	a GNU/GPL CMS/Framework available from `www.typo3.org <http://www.typo3.org/>`_.
-
-	**Table of Contents**
+**Table of Contents:**
 
 .. toctree::
-	:maxdepth: 3
+   :maxdepth: 2
+   :titlesonly:
 
 	Introduction/Index
 	Administrator/Index
 	Developer/Index
 	Links
+
+.. Meta Menu
+
+.. toctree::
+   :hidden:
+
+   Sitemap
+   genindex

@@ -1,9 +1,4 @@
-.. ==================================================
-.. FOR YOUR INFORMATION
-.. --------------------------------------------------
-.. -*- coding: utf-8 -*- with BOM.
-
-.. include:: Includes.txt
+.. include:: /Includes.rst.txt
 
 
 .. _links:
@@ -24,4 +19,4 @@ Links
 	https://jweiland.net/kontakt.html
 
 :Avalex:
-  https://www.avalex.de/121.html
+  https://www.avalex.de
