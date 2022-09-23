@@ -1,8 +1,8 @@
 ﻿.. include:: /Includes.rst.txt
 
-=========
-<project>
-=========
+======
+Avalex
+======
 
 :Extension key:
    avalex
