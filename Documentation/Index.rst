@@ -1,8 +1,8 @@
 ﻿.. include:: /Includes.rst.txt
 
-=========
-<project>
-=========
+======
+Avalex
+======
 
 :Extension key:
    avalex
@@ -41,10 +41,10 @@ cancellation notice as well as terms and conditions.
    :maxdepth: 2
    :titlesonly:
 
-	Introduction/Index
-	Administrator/Index
-	Developer/Index
-	Links
+   Introduction/Index
+   Administrator/Index
+   Developer/Index
+   Links
 
 .. Meta Menu
 
