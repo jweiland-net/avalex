@@ -34,7 +34,7 @@ Administrator Manual
 
    After completing the data you can download the TYPO3 extension directly
    from the Avalex site, however we recommend always using the latest version
-   from the TYPO3 Extension Repository (TER), Github or Packagist.
+   from the TYPO3 Extension Repository (TER) or Packagist (Composer).
 
 4. Install the ``avalex`` extension
 
@@ -44,12 +44,9 @@ Administrator Manual
 
 5. Add ``avalex`` plugin
 
-   Add a plugin from Tab ``Avalex`` to display one of the Avalex services on
-   your site. In the settings of the page the cache duration should be changed
-   from ``default`` to a value like ``1 hour``. This will ensure, that the
-   privacy statement on the website will be updated no later than 1 hour
-   after the scheduler task has fetched a new version from the Avalex
-   server (Otherwise it may take up to 24 hours).
+   Visit a page in the TYPO3 backend and click on ``+ Content`` to
+   open the Content Element Wizard. Navigate to tab ``Avalex`` and choose
+   one of the available plugins.
    No further settings are necessary. The text output will be with standard
    ``h2`` headers and therefore should blend with the normal content.
 
