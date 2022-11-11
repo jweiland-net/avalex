@@ -2,7 +2,6 @@
 defined('TYPO3_MODE') || die('Access denied.');
 
 call_user_func(static function () {
-
     $wizardItems = 'mod.wizards.newContentElement.wizardItems {
     tx_avalex {
         header = LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:wizard_items.tx_avalex

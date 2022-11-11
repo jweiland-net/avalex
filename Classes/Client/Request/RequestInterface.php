@@ -10,7 +10,7 @@
 namespace JWeiland\Avalex\Client\Request;
 
 /**
- * Interface for Avalex requests
+ * Interface for avalex requests
  */
 interface RequestInterface
 {

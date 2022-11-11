@@ -13,7 +13,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
- * Avalex Response class which can handle string and json content
+ * avalex Response class which can handle string and json content
  */
 class AvalexResponse implements ResponseInterface
 {

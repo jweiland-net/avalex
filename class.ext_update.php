@@ -98,12 +98,8 @@ class ext_update {
             if (!$this->migrateApiKeyToDb()) {
                 return false;
             }
-            // manually run task once
-            if (!$this->runTaskManually()) {
-                return false;
-            }
             // the api key is no longer in extension configuration
-            // so we gonna remove him
+            // so we gonna remove it
             $this->removeApiKeyFromExtConf();
         } catch (\Exception $exception) {
             $this->messageArray[] = [
@@ -149,37 +145,6 @@ class ext_update {
                 '',
                 'Successfully migrated API key from extension configuration to TCA record on page 0'
             ];
-        }
-        return $success;
-    }
-
-    /**
-     * Run task manually
-     *
-     * @return bool true on success
-     */
-    protected function runTaskManually()
-    {
-        $success = true;
-        $importerTask = new ImporterTask();
-        if ($importerTask->execute()) {
-            $this->messageArray[] = [
-                AbstractMessage::OK,
-                '',
-                'Successfully run scheduler task manually to fetch the latest privacy content'
-            ];
-            $this->messageArray[] = [
-                AbstractMessage::INFO,
-                'Important information',
-                'Please open the Scheduler module, create a new avalex importer task and remove the old one!'
-            ];
-        } else {
-            $this->messageArray[] = [
-                AbstractMessage::ERROR,
-                '',
-                'Failed to run scheduler task manually! Please check your API key.'
-            ];
-            $success = false;
         }
         return $success;
     }
