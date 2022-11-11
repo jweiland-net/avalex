@@ -19,7 +19,7 @@ use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * This is the Avalex client which will send the request to the Avalex server
+ * This is the avalex client which will send the request to the avalex server
  */
 class AvalexClient
 {
