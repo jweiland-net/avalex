@@ -14,7 +14,6 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Contains methods to create FlashMessage.
@@ -29,8 +28,7 @@ class MessageHelper
 
     public function __construct()
     {
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->flashMessageService = $objectManager->get(FlashMessageService::class);
+        $this->flashMessageService = GeneralUtility::makeInstance(FlashMessageService::class);
     }
 
     /**

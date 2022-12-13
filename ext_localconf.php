@@ -1,5 +1,5 @@
 <?php
-defined('TYPO3_MODE') || die('Access denied.');
+defined('TYPO3_MODE') || defined('TYPO3') || die('Access denied.');
 
 call_user_func(static function () {
     $wizardItems = 'mod.wizards.newContentElement.wizardItems {
@@ -80,7 +80,13 @@ call_user_func(static function () {
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_content'] = [];
     }
 
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['avalex_newcontentelement'] = \JWeiland\Avalex\Hooks\PageLayoutView\AvalexPreviewRenderer::class;
+    if (
+        version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '10.0', '<') ||
+        (\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\Features::class))->isFeatureEnabled('fluidBasedPageModule') === false
+    ) {
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['avalex_newcontentelement'] = \JWeiland\Avalex\Hooks\PageLayoutView\AvalexPreviewRenderer::class;
+    }
+    // else ContentPreviewRenderer is used
 
     if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class])) {
         $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class] = [];

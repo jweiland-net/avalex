@@ -62,6 +62,7 @@ class LanguageService
         $frontendLanguage = $this->getFrontendLocale();
         $avalexLanguageResponse = $this->getLanguageResponseFromCache() ?: $this->fetchLanguageResponse();
         if (
+            is_array($avalexLanguageResponse) &&
             array_key_exists($frontendLanguage, $avalexLanguageResponse)
             && array_key_exists($endpointRequest->getEndpointWithoutPrefix(), $avalexLanguageResponse[$frontendLanguage])
         ) {
