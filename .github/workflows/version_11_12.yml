@@ -1,4 +1,4 @@
-name: Test Avalex against TYPO3 version 11 - 12
+name: Test Avalex against TYPO3 11-12
 
 on: [pull_request]
 
@@ -16,7 +16,7 @@ jobs:
         run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composer -e 'validate'
 
       - name: Install testing system
-        run: Build/Scripts/runTests.sh -t 11 -p ${{ matrix.php }} -s composerInstall
+        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composerInstall
 
       - name: Lint PHP
         run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s lint

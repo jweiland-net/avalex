@@ -1,4 +1,4 @@
-name: Test Avalex against TYPO3 version 6-10
+name: Test Avalex against TYPO3 6-10
 
 on: [pull_request]
 
