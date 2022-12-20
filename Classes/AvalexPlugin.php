@@ -19,10 +19,12 @@ use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Service\ApiService;
 use JWeiland\Avalex\Service\LanguageService;
 use JWeiland\Avalex\Utility\AvalexUtility;
+use JWeiland\Avalex\Utility\Typo3Utility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Typolink\EmailLinkBuilder;
 
 /**
  * Class AvalexPlugin
@@ -71,6 +73,16 @@ class AvalexPlugin
         );
 
         $this->languageService = $this->getLanguageService($this->configuration);
+    }
+
+    /**
+     * This is the new version to set the COR for UserFunc since TYPO3 11.
+     *
+     * @param ContentObjectRenderer $contentObjectRenderer
+     */
+    public function setContentObjectRenderer(ContentObjectRenderer $contentObjectRenderer)
+    {
+        $this->cObj = $contentObjectRenderer;
     }
 
     /**
@@ -164,23 +176,33 @@ class AvalexPlugin
      */
     protected function processLinks($content)
     {
-        $cObj = $this->cObj;
         $requestUrl = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
+        $encryptMailCallable = $this->getEncryptedMailCallable();
+
         return preg_replace_callback(
-            '@<a href="(?P<href>(?P<type>mailto:|#)[^"\']+)">(?P<text>[^<]+)<\/a>@',
-            static function ($match) use ($cObj, $requestUrl) {
+            '@<a href="(?P<href>(?P<type>mailto:|#)[^"\']+)">(?P<text>[^<]+)</a>@',
+            static function ($match) use ($requestUrl, $encryptMailCallable) {
                 if ($match['type'] === 'mailto:') {
-                    $encrypted = $cObj->getMailTo(substr($match['href'], 7), $match['text']);
+                    $encrypted = $encryptMailCallable(substr($match['href'], 7), $match['text']);
                     if (count($encrypted) === 3) {
                         // TYPO3 >= 11
-                        $html = '<a href="' . $encrypted[0] . '" '
-                            . GeneralUtility::implodeAttributes($encrypted[2], true)
-                            . '>' . $encrypted[1] . '</a>';
+                        $html = sprintf(
+                            '<a href="%s" %s>%s</a>',
+                            $encrypted[0],
+                            GeneralUtility::implodeAttributes($encrypted[2], true),
+                            $encrypted[1]
+                        );
                     } else {
-                        $html = '<a href="' . $encrypted[0] . '">' . $encrypted[1] . '</a>';
+                        $html = sprintf(
+                            '<a href="%s">%s</a>',
+                            $encrypted[0],
+                            $encrypted[1]
+                        );
                     }
+
                     return $html;
                 }
+
                 return (string)str_replace($match['href'], $requestUrl . $match['href'], $match[0]);
             },
             $content
@@ -188,8 +210,23 @@ class AvalexPlugin
     }
 
     /**
-     * @param array $configuration
-     *
+     * @return Callable
+     */
+    protected function getEncryptedMailCallable()
+    {
+        $cObj = $this->cObj;
+
+        return static function ($mailAddress, $linkText) use ($cObj) {
+            if (version_compare(Typo3Utility::getTypo3Version(), '12.0', '>=')) {
+                $linkBuilder = GeneralUtility::makeInstance(EmailLinkBuilder::class, $cObj, $GLOBALS['TSFE']);
+                return $linkBuilder->processEmailLink((string)$mailAddress, (string)$linkText);
+            }
+
+            return $cObj->getMailTo($mailAddress, $linkText);
+        };
+    }
+
+    /**
      * @return LanguageService
      */
     protected function getLanguageService(array $configuration)
