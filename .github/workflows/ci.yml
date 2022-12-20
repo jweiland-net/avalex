@@ -4,7 +4,51 @@ name: CI
 on: [pull_request]
 
 jobs:
-  build:
+  CGL:
+    name: Coding Standard
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup PHP with tools
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Install dependencies with typo3/cms-core:^12.1
+        run: |
+          composer require typo3/cms-core:^12.1 --no-progress
+          composer require typo3/cms-extensionmanager:^12.1 --no-progress
+          composer require "friendsofphp/php-cs-fixer":^3.13 --no-progress
+          git checkout composer.json
+
+      - name: php-cs-fixer
+        run: composer ci:php:fixer
+
+      - name: Lint PHP
+        run: composer ci:php:lint
+
+  testing:
+    name: PHP Unit and Functional Tests
+    needs: CGL
+
     runs-on: ubuntu-latest
 
     strategy:
@@ -45,7 +89,18 @@ jobs:
             php: '8.0'
             composer: '2'
             package: typo3/cms-core
-            # Do not test against PHP 8.1. php-cs-fixer 2.19 does not work with PHP 8.1
+          - typo3: ^11.0
+            php: '8.1'
+            composer: '2'
+            package: typo3/cms-core
+          - typo3: ^12.0
+            php: '8.1'
+            composer: '2'
+            package: typo3/cms-core
+          - typo3: ^12.0
+            php: '8.2'
+            composer: '2'
+            package: typo3/cms-core
     services:
       mysql:
         image: mysql:5.6
@@ -70,24 +125,21 @@ jobs:
         run: |
           composer self-update --${{ matrix.composer }}
 
-      - name: Environment Check
-        run: |
-          php --version
-          composer --version
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate
+      - name: Cache composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies with ${{ matrix.package }}:${{ matrix.typo3 }}
         run: |
           composer require ${{ matrix.package }}:${{ matrix.typo3 }} --no-progress
           git checkout composer.json
-
-      - name: php-cs-fixer
-        run: composer ci:php:fixer
-
-      - name: Lint PHP
-        run: composer ci:php:lint
 
       - name: Functional Tests
         if: matrix.php > 7.0
