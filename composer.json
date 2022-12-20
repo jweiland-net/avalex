@@ -22,7 +22,6 @@
 		"typo3/cms-core": "^6.2 || ^7.6 || ^8.7 || ^9.5.17 || ^10.4.2 || ^11.0 || ^12.1"
 	},
 	"require-dev": {
-		"friendsofphp/php-cs-fixer": "^2.19",
 		"nimut/testing-framework": ">=2.0",
 		"phpunit/phpunit": "<9.0",
 		"phpspec/prophecy": "^1.10"
