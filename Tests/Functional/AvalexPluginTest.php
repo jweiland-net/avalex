@@ -133,7 +133,7 @@ class AvalexPluginTest extends FunctionalTestCase
     }
 
     /**
-     * @return Callable
+     * @return callable
      */
     protected function getEncryptedMailCallable()
     {

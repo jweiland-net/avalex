@@ -210,7 +210,7 @@ class AvalexPlugin
     }
 
     /**
-     * @return Callable
+     * @return callable
      */
     protected function getEncryptedMailCallable()
     {
