@@ -118,11 +118,11 @@ class AvalexResponseTest extends FunctionalTestCase
         self::assertSame(
             [
                 'Expires' => [
-                    0 => '0'
+                    0 => '0',
                 ],
                 'Content-Length' => [
-                    0 => '123'
-                ]
+                    0 => '123',
+                ],
             ],
             $this->subject->getHeaders()
         );
