@@ -326,7 +326,7 @@ DOCKER_PHP_IMAGE=`echo "php${PHP_VERSION}" | sed -e 's/\.//'`
 shift $((OPTIND - 1))
 TEST_FILE=${1}
 if [ -n "${1}" ]; then
-    TEST_FILE=".Build/public/typo3conf/ext/news/${1}"
+    TEST_FILE=".Build/public/typo3conf/ext/avalex/${1}"
 fi
 
 if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
