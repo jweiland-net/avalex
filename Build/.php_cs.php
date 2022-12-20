@@ -29,7 +29,7 @@ COMMENT;
 
 $finder = PhpCsFixer\Finder::create()
     ->name('*.php')
-    ->exclude('.build')
+    ->exclude('.Build')
     ->exclude('var')
     ->in(__DIR__);
 
