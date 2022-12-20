@@ -12,7 +12,6 @@ jobs:
       matrix:
         typo3: [ '^9.5', '^10.4' ]
         php: [ '7.3', '7.4' ]
-        package: [typo3/cms-core]
         include:
           - typo3: '^6.2'
             php: '5.6'
@@ -29,12 +28,15 @@ jobs:
           - typo3: '^8.7'
             php: '7.0'
             composer: '1'
+            package: typo3/cms-core
           - typo3: '^8.7'
             php: '7.1'
             composer: '1'
+            package: typo3/cms-core
           - typo3: '^8.7'
             php: '7.2'
             composer: '1'
+            package: typo3/cms-core
     services:
       mysql:
         image: mysql:5.6
