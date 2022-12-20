@@ -136,9 +136,9 @@ $tca = [
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.description',
             'config' => [
                 'type' => 'input',
-            ]
-        ]
-    ]
+            ],
+        ],
+    ],
 ];
 
 if (version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '8.5', '<')) {
