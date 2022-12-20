@@ -15,6 +15,9 @@ jobs:
       - name: Validate composer.json and composer.lock
         run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composer -e 'validate'
 
+      - name: Install testing system
+        run: Build/Scripts/runTests.sh -t 11 -p ${{ matrix.php }} -s composerInstall
+
       - name: Lint PHP
         run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s lint
 
