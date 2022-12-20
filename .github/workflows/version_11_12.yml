@@ -15,6 +15,10 @@ jobs:
       - name: Validate composer.json and composer.lock
         run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composer -e 'validate'
 
+      # Do not add php-cs-fixer to composer.json, as version 3 is not compatible with PHP < 7.4 for earlier TYPO3 versions
+      - name: Install php-cs-fixer v3
+        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composer -e 'require --dev friendsofphp/php-cs-fixer:^3.13.0'
+
       - name: Install testing system
         run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composerInstall
 
