@@ -1,5 +1,4 @@
-# Adapted from https://github.com/TYPO3GmbH/blog/blob/master/.github/workflows/ci.yml
-name: CI
+name: Test Avalex against TYPO3 version 6-10
 
 on: [pull_request]
 
@@ -16,7 +15,7 @@ jobs:
       - name: Setup PHP with tools
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '7.4'
 
       - name: Get composer cache directory
         id: composer-cache
@@ -32,10 +31,10 @@ jobs:
       - name: Validate composer.json and composer.lock
         run: composer validate
 
-      - name: Install dependencies with typo3/cms-core:^12.1
+      - name: Install dependencies with typo3/cms-core:^10.4
         run: |
-          composer require typo3/cms-core:^12.1 --no-progress
-          composer require typo3/cms-extensionmanager:^12.1 --no-progress
+          composer require typo3/cms-core:^10.4 --no-progress
+          composer require typo3/cms-extensionmanager:^10.4 --no-progress
           composer require "friendsofphp/php-cs-fixer":^3.13 --no-progress
           git checkout composer.json
 
@@ -53,54 +52,31 @@ jobs:
 
     strategy:
       matrix:
-        typo3: [^9.5, ^10.4]
-        php: ['7.3', '7.4']
+        typo3: [ '^9.5', '^10.4' ]
+        php: [ '7.3', '7.4' ]
         package: [typo3/cms-core]
         include:
-          - typo3: ^6.2
+          - typo3: '^6.2'
             php: '5.6'
             composer: '1'
             package: typo3/cms
-          - typo3: ^7.6
+          - typo3: '^7.6'
             php: '5.6'
             composer: '1'
             package: typo3/cms
-          - typo3: ^7.6
+          - typo3: '^7.6'
             php: '7.0'
             composer: '1'
             package: typo3/cms
-          - typo3: ^8.7
+          - typo3: '^8.7'
             php: '7.0'
             composer: '1'
-            package: typo3/cms-core
-          - typo3: ^8.7
+          - typo3: '^8.7'
             php: '7.1'
             composer: '1'
-            package: typo3/cms-core
-          - typo3: ^8.7
+          - typo3: '^8.7'
             php: '7.2'
             composer: '1'
-            package: typo3/cms-core
-          - typo3: ^11.0
-            php: '7.4'
-            composer: '2'
-            package: typo3/cms-core
-          - typo3: ^11.0
-            php: '8.0'
-            composer: '2'
-            package: typo3/cms-core
-          - typo3: ^11.0
-            php: '8.1'
-            composer: '2'
-            package: typo3/cms-core
-          - typo3: ^12.0
-            php: '8.1'
-            composer: '2'
-            package: typo3/cms-core
-          - typo3: ^12.0
-            php: '8.2'
-            composer: '2'
-            package: typo3/cms-core
     services:
       mysql:
         image: mysql:5.6
