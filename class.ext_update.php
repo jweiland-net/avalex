@@ -22,6 +22,8 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Update class for the extension manager.
+ * ext_update.php compatibility has been removed with TYPO3 11.
+ * So we can leave ObjectManager here, which was removed with TYPO3 12.
  */
 class ext_update {
     /**
