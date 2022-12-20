@@ -9,7 +9,6 @@
 
 namespace JWeiland\Avalex\Tests\Functional\Service;
 
-
 use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\ImpressumRequest;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
@@ -38,7 +37,7 @@ class ApiServiceTest extends FunctionalTestCase
      * @var string[]
      */
     protected $testExtensionsToLoad = [
-        'typo3conf/ext/avalex'
+        'typo3conf/ext/avalex',
     ];
 
     protected function setUp(): void

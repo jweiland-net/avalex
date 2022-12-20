@@ -54,7 +54,7 @@ class AvalexPluginTest extends FunctionalTestCase
      * @var string[]
      */
     protected $testExtensionsToLoad = [
-        'typo3conf/ext/avalex'
+        'typo3conf/ext/avalex',
     ];
 
     protected function setUp(): void
@@ -126,7 +126,7 @@ class AvalexPluginTest extends FunctionalTestCase
             $expected = "<a href=\"$encryptedMail[0]\">$encryptedMail[1]</a>";
         }
 
-        static::assertThat(
+        self::assertThat(
             $this->subject->render(null, ['endpoint' => 'avx-impressum']),
             new StringContains($expected)
         );

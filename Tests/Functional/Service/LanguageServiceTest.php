@@ -42,7 +42,7 @@ class LanguageServiceTest extends FunctionalTestCase
      * @var string[]
      */
     protected $testExtensionsToLoad = [
-        'typo3conf/ext/avalex'
+        'typo3conf/ext/avalex',
     ];
 
     protected function setUp(): void
@@ -86,7 +86,7 @@ class LanguageServiceTest extends FunctionalTestCase
                     new Uri('/'),
                     [
                         'enabled' => true,
-                        'iso-639-1' => $language
+                        'iso-639-1' => $language,
                     ]
                 )
             );
@@ -142,8 +142,8 @@ class LanguageServiceTest extends FunctionalTestCase
             ->shouldBeCalled()
             ->willReturn([
                 'de' => [
-                    'invalid-endpoint' => 'foo->bar'
-                ]
+                    'invalid-endpoint' => 'foo->bar',
+                ],
             ]);
 
         $this->avalexClientProphecy
@@ -174,8 +174,8 @@ class LanguageServiceTest extends FunctionalTestCase
             ->shouldBeCalled()
             ->willReturn([
                 'de' => [
-                    'impressum' => 'TYPO3 works'
-                ]
+                    'impressum' => 'TYPO3 works',
+                ],
             ]);
 
         $this->avalexClientProphecy
@@ -206,11 +206,11 @@ class LanguageServiceTest extends FunctionalTestCase
             ->shouldBeCalled()
             ->willReturn([
                 'de' => [
-                    'impressum' => 'TYPO3 klappt'
+                    'impressum' => 'TYPO3 klappt',
                 ],
                 'en' => [
-                    'impressum' => 'TYPO3 works'
-                ]
+                    'impressum' => 'TYPO3 works',
+                ],
             ]);
 
         $this->avalexClientProphecy

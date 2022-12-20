@@ -13,7 +13,6 @@
  * The TYPO3 project - inspiring people to share!
  */
 
-use JWeiland\Avalex\Task\ImporterTask;
 use JWeiland\Avalex\Utility\Typo3Utility;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
@@ -25,7 +24,8 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
  * ext_update.php compatibility has been removed with TYPO3 11.
  * So we can leave ObjectManager here, which was removed with TYPO3 12.
  */
-class ext_update {
+class ext_update
+{
     /**
      * Array of flash messages (params) array[][status,title,message]
      *
@@ -107,7 +107,7 @@ class ext_update {
             $this->messageArray[] = [
                 AbstractMessage::ERROR,
                 'Updater run into an exception',
-                $exception->getMessage()
+                $exception->getMessage(),
             ];
             $success = false;
         }
@@ -127,7 +127,7 @@ class ext_update {
             'pid' => 0,
             'description' => 'Main',
             'global' => true,
-            'api_key' => (string)$this->apiKey
+            'api_key' => (string)$this->apiKey,
         ];
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
         $dataHandler->start($data, []);
@@ -137,7 +137,7 @@ class ext_update {
                 $this->messageArray[] = [
                     AbstractMessage::ERROR,
                     'Error while running DataHandler',
-                    $logEntry
+                    $logEntry,
                 ];
             }
             $success = false;
@@ -145,7 +145,7 @@ class ext_update {
             $this->messageArray[] = [
                 AbstractMessage::OK,
                 '',
-                'Successfully migrated API key from extension configuration to TCA record on page 0'
+                'Successfully migrated API key from extension configuration to TCA record on page 0',
             ];
         }
         return $success;
@@ -163,7 +163,7 @@ class ext_update {
         $this->messageArray[] = [
             AbstractMessage::OK,
             '',
-            'Successfully removed api key from extension configuration.'
+            'Successfully removed api key from extension configuration.',
         ];
     }
 

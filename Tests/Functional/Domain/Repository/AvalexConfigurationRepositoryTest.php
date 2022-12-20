@@ -9,7 +9,6 @@
 
 namespace JWeiland\Avalex\Tests\Functional\Domain\Repository;
 
-
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Exception\AvalexConfigurationNotFoundException;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
@@ -30,7 +29,7 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
      * @var string[]
      */
     protected $testExtensionsToLoad = [
-        'typo3conf/ext/avalex'
+        'typo3conf/ext/avalex',
     ];
 
     protected function setUp(): void
@@ -93,7 +92,7 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
         $this->getDatabaseConnection()->delete(
             'tx_avalex_configuration',
             [
-                'uid' => 1
+                'uid' => 1,
             ]
         );
 

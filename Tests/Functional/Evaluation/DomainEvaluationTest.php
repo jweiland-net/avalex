@@ -9,20 +9,8 @@
 
 namespace JWeiland\Avalex\Tests\Functional;
 
-use JWeiland\Avalex\AvalexPlugin;
-use JWeiland\Avalex\Client\AvalexClient;
-use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
-use JWeiland\Avalex\Client\Request\ImpressumRequest;
-use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Evaluation\DomainEvaluation;
-use JWeiland\Avalex\Service\ApiService;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
-use PHPUnit\Framework\Constraint\StringContains;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Test case.
@@ -38,7 +26,7 @@ class DomainEvaluationTest extends FunctionalTestCase
      * @var string[]
      */
     protected $testExtensionsToLoad = [
-        'typo3conf/ext/avalex'
+        'typo3conf/ext/avalex',
     ];
 
     protected function setUp(): void
