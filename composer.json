@@ -42,8 +42,8 @@
 	"extra": {
 		"typo3/cms": {
 			"extension-key": "avalex",
-			"app-dir": ".Build",
-			"web-dir": ".Build/public"
+			"vendor-dir": ".Build/vendor",
+			"bin-dir": ".Build/bin"
 		}
 	},
 	"scripts": {
