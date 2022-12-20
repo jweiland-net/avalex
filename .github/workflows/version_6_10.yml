@@ -73,6 +73,8 @@ jobs:
       - name: Install dependencies with ${{ matrix.package }}:${{ matrix.typo3 }}
         run: |
           composer require ${{ matrix.package }}:${{ matrix.typo3 }} --no-progress
+          composer require typo3/cms-extensionmanager:^10.4 --no-progress
+          composer require --dev nimut/testing-framework:">=2.0" phpunit/phpunit:"<9.0" phpspec/prophecy:^1.10 --no-progress
           git checkout composer.json
 
       - name: Functional Tests
