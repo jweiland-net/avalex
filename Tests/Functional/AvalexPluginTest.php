@@ -117,7 +117,7 @@ class AvalexPluginTest extends FunctionalTestCase
                 '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="mailto:john@doe.tld">johns mail</a></p>'
             );
 
-        $encryptedMail = call_user_func($this->getEncryptedMailCallable(), ['john@doe.tld', 'johns mail']);
+        $encryptedMail = call_user_func_array($this->getEncryptedMailCallable(), ['john@doe.tld', 'johns mail']);
         if (count($encryptedMail) === 3) {
             // TYPO3 >= 11
             $attributes = GeneralUtility::implodeAttributes($encryptedMail[2], true);
