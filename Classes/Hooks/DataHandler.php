@@ -78,8 +78,8 @@ class DataHandler
         $avalexResponse = $this->avalexClient->processRequest($isApiKeyConfiguredRequest);
         $result = $avalexResponse->getBody();
         if (
-            is_array($result) &&
-            array_key_exists('message', $result)
+            is_array($result)
+            && array_key_exists('message', $result)
             && $result['message'] === 'OK'
         ) {
             // API key valid
