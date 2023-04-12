@@ -17,26 +17,26 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Validate composer.json and composer.lock
-        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composer -e 'validate'
+        run: Build/Scripts/runTests.sh -p 8.1 -s composer -e 'validate'
 
       - name: Install testing system
-        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composerInstall
+        run: Build/Scripts/runTests.sh -p 8.1 -s composerInstall
 
       # Do not add php-cs-fixer to composer.json, as version 3 is not compatible with PHP < 7.4 for earlier TYPO3 versions
       - name: Install php-cs-fixer v3
-        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composer -e 'require --dev friendsofphp/php-cs-fixer:^3.13'
+        run: Build/Scripts/runTests.sh -p 8.1 -s composer -e 'require --dev friendsofphp/php-cs-fixer:^3.13'
 
       - name: Install TYPO3 coding standards
-        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composer -e 'require --dev typo3/coding-standards:^0.7'
+        run: Build/Scripts/runTests.sh -p 8.1 -s composer -e 'require --dev typo3/coding-standards:^0.7'
 
       - name: Install composer installer bridge
-        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composer -e 'require --dev sbuerk/typo3-cmscomposerinstallers-testingframework-bridge:^0.0.1'
+        run: Build/Scripts/runTests.sh -p 8.1 -s composer -e 'require --dev sbuerk/typo3-cmscomposerinstallers-testingframework-bridge:^0.0.1'
 
       - name: Lint PHP
-        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s lint
+        run: Build/Scripts/runTests.sh -p 8.1 -s lint
 
       - name: Validate code against CGL
-        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s cgl -n
+        run: Build/Scripts/runTests.sh -p 8.1 -s cgl -n
 
   testing:
     name: PHP Unit and Functional Tests
@@ -54,13 +54,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install testing system
-        run: Build/Scripts/runTests.sh -t 11 -p ${{ matrix.php }} -s composerInstall
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composerInstall
 
       - name: Install composer installer bridge
-        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composer -e 'require --dev sbuerk/typo3-cmscomposerinstallers-testingframework-bridge:^0.0.1'
+        run: Build/Scripts/runTests.sh -p 8.1 -s composer -e 'require --dev sbuerk/typo3-cmscomposerinstallers-testingframework-bridge:^0.0.1'
 
       - name: Install composer installer bridge
-        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composer -e 'require --dev typo3/testing-framework:~7.0@dev'
+        run: Build/Scripts/runTests.sh -p 8.1 -s composer -e 'require --dev typo3/testing-framework:~7.0@dev'
 
       - name: Functional Tests with mariadb and mysqli
-        run: Build/Scripts/runTests.sh -t 11 -p ${{ matrix.php }} -d mariadb -a mysqli -s functional
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d mariadb -a mysqli -s functional
