@@ -129,7 +129,7 @@ class AvalexPluginTest extends FunctionalTestCase
         }
 
         self::assertThat(
-            $this->subject->render(null, ['endpoint' => 'avx-impressum']),
+            $this->subject->render('', ['endpoint' => 'avx-impressum']),
             new StringContains($expected)
         );
     }
@@ -192,7 +192,7 @@ class AvalexPluginTest extends FunctionalTestCase
 
         self::assertEquals(
             str_replace('$requestUri', $requestUri, implode(chr(10), $expected)),
-            $this->subject->render(null, ['endpoint' => 'avx-impressum'])
+            $this->subject->render('', ['endpoint' => 'avx-impressum'])
         );
     }
 }
