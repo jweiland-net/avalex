@@ -1,51 +1,43 @@
-# Adapted from https://github.com/TYPO3GmbH/blog/blob/master/.github/workflows/ci.yml
-name: CI
+name: Test Avalex against TYPO3 6-10
 
 on: [pull_request]
 
 jobs:
-  build:
+  testing:
+    name: PHP Unit and Functional Tests
+
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        typo3: [^9.5, ^10.4]
-        php: ['7.3', '7.4']
+        typo3: [ '^9.5', '^10.4' ]
+        php: [ '7.3', '7.4' ]
         package: [typo3/cms-core]
         include:
-          - typo3: ^6.2
+          - typo3: '^6.2'
             php: '5.6'
             composer: '1'
             package: typo3/cms
-          - typo3: ^7.6
+          - typo3: '^7.6'
             php: '5.6'
             composer: '1'
             package: typo3/cms
-          - typo3: ^7.6
+          - typo3: '^7.6'
             php: '7.0'
             composer: '1'
             package: typo3/cms
-          - typo3: ^8.7
+          - typo3: '^8.7'
             php: '7.0'
             composer: '1'
             package: typo3/cms-core
-          - typo3: ^8.7
+          - typo3: '^8.7'
             php: '7.1'
             composer: '1'
             package: typo3/cms-core
-          - typo3: ^8.7
+          - typo3: '^8.7'
             php: '7.2'
             composer: '1'
             package: typo3/cms-core
-          - typo3: ^11.0
-            php: '7.4'
-            composer: '2'
-            package: typo3/cms-core
-          - typo3: ^11.0
-            php: '8.0'
-            composer: '2'
-            package: typo3/cms-core
-            # Do not test against PHP 8.1. php-cs-fixer 2.19 does not work with PHP 8.1
     services:
       mysql:
         image: mysql:5.6
@@ -70,24 +62,22 @@ jobs:
         run: |
           composer self-update --${{ matrix.composer }}
 
-      - name: Environment Check
-        run: |
-          php --version
-          composer --version
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate
+      - name: Cache composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies with ${{ matrix.package }}:${{ matrix.typo3 }}
         run: |
           composer require ${{ matrix.package }}:${{ matrix.typo3 }} --no-progress
+          composer require --dev nimut/testing-framework:">=2.0" phpunit/phpunit:"<9.0" phpspec/prophecy:^1.10 --no-progress
           git checkout composer.json
-
-      - name: php-cs-fixer
-        run: composer ci:php:fixer
-
-      - name: Lint PHP
-        run: composer ci:php:lint
 
       - name: Functional Tests
         if: matrix.php > 7.0

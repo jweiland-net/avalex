@@ -35,13 +35,15 @@ $tca = [
             'starttime' => 'starttime',
             'endtime' => 'endtime',
         ],
-        'iconfile' => $iconFile
+        'iconfile' => $iconFile,
     ],
     'interface' => [
-        'showRecordsFieldList' => 'hidden, api_key, website_root'
+        'showRecordsFieldList' => 'hidden, api_key, website_root',
     ],
     'types' => [
-        '1' => ['showitem' => 'hidden, api_key, domain, website_root, global, description, --div--;' . $locallangTtc . 'tabs.access, starttime, endtime']
+        '1' => [
+            'showitem' => 'hidden, api_key, domain, website_root, global, description, --div--;' . $locallangTtc . 'tabs.access, starttime, endtime',
+        ],
     ],
     'columns' => [
         't3ver_label' => [
@@ -100,8 +102,8 @@ $tca = [
                 'foreign_table_where' => 'AND is_siteroot = 1',
                 'size' => 3,
                 'minitems' => 0,
-                'maxitems' => 999
-            ]
+                'maxitems' => 999,
+            ],
         ],
         'global' => [
             'exclude' => true,
@@ -109,16 +111,16 @@ $tca = [
             'onChange' => 'reload',
             'config' => [
                 'type' => 'check',
-                'default' => '0'
-            ]
+                'default' => '0',
+            ],
         ],
         'api_key' => [
             'exclude' => true,
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.api_key',
             'config' => [
                 'required' => true,
-                'type' => 'input'
-            ]
+                'type' => 'input',
+            ],
         ],
         'domain' => [
             'exclude' => true,
@@ -126,17 +128,17 @@ $tca = [
             'config' => [
                 'required' => true,
                 'type' => 'input',
-                'eval' => \JWeiland\Avalex\Evaluation\DomainEvaluation::class
-            ]
+                'eval' => \JWeiland\Avalex\Evaluation\DomainEvaluation::class,
+            ],
         ],
         'description' => [
             'exclude' => true,
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.description',
             'config' => [
-                'type' => 'input'
-            ]
-        ]
-    ]
+                'type' => 'input',
+            ],
+        ],
+    ],
 ];
 
 if (version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '8.5', '<')) {

@@ -18,7 +18,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class AvalexConfigurationRepository extends AbstractRepository
 {
-    const TABLE = 'tx_avalex_configuration';
+    public const TABLE = 'tx_avalex_configuration';
 
     /**
      * Find all configurations

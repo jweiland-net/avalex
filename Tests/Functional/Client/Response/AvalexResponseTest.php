@@ -23,7 +23,7 @@ class AvalexResponseTest extends FunctionalTestCase
      * @var string[]
      */
     protected $testExtensionsToLoad = [
-        'typo3conf/ext/avalex'
+        'typo3conf/ext/avalex',
     ];
 
     /**
@@ -88,7 +88,7 @@ class AvalexResponseTest extends FunctionalTestCase
         $this->subject->setIsJsonResponse(true);
         self::assertSame(
             [
-                'firstname' => 'stefan'
+                'firstname' => 'stefan',
             ],
             $this->subject->getBody()
         );
@@ -118,11 +118,11 @@ class AvalexResponseTest extends FunctionalTestCase
         self::assertSame(
             [
                 'Expires' => [
-                    0 => '0'
+                    0 => '0',
                 ],
                 'Content-Length' => [
-                    0 => '123'
-                ]
+                    0 => '123',
+                ],
             ],
             $this->subject->getHeaders()
         );
@@ -143,11 +143,11 @@ class AvalexResponseTest extends FunctionalTestCase
         self::assertSame(
             [
                 'Expires' => [
-                    0 => '0'
+                    0 => '0',
                 ],
                 'Content-Length' => [
-                    0 => '123'
-                ]
+                    0 => '123',
+                ],
             ],
             $this->subject->getHeaders()
         );
@@ -166,7 +166,7 @@ class AvalexResponseTest extends FunctionalTestCase
             'Content-Length' => [
                 0 => '123',
                 1 => '321',
-            ]
+            ],
         ];
         $this->subject = new AvalexResponse('', $headers);
         self::assertSame(

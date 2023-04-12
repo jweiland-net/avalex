@@ -51,7 +51,7 @@ class LanguageService
 
         $this->configuration = [
             'domain' => (string)$configuration['domain'],
-            'api_key' => (string)$configuration['api_key']
+            'api_key' => (string)$configuration['api_key'],
         ];
     }
 

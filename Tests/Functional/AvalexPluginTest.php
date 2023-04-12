@@ -15,6 +15,7 @@ use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Client\Request\ImpressumRequest;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Service\ApiService;
+use JWeiland\Avalex\Utility\Typo3Utility;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use PHPUnit\Framework\Constraint\StringContains;
 use Prophecy\Argument;
@@ -22,6 +23,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3\CMS\Frontend\Typolink\EmailLinkBuilder;
 
 /**
  * Test case.
@@ -52,7 +54,7 @@ class AvalexPluginTest extends FunctionalTestCase
      * @var string[]
      */
     protected $testExtensionsToLoad = [
-        'typo3conf/ext/avalex'
+        'typo3conf/ext/avalex',
     ];
 
     protected function setUp(): void
@@ -115,7 +117,7 @@ class AvalexPluginTest extends FunctionalTestCase
                 '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="mailto:john@doe.tld">johns mail</a></p>'
             );
 
-        $encryptedMail = $this->subject->cObj->getMailTo('john@doe.tld', 'johns mail');
+        $encryptedMail = call_user_func_array($this->getEncryptedMailCallable(), ['john@doe.tld', 'johns mail']);
         if (count($encryptedMail) === 3) {
             // TYPO3 >= 11
             $attributes = GeneralUtility::implodeAttributes($encryptedMail[2], true);
@@ -124,10 +126,27 @@ class AvalexPluginTest extends FunctionalTestCase
             $expected = "<a href=\"$encryptedMail[0]\">$encryptedMail[1]</a>";
         }
 
-        static::assertThat(
+        self::assertThat(
             $this->subject->render(null, ['endpoint' => 'avx-impressum']),
             new StringContains($expected)
         );
+    }
+
+    /**
+     * @return callable
+     */
+    protected function getEncryptedMailCallable()
+    {
+        $cObj = $this->subject->cObj;
+
+        return static function ($mailAddress, $linkText) use ($cObj) {
+            if (version_compare(Typo3Utility::getTypo3Version(), '12.0', '>=')) {
+                $linkBuilder = GeneralUtility::makeInstance(EmailLinkBuilder::class, $cObj, $GLOBALS['TSFE']);
+                return $linkBuilder->processEmailLink((string)$mailAddress, (string)$linkText);
+            }
+
+            return $cObj->getMailTo($mailAddress, $linkText);
+        };
     }
 
     /**

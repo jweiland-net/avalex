@@ -27,7 +27,7 @@ class MessageHelperTest extends FunctionalTestCase
      * @var string[]
      */
     protected $testExtensionsToLoad = [
-        'typo3conf/ext/avalex'
+        'typo3conf/ext/avalex',
     ];
 
     protected function setUp(): void

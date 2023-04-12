@@ -82,7 +82,7 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
     {
         $params = [
             'edit' => ['tx_avalex_configuration' => [$uid => 'edit']],
-            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
+            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
         ];
         if (version_compare(Typo3Utility::getTypo3Version(), '7.4', '>')) {
             $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
@@ -105,7 +105,7 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
     {
         $params = [
             'edit' => ['tx_avalex_configuration' => [0 => 'new']],
-            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
+            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
         ];
         if (version_compare(Typo3Utility::getTypo3Version(), '7.4', '>')) {
             $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
