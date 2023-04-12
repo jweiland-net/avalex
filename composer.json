@@ -21,9 +21,6 @@
 		"php": ">=5.6",
 		"typo3/cms-core": "^6.2 || ^7.6 || ^8.7 || ^9.5.17 || ^10.4.2 || ^11.0 || ^12.0"
 	},
-	"require-dev": {
-		"sbuerk/typo3-cmscomposerinstallers-testingframework-bridge": "^0.0.1"
-	},
 	"autoload": {
 		"psr-4": {
 			"JWeiland\\Avalex\\": "Classes"
