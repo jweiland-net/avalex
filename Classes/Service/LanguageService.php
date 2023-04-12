@@ -40,7 +40,10 @@ class LanguageService
     protected $configuration = [];
 
     /**
-     * @param array $configuration e.g. by using AvalexConfigurationRepository::findByWebsiteRoot($rootPage, 'api_key, domain')
+     * Use AvalexConfigurationRepository::findByWebsiteRoot($rootPage, 'api_key, domain')
+     * to find a configuration
+     *
+     * @param array $configuration
      *
      * @throws NoSuchCacheException
      */
@@ -57,14 +60,17 @@ class LanguageService
 
     public function addLanguageToEndpoint(LocalizeableRequestInterface $endpointRequest)
     {
-        // avalex default language
+        // Avalex default language
         $language = 'de';
         $frontendLanguage = $this->getFrontendLocale();
         $avalexLanguageResponse = $this->getLanguageResponseFromCache() ?: $this->fetchLanguageResponse();
         if (
             is_array($avalexLanguageResponse)
             && array_key_exists($frontendLanguage, $avalexLanguageResponse)
-            && array_key_exists($endpointRequest->getEndpointWithoutPrefix(), $avalexLanguageResponse[$frontendLanguage])
+            && array_key_exists(
+                $endpointRequest->getEndpointWithoutPrefix(),
+                $avalexLanguageResponse[$frontendLanguage]
+            )
         ) {
             $language = $frontendLanguage;
         }
@@ -115,7 +121,8 @@ class LanguageService
                 class_exists(SiteLanguage::class)
                 && isset($GLOBALS['TYPO3_REQUEST'])
                 && $GLOBALS['TYPO3_REQUEST'] instanceof ServerRequestInterface
-                && $GLOBALS['TYPO3_REQUEST']->getAttribute('language') instanceof SiteLanguage) {
+                && $GLOBALS['TYPO3_REQUEST']->getAttribute('language') instanceof SiteLanguage
+            ) {
                 $siteLanguage = $GLOBALS['TYPO3_REQUEST']->getAttribute('language');
                 $frontendLocale = $siteLanguage ? $siteLanguage->getTwoLetterIsoCode() : '';
             } elseif (isset($GLOBALS['TSFE']->lang)) {

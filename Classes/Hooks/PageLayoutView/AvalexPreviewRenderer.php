@@ -25,8 +25,13 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
     /**
      * @inheritDoc
      */
-    public function preProcess(\TYPO3\CMS\Backend\View\PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row)
-    {
+    public function preProcess(
+        \TYPO3\CMS\Backend\View\PageLayoutView &$parentObject,
+        &$drawItem,
+        &$headerContent,
+        &$itemContent,
+        array &$row
+    ) {
         if (strpos($row['list_type'], 'avalex') !== false) {
             try {
                 $rootPage = AvalexUtility::getRootForPage($parentObject->id);
@@ -44,30 +49,46 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
             );
             $itemContent .= sprintf(
                 '<p><b>Avalex: %s</b></p>',
-                $GLOBALS['LANG']->sL(sprintf('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_%s.name', $row['list_type']))
+                $GLOBALS['LANG']->sL(
+                    sprintf(
+                        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_%s.name',
+                        $row['list_type']
+                    )
+                )
             );
             $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid,description');
             if (empty($configuration)) {
-                // could not find any key
+                // Could not find any key
                 $itemContent .= sprintf(
                     '<p>%s</p>',
-                    $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.no_config')
+                    $GLOBALS['LANG']->sL(
+                        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.no_config'
+                    )
                 );
                 $itemContent .= sprintf(
                     '<a href="%s" class="btn btn-primary t3-button">%s</a>',
                     $this->getLinkToCreateConfigurationRecord(),
-                    $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.add')
+                    $GLOBALS['LANG']->sL(
+                        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.add'
+                    )
                 );
             } else {
-                // key found
+                // Key found
                 $itemContent .= sprintf(
                     '<p>%s</p>',
-                    sprintf($GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.found_config'), $configuration['description'])
+                    sprintf(
+                        $GLOBALS['LANG']->sL(
+                            'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.found_config'
+                        ),
+                        $configuration['description']
+                    )
                 );
                 $itemContent .= sprintf(
                     '<a href="%s" class="btn btn-default t3-button">%s</a>',
                     $this->getLinkToEditConfigurationRecord($configuration['uid']),
-                    $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.edit')
+                    $GLOBALS['LANG']->sL(
+                        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.edit'
+                    )
                 );
             }
             $drawItem = false;

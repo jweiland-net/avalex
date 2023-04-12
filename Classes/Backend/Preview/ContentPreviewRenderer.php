@@ -14,11 +14,9 @@ namespace JWeiland\Avalex\Backend\Preview;
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Exception\InvalidUidException;
 use JWeiland\Avalex\Utility\AvalexUtility;
-use JWeiland\Avalex\Utility\Typo3Utility;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class ContentPreviewRenderer extends \TYPO3\CMS\Backend\Preview\StandardContentPreviewRenderer
 {
@@ -45,7 +43,7 @@ class ContentPreviewRenderer extends \TYPO3\CMS\Backend\Preview\StandardContentP
         );
         $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid,description');
         if (empty($configuration)) {
-            // could not find any key
+            // Could not find any key
             $itemContent .= sprintf(
                 '<p>%s</p>',
                 $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.no_config')
@@ -56,7 +54,7 @@ class ContentPreviewRenderer extends \TYPO3\CMS\Backend\Preview\StandardContentP
                 $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.add')
             );
         } else {
-            // key found
+            // Key found
             $itemContent .= sprintf(
                 '<p>%s</p>',
                 sprintf($GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.found_config'), $configuration['description'])

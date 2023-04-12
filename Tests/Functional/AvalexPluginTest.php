@@ -114,16 +114,18 @@ class AvalexPluginTest extends FunctionalTestCase
             )
             ->shouldBeCalled()
             ->willReturn(
-                '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="mailto:john@doe.tld">johns mail</a></p>'
+                '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! '
+                . '<a href="mailto:john@doe.tld">johns mail</a>'
+                . '</p>'
             );
 
         $encryptedMail = call_user_func_array($this->getEncryptedMailCallable(), ['john@doe.tld', 'johns mail']);
         if (count($encryptedMail) === 3) {
             // TYPO3 >= 11
             $attributes = GeneralUtility::implodeAttributes($encryptedMail[2], true);
-            $expected = "<a href=\"$encryptedMail[0]\" $attributes>$encryptedMail[1]</a>";
+            $expected = '<a href="' . $encryptedMail[0] . '" $attributes>$encryptedMail[1]</a>';
         } else {
-            $expected = "<a href=\"$encryptedMail[0]\">$encryptedMail[1]</a>";
+            $expected = '<a href="' . $encryptedMail[0] . '">$encryptedMail[1]</a>';
         }
 
         self::assertThat(
@@ -173,15 +175,19 @@ class AvalexPluginTest extends FunctionalTestCase
             )
             ->shouldBeCalled()
             ->willReturn(
-                '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="#hello">Hello World</a>.</p>' . chr(10)
-                . '<p>Want another link? OK: <a href="#world">Another one</a>. <a href="/test.html">Do not replace this</a> ok?</p>' . chr(10)
+                '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! '
+                . '<a href="#hello">Hello World</a>.</p>' . chr(10)
+                . '<p>Want another link? OK: <a href="#world">Another one</a>. '
+                . '<a href="/test.html">Do not replace this</a> ok?</p>' . chr(10)
                 . '<p>And also do <a href="https://domain.tld">not replace this</a>.</p>'
             );
 
         $requestUri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
         $expected = [];
-        $expected[] = '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="$requestUri#hello">Hello World</a>.</p>';
-        $expected[] = '<p>Want another link? OK: <a href="$requestUri#world">Another one</a>. <a href="/test.html">Do not replace this</a> ok?</p>';
+        $expected[] = '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! '
+            . '<a href="$requestUri#hello">Hello World</a>.</p>';
+        $expected[] = '<p>Want another link? OK: <a href="$requestUri#world">Another one</a>. '
+            . '<a href="/test.html">Do not replace this</a> ok?</p>';
         $expected[] = '<p>And also do <a href="https://domain.tld">not replace this</a>.</p>';
 
         self::assertEquals(

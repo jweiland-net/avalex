@@ -26,7 +26,9 @@ class Typo3Utility
         if (static::$typo3Version === '') {
             if (class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)) {
                 // Available since TYPO3 10.3
-                static::$typo3Version = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(Typo3Version::class)->getVersion();
+                static::$typo3Version = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                    Typo3Version::class
+                )->getVersion();
             } else {
                 // TYPO3_version will be removed with TYPO3 12.0
                 static::$typo3Version = TYPO3_version;

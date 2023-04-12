@@ -88,12 +88,12 @@ class AvalexPlugin
     /**
      * Render plugin
      *
-     * @param string $_ empty string
+     * @param string $emptyContent empty string
      * @param array $conf TypoScript configuration
      * @return string
      * @throws Exception\InvalidUidException
      */
-    public function render($_, $conf)
+    public function render(string $emptyContent, $conf)
     {
         $endpointRequest = $this->getRequestForEndpoint($conf['endpoint']);
         $cacheIdentifier = $this->getCacheIdentifier($endpointRequest);
@@ -108,7 +108,7 @@ class AvalexPlugin
         );
 
         if ($content !== '') {
-            // set cache for successful calls only
+            // Set cache for successful calls only
             $content = $this->processLinks($content);
             $this->cache->set($cacheIdentifier, $content, [], 21600);
         }

@@ -18,7 +18,7 @@ foreach (\JWeiland\Avalex\Utility\AvalexUtility::LIST_TYPES as $listType) {
     $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_excludelist'][$listType] = 'recursive,select_key,pages';
 }
 
-// for fluidBasedPageModule enabled (always for TYPO3 > 11)
+// For fluidBasedPageModule enabled (always for TYPO3 > 11)
 $GLOBALS['TCA']['tt_content']['types']['list']['previewRenderer']['avalex_avalex'] = \JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer::class;
 $GLOBALS['TCA']['tt_content']['types']['list']['previewRenderer']['avalex_imprint'] = \JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer::class;
 $GLOBALS['TCA']['tt_content']['types']['list']['previewRenderer']['avalex_bedingungen'] = \JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer::class;
