@@ -459,7 +459,7 @@ services:
         if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
           set -x
         fi
-        php -dxdebug.mode=off vendor/bin/php-cs-fixer fix -v ${CGLCHECK_DRY_RUN} --path-mode intersection \
+        php -dxdebug.mode=off ${CORE_ROOT}/vendor/bin/php-cs-fixer fix -v ${CGLCHECK_DRY_RUN} --path-mode intersection \
           --config=Build/php-cs-fixer/php-cs-fixer.php Classes/ Tests/
       "
   check_annotations:
