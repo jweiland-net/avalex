@@ -9,6 +9,7 @@
 
 namespace JWeiland\Avalex\Client;
 
+use GuzzleHttp\Exception\RequestException;
 use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Client\Response\ResponseInterface;
@@ -49,7 +50,16 @@ class AvalexClient
             return new AvalexResponse();
         }
 
-        $avalexResponse = $this->request($request);
+        try {
+            $avalexResponse = $this->request($request);
+        } catch (RequestException $e) {
+            $this->messageHelper->addFlashMessage(
+                $e->getMessage(),
+                'Request Exception',
+                AbstractMessage::ERROR
+            );
+            return new AvalexResponse();
+        }
         if ($this->hasResponseErrors($avalexResponse)) {
             $avalexResponse = new AvalexResponse();
         }

@@ -73,6 +73,11 @@ class AvalexPlugin
         $this->languageService = $this->getLanguageService($this->configuration);
     }
 
+    public function setContentObjectRenderer(ContentObjectRenderer $cObj)
+    {
+        $this->cObj = $cObj;
+    }
+
     /**
      * Render plugin
      *

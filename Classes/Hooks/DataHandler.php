@@ -12,6 +12,7 @@ namespace JWeiland\Avalex\Hooks;
 use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\IsApiKeyConfiguredRequest;
 use JWeiland\Avalex\Helper\MessageHelper;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -53,7 +54,9 @@ class DataHandler
                         LocalizationUtility::translate(
                             'flash_message.configuration.key_invalid',
                             'avalex'
-                        )
+                        ),
+                        '',
+                        AbstractMessage::ERROR
                     );
                 }
             }
@@ -75,6 +78,7 @@ class DataHandler
         $avalexResponse = $this->avalexClient->processRequest($isApiKeyConfiguredRequest);
         $result = $avalexResponse->getBody();
         if (
+            is_array($result) &&
             array_key_exists('message', $result)
             && $result['message'] === 'OK'
         ) {
