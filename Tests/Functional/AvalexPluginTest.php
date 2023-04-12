@@ -122,10 +122,18 @@ class AvalexPluginTest extends FunctionalTestCase
         $encryptedMail = call_user_func_array($this->getEncryptedMailCallable(), ['john@doe.tld', 'johns mail']);
         if (count($encryptedMail) === 3) {
             // TYPO3 >= 11
-            $attributes = GeneralUtility::implodeAttributes($encryptedMail[2], true);
-            $expected = '<a href="' . $encryptedMail[0] . '" $attributes>$encryptedMail[1]</a>';
+            $expected = sprintf(
+                '<a href="%s" %s>%s</a>',
+                $encryptedMail[0],
+                GeneralUtility::implodeAttributes($encryptedMail[2], true),
+                $encryptedMail[1]
+            );
         } else {
-            $expected = '<a href="' . $encryptedMail[0] . '">$encryptedMail[1]</a>';
+            $expected = sprintf(
+                '<a href="%s">%s</a>',
+                $encryptedMail[0],
+                $encryptedMail[1]
+            );
         }
 
         self::assertThat(
