@@ -460,7 +460,7 @@ services:
           set -x
         fi
         php -dxdebug.mode=off ${CORE_ROOT}/.Build/bin/php-cs-fixer fix -v ${CGLCHECK_DRY_RUN} --path-mode intersection \
-          --config=Build/php-cs-fixer/php-cs-fixer.php Classes/ Tests/
+          --config=Build/php-cs-fixer/config.php Classes/ Tests/
       "
   check_annotations:
     image: typo3/core-testing-${DOCKER_PHP_IMAGE}:latest
