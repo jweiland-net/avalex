@@ -1,6 +1,10 @@
-name: Test Avalex against TYPO3 11-12
+# runTests.sh is a copy of https://github.com/astehlik/typo3-extension-buildtools/tree/TYPO3_11
+name: Test Avalex against TYPO3 11
 
 on: [pull_request]
+
+env:
+ TYPO3_EXTENSION_KEY: avalex
 
 jobs:
   CGL:
