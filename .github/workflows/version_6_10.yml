@@ -38,6 +38,7 @@ jobs:
             php: '7.2'
             composer: '1'
             package: typo3/cms-core
+
     services:
       mysql:
         image: mysql:5.6
