@@ -43,7 +43,7 @@ jobs:
           git checkout composer.json
 
       - name: Lint PHP
-        run: Build/bin/t3_run_tests.sh -p 8.1 -s lint
+        run: Build/bin/t3_run_tests.sh -p 8.1 -s lintPhp
 
       - name: Validate code against CGL
         run: Build/bin/t3_run_tests.sh -p 8.1 -s cgl -n
@@ -63,14 +63,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install testing system
-        run: Build/bin/t3_run_tests.sh -p ${{ matrix.php }} -s composerInstall
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Install composer installer bridge
-        run: Build/bin/t3_run_tests.sh -p 8.1 -s composer -e 'require --dev sbuerk/typo3-cmscomposerinstallers-testingframework-bridge:^0.0.1'
+      - name: Setup PHP 8.1, with composer and extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          extensions: mbstring, dom, zip
 
-      - name: Install composer installer bridge
-        run: Build/bin/t3_run_tests.sh -p 8.1 -s composer -e 'require --dev typo3/testing-framework:~7.0@dev'
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies with typo3/cms-core:^11.5
+        run: |
+          composer require typo3/cms-core:^11.5 --no-progress
+          composer require typo3/cms-extensionmanager:^11.5 --no-progress
+          composer require --dev friendsofphp/php-cs-fixer:^3.13 --no-progress
+          composer require --dev typo3/coding-standards:^0.7 --no-progress
+          composer require --dev sbuerk/typo3-cmscomposerinstallers-testingframework-bridge:^0.0.1 --no-progress
+          git checkout composer.json
 
       - name: Functional Tests with mariadb and mysqli
         run: Build/bin/t3_run_tests.sh -p ${{ matrix.php }} -d mariadb -a mysqli -s functional
