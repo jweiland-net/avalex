@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
-namespace JWeiland\Avalex\Backend\Preview;
-
 /*
  * This file is part of the package jweiland/avalex.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
+
+namespace JWeiland\Avalex\Backend\Preview;
 
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Exception\InvalidUidException;
@@ -69,18 +67,19 @@ class ContentPreviewRenderer extends \TYPO3\CMS\Backend\Preview\StandardContentP
     }
 
     /**
-     * @param $uid
+     * @param int $uid
+     *
      * @return string
      */
     protected function getLinkToEditConfigurationRecord($uid)
     {
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $params = [
             'edit' => ['tx_avalex_configuration' => [$uid => 'edit']],
-            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
+            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
         ];
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        $link = (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
-        return $link;
+
+        return (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 
     /**
@@ -88,13 +87,12 @@ class ContentPreviewRenderer extends \TYPO3\CMS\Backend\Preview\StandardContentP
      */
     protected function getLinkToCreateConfigurationRecord()
     {
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $params = [
             'edit' => ['tx_avalex_configuration' => [0 => 'new']],
-            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
+            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
         ];
 
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        $link = (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
-        return $link;
+        return (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 }
