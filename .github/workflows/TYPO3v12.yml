@@ -66,5 +66,11 @@ jobs:
     - name: Composer require testing framework bridge for TYPO3 11/12
       run: Build/Scripts/runTests.sh -p 8.1 -t 12 -s composer -e 'require sbuerk/typo3-cmscomposerinstallers-testingframework-bridge:^0.1'
 
-    - name: Unit tests
-      run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -t 12 -s unit
+    - name: Functional Tests with mariadb and mysqli
+      run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -t 12 -d mariadb -a mysqli -s functional
+
+    - name: Functional Tests with mariadb and pdo_mysql
+      run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -t 12 -d mariadb -a pdo_mysql -s functional
+
+    - name: Functional Tests with mysql and mysqli
+      run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -t 12 -d mysql -a mysqli -s functional
