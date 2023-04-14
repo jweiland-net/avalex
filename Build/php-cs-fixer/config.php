@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package jweiland/jobcenter.
+ * This file is part of the package jweiland/avalex.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
@@ -14,16 +14,21 @@ if (PHP_SAPI !== 'cli') {
 }
 
 $headerComment = <<<COMMENT
-This file is part of the package jweiland/jobcenter.
+This file is part of the package jweiland/avalex.
 
 For the full copyright and license information, please read the
 LICENSE file that was distributed with this source code.
 COMMENT;
 
 $finder = PhpCsFixer\Finder::create()
-    ->name('*.php')
-    ->exclude('.build')
-    ->in(__DIR__);
+    ->in(realpath(__DIR__ . '/../../'))
+    ->ignoreVCSIgnored(true)
+    ->notPath('/^.Build\//')
+    ->notPath('/^Build\/php-cs-fixer\/config.php/')
+    ->notPath('/^Build\/phpunit\/(UnitTestsBootstrap|FunctionalTestsBootstrap).php/')
+    ->notPath('/^Configuration\//')
+    ->notPath('/^Documentation\//')
+    ->notName('/^ext_(emconf|localconf|tables).php/');
 
 return (new \PhpCsFixer\Config())
     ->setFinder($finder)
@@ -46,7 +51,7 @@ return (new \PhpCsFixer\Config())
         'function_typehint_space' => true,
         'lowercase_cast' => true,
         'method_argument_space' => ['on_multiline' => 'ensure_fully_multiline'],
-        'modernize_strpos' => true,
+        'modernize_strpos' => false,
         'modernize_types_casting' => true,
         'native_function_casing' => true,
         'new_with_braces' => true,
