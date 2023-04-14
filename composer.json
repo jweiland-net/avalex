@@ -46,5 +46,15 @@
 			"extension-key": "avalex",
 			"web-dir": ".Build/public"
 		}
+	},
+	"scripts": {
+		"ci:tests:functional": "find 'Tests/Functional' -wholename '*Test.php' | parallel --gnu 'echo; echo \"Running functional test suite {}\"; .Build/bin/phpunit -c .Build/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml {}';",
+		"link-extension": [
+			"@php -r 'is_dir($extFolder=__DIR__.\"/.Build/public/typo3conf/ext/\") || mkdir($extFolder, 0777, true);'",
+			"@php -r 'file_exists($extFolder=__DIR__.\"/.Build/public/typo3conf/ext/avalex\") || symlink(__DIR__,$extFolder);'"
+		],
+		"post-autoload-dump": [
+			"@link-extension"
+		]
 	}
 }
