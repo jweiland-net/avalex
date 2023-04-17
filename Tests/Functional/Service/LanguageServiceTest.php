@@ -110,14 +110,14 @@ class LanguageServiceTest extends FunctionalTestCase
         /** @var AvalexResponse|MockObject $avalexResponseMock */
         $avalexResponseMock = $this->createMock(AvalexResponse::class);
         $avalexResponseMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('getBody')
             ->willReturn([]);
 
         $this->avalexClientMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('processRequest')
-            ->with($this->isInstanceOf(GetDomainLanguagesRequest::class))
+            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponseMock);
 
         $endpoint = new ImpressumRequest();
@@ -139,7 +139,7 @@ class LanguageServiceTest extends FunctionalTestCase
         /** @var AvalexResponse|MockObject $avalexResponseMock */
         $avalexResponseMock = $this->createMock(AvalexResponse::class);
         $avalexResponseMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('getBody')
             ->willReturn([
                 'de' => [
@@ -148,9 +148,9 @@ class LanguageServiceTest extends FunctionalTestCase
             ]);
 
         $this->avalexClientMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('processRequest')
-            ->with($this->isInstanceOf(GetDomainLanguagesRequest::class))
+            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponseMock);
 
         $endpoint = new ImpressumRequest();
@@ -172,7 +172,7 @@ class LanguageServiceTest extends FunctionalTestCase
         /** @var AvalexResponse|MockObject $avalexResponseMock */
         $avalexResponseMock = $this->createMock(AvalexResponse::class);
         $avalexResponseMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('getBody')
             ->willReturn([
                 'de' => [
@@ -181,9 +181,9 @@ class LanguageServiceTest extends FunctionalTestCase
             ]);
 
         $this->avalexClientMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('processRequest')
-            ->with($this->isInstanceOf(GetDomainLanguagesRequest::class))
+            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponseMock);
 
         $endpoint = new ImpressumRequest();
@@ -205,7 +205,7 @@ class LanguageServiceTest extends FunctionalTestCase
         /** @var AvalexResponse|MockObject $avalexResponseMock */
         $avalexResponseMock = $this->createMock(AvalexResponse::class);
         $avalexResponseMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('getBody')
             ->willReturn([
                 'de' => [
@@ -217,9 +217,9 @@ class LanguageServiceTest extends FunctionalTestCase
             ]);
 
         $this->avalexClientMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('processRequest')
-            ->with($this->isInstanceOf(GetDomainLanguagesRequest::class))
+            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponseMock);
 
         $endpoint = new ImpressumRequest();

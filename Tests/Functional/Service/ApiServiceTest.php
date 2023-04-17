@@ -69,14 +69,14 @@ class ApiServiceTest extends FunctionalTestCase
         /** @var AvalexResponse|MockObject $avalexResponseMock */
         $avalexResponseMock = $this->createMock(AvalexResponse::class);
         $avalexResponseMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('getBody')
             ->willReturn('german text');
 
         $this->avalexClientMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('processRequest')
-            ->with($this->isInstanceOf(ImpressumRequest::class))
+            ->with(self::isInstanceOf(ImpressumRequest::class))
             ->willReturn($avalexResponseMock);
 
         $endpoint = new ImpressumRequest();

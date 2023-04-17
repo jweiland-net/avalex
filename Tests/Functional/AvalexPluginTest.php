@@ -96,17 +96,17 @@ class AvalexPluginTest extends FunctionalTestCase
         $avalexResponse->setIsJsonResponse(true);
 
         $this->avalexClientMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('processRequest')
-            ->with($this->isInstanceOf(GetDomainLanguagesRequest::class))
+            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponse);
 
         $this->apiServiceMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('getHtmlForCurrentRootPage')
             ->with(
-                $this->isInstanceOf(ImpressumRequest::class),
-                $this->equalTo(
+                self::isInstanceOf(ImpressumRequest::class),
+                self::equalTo(
                     [
                         'uid' => 1,
                         'api_key' => 'demo-key-with-online-shop',
@@ -143,7 +143,7 @@ class AvalexPluginTest extends FunctionalTestCase
         );
     }
 
-    protected function getEncryptedMailCallable(): Callable
+    protected function getEncryptedMailCallable(): callable
     {
         $cObj = $this->subject->cObj;
 
@@ -166,16 +166,16 @@ class AvalexPluginTest extends FunctionalTestCase
         $avalexResponse->setIsJsonResponse(true);
 
         $this->avalexClientMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('processRequest')
-            ->with($this->isInstanceOf(GetDomainLanguagesRequest::class))
+            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponse);
 
         $this->apiServiceMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->with(
-                $this->isInstanceOf(ImpressumRequest::class),
-                $this->equalTo(
+                self::isInstanceOf(ImpressumRequest::class),
+                self::equalTo(
                     [
                         'uid' => 1,
                         'api_key' => 'demo-key-with-online-shop',
