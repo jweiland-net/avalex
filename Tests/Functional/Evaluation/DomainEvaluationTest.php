@@ -10,22 +10,21 @@
 namespace JWeiland\Avalex\Tests\Functional;
 
 use JWeiland\Avalex\Evaluation\DomainEvaluation;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * Test case.
  */
 class DomainEvaluationTest extends FunctionalTestCase
 {
-    /**
-     * @var DomainEvaluation
-     */
-    protected $subject;
+    protected bool $initializeDatabase = false;
+
+    protected DomainEvaluation $subject;
 
     /**
      * @var string[]
      */
-    protected $testExtensionsToLoad = [
+    protected array $testExtensionsToLoad = [
         'typo3conf/ext/avalex',
     ];
 

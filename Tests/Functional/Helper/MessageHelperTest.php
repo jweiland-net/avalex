@@ -10,30 +10,32 @@
 namespace JWeiland\Avalex\Tests\Functional\Helper;
 
 use JWeiland\Avalex\Helper\MessageHelper;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * Test case.
  */
 class MessageHelperTest extends FunctionalTestCase
 {
-    /**
-     * @var MessageHelper
-     */
-    protected $subject;
+    protected bool $initializeDatabase = false;
+
+    protected MessageHelper $subject;
 
     /**
      * @var string[]
      */
-    protected $testExtensionsToLoad = [
+    protected array $testExtensionsToLoad = [
         'typo3conf/ext/avalex',
     ];
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->setUpBackendUserFromFixture(1);
+
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/be_users.csv');
+        $this->setUpBackendUser(1);
 
         $this->subject = new MessageHelper();
     }
@@ -55,7 +57,7 @@ class MessageHelperTest extends FunctionalTestCase
         $expectedFlashMessage = new FlashMessage(
             'Hello',
             '',
-            FlashMessage::OK,
+            AbstractMessage::OK,
             true
         );
 
@@ -75,7 +77,7 @@ class MessageHelperTest extends FunctionalTestCase
         $expectedFlashMessage = new FlashMessage(
             'Hello',
             'Subject',
-            FlashMessage::OK,
+            AbstractMessage::OK,
             true
         );
 
@@ -95,11 +97,11 @@ class MessageHelperTest extends FunctionalTestCase
         $expectedFlashMessage = new FlashMessage(
             'Hello',
             'Subject',
-            FlashMessage::ERROR,
+            AbstractMessage::ERROR,
             true
         );
 
-        $this->subject->addFlashMessage('Hello', 'Subject', FlashMessage::ERROR);
+        $this->subject->addFlashMessage('Hello', 'Subject', AbstractMessage::ERROR);
 
         self::assertEquals(
             [$expectedFlashMessage],
@@ -173,21 +175,21 @@ class MessageHelperTest extends FunctionalTestCase
         // Test two times, to be save that messages were flushed
         self::assertCount(
             1,
-            $this->subject->getFlashMessagesBySeverityAndFlush(FlashMessage::ERROR)
+            $this->subject->getFlashMessagesBySeverityAndFlush(AbstractMessage::ERROR)
         );
         self::assertCount(
             0,
-            $this->subject->getFlashMessagesBySeverityAndFlush(FlashMessage::ERROR)
+            $this->subject->getFlashMessagesBySeverityAndFlush(AbstractMessage::ERROR)
         );
 
         // Test two times, to be save that messages were flushed
         self::assertCount(
             2,
-            $this->subject->getFlashMessagesBySeverityAndFlush(FlashMessage::WARNING)
+            $this->subject->getFlashMessagesBySeverityAndFlush(AbstractMessage::WARNING)
         );
         self::assertCount(
             0,
-            $this->subject->getFlashMessagesBySeverityAndFlush(FlashMessage::WARNING)
+            $this->subject->getFlashMessagesBySeverityAndFlush(AbstractMessage::WARNING)
         );
     }
 

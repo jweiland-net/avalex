@@ -13,44 +13,43 @@ use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\ImpressumRequest;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Service\ApiService;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * Test case.
  */
 class ApiServiceTest extends FunctionalTestCase
 {
-    /**
-     * @var AvalexClient|ObjectProphecy
-     */
-    protected $avalexClientProphecy;
+    protected bool $initializeDatabase = false;
 
     /**
-     * @var ApiService
+     * @var AvalexClient|MockObject
      */
-    protected $subject;
+    protected $avalexClientMock;
+
+    protected ApiService $subject;
 
     /**
      * @var string[]
      */
-    protected $testExtensionsToLoad = [
+    protected array $testExtensionsToLoad = [
         'typo3conf/ext/avalex',
     ];
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->importDataSet('ntf://Database/pages.xml');
-        $this->importDataSet(__DIR__ . '/../Fixtures/tx_avalex_configuration.xml');
+
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/pages.csv');
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/tx_avalex_configuration.csv');
 
         // Set is_siteroot to 1
-        parent::setUpFrontendRootPage(1);
+        $this->setUpFrontendRootPage(1);
 
-        $this->avalexClientProphecy = $this->prophesize(AvalexClient::class);
-        GeneralUtility::addInstance(AvalexClient::class, $this->avalexClientProphecy->reveal());
+        $this->avalexClientMock = $this->createMock(AvalexClient::class);
+        GeneralUtility::addInstance(AvalexClient::class, $this->avalexClientMock);
 
         $this->subject = new ApiService();
     }
@@ -58,8 +57,7 @@ class ApiServiceTest extends FunctionalTestCase
     protected function tearDown(): void
     {
         unset(
-            $this->subject,
-            $GLOBALS['TSFE']
+            $this->subject
         );
     }
 
@@ -68,17 +66,18 @@ class ApiServiceTest extends FunctionalTestCase
      */
     public function addLanguageToEndpointWithoutResponseSetsDefaultLanguageToEndpoint(): void
     {
-        /** @var AvalexResponse|ObjectProphecy $avalexResponseProphecy */
-        $avalexResponseProphecy = $this->prophesize(AvalexResponse::class);
-        $avalexResponseProphecy
-            ->getBody()
-            ->shouldBeCalled()
+        /** @var AvalexResponse|MockObject $avalexResponseMock */
+        $avalexResponseMock = $this->createMock(AvalexResponse::class);
+        $avalexResponseMock
+            ->expects($this->atLeastOnce())
+            ->method('getBody')
             ->willReturn('german text');
 
-        $this->avalexClientProphecy
-            ->processRequest(Argument::type(ImpressumRequest::class))
-            ->shouldBeCalled()
-            ->willReturn($avalexResponseProphecy->reveal());
+        $this->avalexClientMock
+            ->expects($this->atLeastOnce())
+            ->method('processRequest')
+            ->with($this->isInstanceOf(ImpressumRequest::class))
+            ->willReturn($avalexResponseMock);
 
         $endpoint = new ImpressumRequest();
 

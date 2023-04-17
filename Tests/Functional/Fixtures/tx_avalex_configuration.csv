@@ -1,0 +1,4 @@
+"tx_avalex_configuration",,,,,,,,,,,,,,
+,"uid","pid","api_key","domain","website_root","global","description"
+,1,0,"demo-key-with-online-shop","https://example.com","",1,"Global/Fallback configuration"
+,2,0,"invalid-key","https://jweiland.net","25",0,"Configuration for website root 25"

@@ -16,67 +16,64 @@ use JWeiland\Avalex\Client\Request\ImpressumRequest;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Service\ApiService;
 use JWeiland\Avalex\Utility\Typo3Utility;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use PHPUnit\Framework\Constraint\StringContains;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Typolink\EmailLinkBuilder;
+use TYPO3\TestingFramework\Core\AccessibleObjectInterface;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * Test case.
  */
 class AvalexPluginTest extends FunctionalTestCase
 {
-    /**
-     * @var ImpressumRequest
-     */
-    protected $impressumRequest;
+    protected bool $initializeDatabase = false;
+
+    protected ImpressumRequest $impressumRequest;
 
     /**
-     * @var ApiService|ObjectProphecy
+     * @var ApiService|MockObject
      */
-    protected $apiServiceProphecy;
+    protected $apiServiceMock;
 
     /**
-     * @var AvalexClient|ObjectProphecy
+     * @var AvalexClient|MockObject
      */
-    protected $avalexClientProphecy;
+    protected $avalexClientMock;
 
-    /**
-     * @var AvalexPlugin
-     */
-    protected $subject;
+    protected AvalexPlugin $subject;
 
     /**
      * @var string[]
      */
-    protected $testExtensionsToLoad = [
+    protected array $testExtensionsToLoad = [
         'typo3conf/ext/avalex',
     ];
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->importDataSet('ntf://Database/pages.xml');
-        $this->importDataSet(__DIR__ . '/Fixtures/tx_avalex_configuration.xml');
+
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/pages.csv');
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/tx_avalex_configuration.csv');
 
         // Set is_siteroot to 1
-        parent::setUpFrontendRootPage(1);
+        $this->setUpFrontendRootPage(1);
 
-        /** @var TypoScriptFrontendController|ObjectProphecy $typoScriptFrontendController */
-        $typoScriptFrontendController = $this->prophesize(TypoScriptFrontendController::class);
-        $GLOBALS['TSFE'] = $typoScriptFrontendController->reveal();
+        /** @var TypoScriptFrontendController|MockObject|AccessibleObjectInterface $typoScriptFrontendController */
+        $typoScriptFrontendController = $this->getAccessibleMock(TypoScriptFrontendController::class);
+        $GLOBALS['TSFE'] = $typoScriptFrontendController;
         $GLOBALS['TSFE']->id = 1;
-        $GLOBALS['TSFE']->spamProtectEmailAddresses = 1;
+        $GLOBALS['TSFE']->_set('spamProtectEmailAddresses', 1);
 
         $this->impressumRequest = new ImpressumRequest();
-        $this->apiServiceProphecy = $this->prophesize(ApiService::class);
-        GeneralUtility::addInstance(ApiService::class, $this->apiServiceProphecy->reveal());
-        $this->avalexClientProphecy = $this->prophesize(AvalexClient::class);
-        GeneralUtility::addInstance(AvalexClient::class, $this->avalexClientProphecy->reveal());
+        $this->apiServiceMock = $this->createMock(ApiService::class);
+        GeneralUtility::addInstance(ApiService::class, $this->apiServiceMock);
+        $this->avalexClientMock = $this->createMock(AvalexClient::class);
+        GeneralUtility::addInstance(AvalexClient::class, $this->avalexClientMock);
 
         $this->subject = new AvalexPlugin();
         $this->subject->cObj = new ContentObjectRenderer();
@@ -98,21 +95,25 @@ class AvalexPluginTest extends FunctionalTestCase
         $avalexResponse = new AvalexResponse('{"de": {"avx-impressum": ""}}');
         $avalexResponse->setIsJsonResponse(true);
 
-        $this->avalexClientProphecy
-            ->processRequest(Argument::type(GetDomainLanguagesRequest::class))
-            ->shouldBeCalled()
+        $this->avalexClientMock
+            ->expects($this->atLeastOnce())
+            ->method('processRequest')
+            ->with($this->isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponse);
 
-        $this->apiServiceProphecy
-            ->getHtmlForCurrentRootPage(
-                Argument::type(ImpressumRequest::class),
-                [
-                    'uid' => 1,
-                    'api_key' => 'demo-key-with-online-shop',
-                    'domain' => 'https://example.com',
-                ]
+        $this->apiServiceMock
+            ->expects($this->atLeastOnce())
+            ->method('getHtmlForCurrentRootPage')
+            ->with(
+                $this->isInstanceOf(ImpressumRequest::class),
+                $this->equalTo(
+                    [
+                        'uid' => 1,
+                        'api_key' => 'demo-key-with-online-shop',
+                        'domain' => 'https://example.com',
+                    ]
+                )
             )
-            ->shouldBeCalled()
             ->willReturn(
                 '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! '
                 . '<a href="mailto:john@doe.tld">johns mail</a>'
@@ -142,10 +143,7 @@ class AvalexPluginTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @return callable
-     */
-    protected function getEncryptedMailCallable()
+    protected function getEncryptedMailCallable(): Callable
     {
         $cObj = $this->subject->cObj;
 
@@ -167,21 +165,24 @@ class AvalexPluginTest extends FunctionalTestCase
         $avalexResponse = new AvalexResponse('{"de": {"avx-impressum": ""}}');
         $avalexResponse->setIsJsonResponse(true);
 
-        $this->avalexClientProphecy
-            ->processRequest(Argument::type(GetDomainLanguagesRequest::class))
-            ->shouldBeCalled()
+        $this->avalexClientMock
+            ->expects($this->atLeastOnce())
+            ->method('processRequest')
+            ->with($this->isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponse);
 
-        $this->apiServiceProphecy
-            ->getHtmlForCurrentRootPage(
-                Argument::type(ImpressumRequest::class),
-                [
-                    'uid' => 1,
-                    'api_key' => 'demo-key-with-online-shop',
-                    'domain' => 'https://example.com',
-                ]
+        $this->apiServiceMock
+            ->expects($this->atLeastOnce())
+            ->with(
+                $this->isInstanceOf(ImpressumRequest::class),
+                $this->equalTo(
+                    [
+                        'uid' => 1,
+                        'api_key' => 'demo-key-with-online-shop',
+                        'domain' => 'https://example.com',
+                    ]
+                )
             )
-            ->shouldBeCalled()
             ->willReturn(
                 '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! '
                 . '<a href="#hello">Hello World</a>.</p>' . chr(10)
