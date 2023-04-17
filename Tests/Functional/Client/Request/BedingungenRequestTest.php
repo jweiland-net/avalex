@@ -35,8 +35,8 @@ class BedingungenRequestTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->importCSVDataSet(__DIR__ . '/Fixtures/pages.csv');
-        $this->importCSVDataSet(__DIR__ . '/Fixtures/tx_avalex_configuration.csv');
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/pages.csv');
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/tx_avalex_configuration.csv');
 
         // Set is_siteroot to 1
         $this->setUpFrontendRootPage(1);
