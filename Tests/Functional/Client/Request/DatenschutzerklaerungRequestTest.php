@@ -26,7 +26,7 @@ class DatenschutzerklaerungRequestTest extends FunctionalTestCase
      * @var string[]
      */
     protected array $testExtensionsToLoad = [
-        'typo3conf/ext/avalex',
+        'jweiland/avalex',
     ];
 
     protected DatenschutzerklaerungRequest $subject;
