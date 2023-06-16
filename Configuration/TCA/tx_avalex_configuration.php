@@ -14,7 +14,7 @@ if (version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '7
     $locallangTtc = 'LLL:EXT:cms/locallang_ttc.xlf:';
 }
 
-$iconFile = 'EXT:avalex/Resources/Public/Icons/Extension.svg';
+$iconFile = 'EXT:avalex/Resources/Public/Icons/Extension.png';
 if (version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '8.7', '<')) {
     $iconFile = 'EXT:avalex/ext_icon.png';
 }
