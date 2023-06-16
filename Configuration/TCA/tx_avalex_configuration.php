@@ -27,7 +27,6 @@ $tca = [
         'label' => 'description',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
         'dividers2tabs' => true,
         'delete' => 'deleted',
         'enablecolumns' => [
@@ -65,30 +64,28 @@ $tca = [
             'exclude' => true,
             'label' => $locallangGeneral . 'LGL.starttime',
             'config' => [
-                'type' => 'input',
+                'type' => 'datetime',
+                'format' => 'datetime',
                 'size' => 13,
-                'eval' => 'datetime',
                 'checkbox' => 0,
                 'default' => 0,
                 'range' => [
                     'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y')),
                 ],
-                'renderType' => 'inputDateTime',
             ],
         ],
         'endtime' => [
             'exclude' => true,
             'label' => $locallangGeneral . 'LGL.endtime',
             'config' => [
-                'type' => 'input',
+                'type' => 'datetime',
+                'format' => 'datetime',
                 'size' => 13,
-                'eval' => 'datetime',
                 'checkbox' => 0,
                 'default' => 0,
                 'range' => [
                     'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y')),
                 ],
-                'renderType' => 'inputDateTime',
             ],
         ],
         'website_root' => [
