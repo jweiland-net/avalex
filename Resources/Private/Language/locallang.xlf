@@ -12,6 +12,9 @@
 			<trans-unit id="error.couldNotDetermineRootPage">
 				<source>The beginning of the website could not be determined! Maybe you forgot to activate the option "Use as start of website" in the page properties of the start page.</source>
 			</trans-unit>
+			<trans-unit id="error.noAvalexConfigurationFound">
+				<source>No avalex configuration found.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

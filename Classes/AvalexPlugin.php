@@ -16,6 +16,7 @@ use JWeiland\Avalex\Client\Request\LocalizeableRequestInterface;
 use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Client\Request\WiderrufRequest;
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
+use JWeiland\Avalex\Exception\AvalexConfigurationNotFoundException;
 use JWeiland\Avalex\Service\ApiService;
 use JWeiland\Avalex\Service\LanguageService;
 use JWeiland\Avalex\Utility\AvalexUtility;
@@ -23,6 +24,7 @@ use JWeiland\Avalex\Utility\Typo3Utility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Typolink\EmailLinkBuilder;
 
@@ -66,13 +68,6 @@ class AvalexPlugin
         $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('avalex_content');
         $this->apiService = GeneralUtility::makeInstance(ApiService::class);
         $this->avalexConfigurationRepository = GeneralUtility::makeInstance(AvalexConfigurationRepository::class);
-
-        $this->configuration = $this->avalexConfigurationRepository->findByWebsiteRoot(
-            AvalexUtility::getRootForPage(),
-            'uid, api_key, domain'
-        );
-
-        $this->languageService = $this->getLanguageService($this->configuration);
     }
 
     /**
@@ -88,13 +83,26 @@ class AvalexPlugin
     /**
      * Render plugin
      *
-     * @param string $emptyContent empty string
+     * @param string $content empty string
      * @param array $conf TypoScript configuration
+     *
      * @return string
+     *
      * @throws Exception\InvalidUidException
      */
-    public function render(string $emptyContent, $conf)
+    public function render($content, $conf)
     {
+        try {
+            $this->configuration = $this->avalexConfigurationRepository->findByWebsiteRoot(
+                AvalexUtility::getRootForPage(),
+                'uid, api_key, domain'
+            );
+        } catch (AvalexConfigurationNotFoundException $avalexConfigurationNotFoundException) {
+            return LocalizationUtility::translate('error.noAvalexConfigurationFound', 'Avalex');
+        }
+
+        $this->languageService = $this->getLanguageService($this->configuration);
+
         $endpointRequest = $this->getRequestForEndpoint($conf['endpoint']);
         $cacheIdentifier = $this->getCacheIdentifier($endpointRequest);
         if ($this->cache->has($cacheIdentifier)) {
