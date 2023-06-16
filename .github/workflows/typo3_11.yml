@@ -12,11 +12,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Validate composer.json and composer.lock
-        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composer -e 'validate'
-
-      - name: Install testing system
-        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composerInstall
+      - name: Composer
+        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composerUpdate
 
       - name: Lint PHP
         run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s lint
@@ -40,8 +37,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install testing system
-        run: Build/Scripts/runTests.sh -t 11 -p ${{ matrix.php }} -s composerInstall
+      - name: Composer
+        run: Build/Scripts/runTests.sh -t 12 -p 8.1 -s composerUpdate
 
-      - name: Functional Tests with mariadb and mysqli
-        run: Build/Scripts/runTests.sh -t 11 -p ${{ matrix.php }} -d mariadb -a mysqli -s functional
+      - name: Functional tests with mariadb
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d mariadb -s functional
+
+      - name: Functional tests with postgres
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d postgres -s functional
+
+      - name: Functional tests with sqlite
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d sqlite -s functional
