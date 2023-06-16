@@ -12,7 +12,7 @@ setUpDockerComposeDotEnv() {
     [ -e .env ] && rm .env
     # Set up a new .env file for docker-compose
     {
-        echo "COMPOSE_PROJECT_NAME=${PROJECT_NAME}"
+        echo "COMPOSE_PROJECT_NAME=local"
         # To prevent access rights of files created by the testing, the docker image later
         # runs with the same user that is currently executing the script. docker-compose can't
         # use $UID directly itself since it is a shell variable and not an env variable, so
@@ -34,6 +34,7 @@ setUpDockerComposeDotEnv() {
         echo "MYSQL_VERSION=${MYSQL_VERSION}"
         echo "POSTGRES_VERSION=${POSTGRES_VERSION}"
         echo "USED_XDEBUG_MODES=${USED_XDEBUG_MODES}"
+        echo "IMAGE_PREFIX=${IMAGE_PREFIX}"
     } > .env
 }
 
@@ -84,6 +85,8 @@ Options:
             - composerInstallHighest: "composer update", handy if host has no PHP
             - functional: functional tests
             - lint: PHP linting
+            - phpstan: phpstan analyze
+            - phpstanGenerateBaseline: regenerate phpstan baseline, handy after phpstan updates
             - unit: PHP unit tests
 
     -a <mysqli|pdo_mysql>
@@ -152,7 +155,7 @@ Options:
         named "canRetrieveValueWithGP"
 
     -x
-        Only with -s functional|unit
+        Only with -s functional|unit|acceptance
         Send information to host instance for test or system under test break points. This is especially
         useful if a local PhpStorm instance is listening on default xdebug port 9003. A different port
         can be selected with -y
@@ -174,7 +177,6 @@ Options:
         versions of the main php images. The images are updated once in a while and only the youngest
         ones are supported by core testing. Use this if weird test errors occur. Also removes obsolete
         image versions of typo3/core-testing-*.
-
     -v
         Enable verbose script output. Shows variables and docker commands.
 
@@ -207,6 +209,7 @@ if ! command -v realpath &> /dev/null; then
 else
   ROOT_DIR=`realpath ${PWD}/../../`
 fi
+
 TEST_SUITE=""
 DBMS="sqlite"
 PHP_VERSION="7.4"
@@ -223,7 +226,7 @@ POSTGRES_VERSION="10"
 USED_XDEBUG_MODES="debug,develop"
 #@todo the $$ would add the current process id to the name, keeping as plan b
 #PROJECT_NAME="runTests-$(basename $(dirname $ROOT_DIR))-$(basename $ROOT_DIR)-$$"
-PROJECT_NAME="run_tests-$(basename $(dirname $ROOT_DIR))-$(basename $ROOT_DIR)"
+PROJECT_NAME="runTests-$(basename $(dirname $ROOT_DIR))-$(basename $ROOT_DIR)"
 PROJECT_NAME="${PROJECT_NAME//[[:blank:]]/}"
 echo $PROJECT_NAME
 
@@ -326,7 +329,10 @@ DOCKER_PHP_IMAGE=`echo "php${PHP_VERSION}" | sed -e 's/\.//'`
 shift $((OPTIND - 1))
 TEST_FILE=${1}
 if [ -n "${1}" ]; then
-    TEST_FILE=".Build/public/typo3conf/ext/avalex/${1}"
+    TEST_FILE="Web/typo3conf/ext/avalex/${1}"
+    if [ "${TYPO3_VERSION}" == "12" ]; then
+        TEST_FILE="./${1}"
+    fi
 fi
 
 if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
@@ -430,7 +436,7 @@ case ${TEST_SUITE} in
                 # Since docker is executed as root (yay!), the path to this dir is owned by
                 # root if docker creates it. Thank you, docker. We create the path beforehand
                 # to avoid permission issues.
-                mkdir -p ${ROOT_DIR}/public/typo3temp/var/tests/functional-sqlite-dbs/
+                mkdir -p ${ROOT_DIR}/Web/typo3temp/var/tests/functional-sqlite-dbs/
                 docker-compose run functional_sqlite
                 SUITE_EXIT_CODE=$?
                 ;;
