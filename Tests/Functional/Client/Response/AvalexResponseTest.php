@@ -20,8 +20,6 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class AvalexResponseTest extends FunctionalTestCase
 {
-    protected bool $initializeDatabase = false;
-
     /**
      * @var string[]
      */

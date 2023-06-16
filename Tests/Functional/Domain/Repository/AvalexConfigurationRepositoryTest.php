@@ -21,8 +21,6 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class AvalexConfigurationRepositoryTest extends FunctionalTestCase
 {
-    protected bool $initializeDatabase = false;
-
     protected AvalexConfigurationRepository $subject;
 
     /**

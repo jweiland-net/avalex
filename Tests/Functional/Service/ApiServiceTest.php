@@ -22,8 +22,6 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class ApiServiceTest extends FunctionalTestCase
 {
-    protected bool $initializeDatabase = false;
-
     /**
      * @var AvalexClient|MockObject
      */

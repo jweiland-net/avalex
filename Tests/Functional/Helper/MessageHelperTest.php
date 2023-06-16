@@ -19,8 +19,6 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class MessageHelperTest extends FunctionalTestCase
 {
-    protected bool $initializeDatabase = false;
-
     protected MessageHelper $subject;
 
     /**

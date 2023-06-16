@@ -30,8 +30,6 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class AvalexPluginTest extends FunctionalTestCase
 {
-    protected bool $initializeDatabase = false;
-
     protected ImpressumRequest $impressumRequest;
 
     /**
