@@ -10,6 +10,7 @@
 namespace JWeiland\Avalex\Backend\Preview;
 
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
+use JWeiland\Avalex\Exception\AvalexConfigurationNotFoundException;
 use JWeiland\Avalex\Exception\InvalidUidException;
 use JWeiland\Avalex\Utility\AvalexUtility;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
@@ -39,20 +40,9 @@ class ContentPreviewRenderer extends \TYPO3\CMS\Backend\Preview\StandardContentP
             '<p><b>Avalex: %s</b></p>',
             $GLOBALS['LANG']->sL(sprintf('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_%s.name', $row['list_type']))
         );
-        $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid,description');
-        if (empty($configuration)) {
-            // Could not find any key
-            $itemContent .= sprintf(
-                '<p>%s</p>',
-                $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.no_config')
-            );
-            $itemContent .= sprintf(
-                '<a href="%s" class="btn btn-primary t3-button">%s</a>',
-                $this->getLinkToCreateConfigurationRecord(),
-                $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.add')
-            );
-        } else {
-            // Key found
+
+        try {
+            $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid,description');
             $itemContent .= sprintf(
                 '<p>%s</p>',
                 sprintf($GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.found_config'), $configuration['description'])
@@ -62,7 +52,18 @@ class ContentPreviewRenderer extends \TYPO3\CMS\Backend\Preview\StandardContentP
                 $this->getLinkToEditConfigurationRecord($configuration['uid']),
                 $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.edit')
             );
+        } catch (AvalexConfigurationNotFoundException $avalexConfigurationNotFoundException) {
+            $itemContent .= sprintf(
+                '<p>%s</p>',
+                $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.no_config')
+            );
+            $itemContent .= sprintf(
+                '<a href="%s" class="btn btn-primary t3-button">%s</a>',
+                $this->getLinkToCreateConfigurationRecord(),
+                $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.add')
+            );
         }
+
         return $itemContent;
     }
 
