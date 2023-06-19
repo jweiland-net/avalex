@@ -31,6 +31,7 @@ class ApiService
      * @var AvalexClient
      */
     protected $avalexClient;
+
     /**
      * @var array
      */

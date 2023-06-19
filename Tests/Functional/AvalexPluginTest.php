@@ -15,66 +15,63 @@ use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Client\Request\ImpressumRequest;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Service\ApiService;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
+use JWeiland\Avalex\Utility\Typo3Utility;
 use PHPUnit\Framework\Constraint\StringContains;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3\CMS\Frontend\Typolink\EmailLinkBuilder;
+use TYPO3\TestingFramework\Core\AccessibleObjectInterface;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * Test case.
  */
 class AvalexPluginTest extends FunctionalTestCase
 {
-    /**
-     * @var ImpressumRequest
-     */
-    protected $impressumRequest;
+    protected ImpressumRequest $impressumRequest;
 
     /**
-     * @var ApiService|ObjectProphecy
+     * @var ApiService|MockObject
      */
-    protected $apiServiceProphecy;
+    protected $apiServiceMock;
 
     /**
-     * @var AvalexClient|ObjectProphecy
+     * @var AvalexClient|MockObject
      */
-    protected $avalexClientProphecy;
+    protected $avalexClientMock;
 
-    /**
-     * @var AvalexPlugin
-     */
-    protected $subject;
+    protected AvalexPlugin $subject;
 
     /**
      * @var string[]
      */
-    protected $testExtensionsToLoad = [
-        'typo3conf/ext/avalex'
+    protected array $testExtensionsToLoad = [
+        'jweiland/avalex',
     ];
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->importDataSet('ntf://Database/pages.xml');
-        $this->importDataSet(__DIR__ . '/Fixtures/tx_avalex_configuration.xml');
+
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/pages.csv');
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/tx_avalex_configuration.csv');
 
         // Set is_siteroot to 1
-        parent::setUpFrontendRootPage(1);
+        $this->setUpFrontendRootPage(1);
 
-        /** @var TypoScriptFrontendController|ObjectProphecy $typoScriptFrontendController */
-        $typoScriptFrontendController = $this->prophesize(TypoScriptFrontendController::class);
-        $GLOBALS['TSFE'] = $typoScriptFrontendController->reveal();
+        /** @var TypoScriptFrontendController|MockObject|AccessibleObjectInterface $typoScriptFrontendController */
+        $typoScriptFrontendController = $this->getAccessibleMock(TypoScriptFrontendController::class, [], [], '', false);
+        $GLOBALS['TSFE'] = $typoScriptFrontendController;
         $GLOBALS['TSFE']->id = 1;
-        $GLOBALS['TSFE']->spamProtectEmailAddresses = 1;
+        $GLOBALS['TSFE']->_set('spamProtectEmailAddresses', 1);
 
         $this->impressumRequest = new ImpressumRequest();
-        $this->apiServiceProphecy = $this->prophesize(ApiService::class);
-        GeneralUtility::addInstance(ApiService::class, $this->apiServiceProphecy->reveal());
-        $this->avalexClientProphecy = $this->prophesize(AvalexClient::class);
-        GeneralUtility::addInstance(AvalexClient::class, $this->avalexClientProphecy->reveal());
+        $this->apiServiceMock = $this->createMock(ApiService::class);
+        GeneralUtility::addInstance(ApiService::class, $this->apiServiceMock);
+        $this->avalexClientMock = $this->createMock(AvalexClient::class);
+        GeneralUtility::addInstance(AvalexClient::class, $this->avalexClientMock);
 
         $this->subject = new AvalexPlugin();
         $this->subject->cObj = new ContentObjectRenderer();
@@ -96,38 +93,66 @@ class AvalexPluginTest extends FunctionalTestCase
         $avalexResponse = new AvalexResponse('{"de": {"avx-impressum": ""}}');
         $avalexResponse->setIsJsonResponse(true);
 
-        $this->avalexClientProphecy
-            ->processRequest(Argument::type(GetDomainLanguagesRequest::class))
-            ->shouldBeCalled()
+        $this->avalexClientMock
+            ->expects(self::atLeastOnce())
+            ->method('processRequest')
+            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponse);
 
-        $this->apiServiceProphecy
-            ->getHtmlForCurrentRootPage(
-                Argument::type(ImpressumRequest::class),
-                [
-                    'uid' => 1,
-                    'api_key' => 'demo-key-with-online-shop',
-                    'domain' => 'https://example.com',
-                ]
+        $this->apiServiceMock
+            ->expects(self::atLeastOnce())
+            ->method('getHtmlForCurrentRootPage')
+            ->with(
+                self::isInstanceOf(ImpressumRequest::class),
+                self::equalTo(
+                    [
+                        'uid' => 1,
+                        'api_key' => 'demo-key-with-online-shop',
+                        'domain' => 'https://example.com',
+                    ]
+                )
             )
-            ->shouldBeCalled()
             ->willReturn(
-                '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="mailto:john@doe.tld">johns mail</a></p>'
+                '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! '
+                . '<a href="mailto:john@doe.tld">johns mail</a>'
+                . '</p>'
             );
 
-        $encryptedMail = $this->subject->cObj->getMailTo('john@doe.tld', 'johns mail');
+        $encryptedMail = call_user_func_array($this->getEncryptedMailCallable(), ['john@doe.tld', 'johns mail']);
         if (count($encryptedMail) === 3) {
             // TYPO3 >= 11
-            $attributes = GeneralUtility::implodeAttributes($encryptedMail[2], true);
-            $expected = "<a href=\"$encryptedMail[0]\" $attributes>$encryptedMail[1]</a>";
+            $expected = sprintf(
+                '<a href="%s" %s>%s</a>',
+                $encryptedMail[0],
+                GeneralUtility::implodeAttributes($encryptedMail[2], true),
+                $encryptedMail[1]
+            );
         } else {
-            $expected = "<a href=\"$encryptedMail[0]\">$encryptedMail[1]</a>";
+            $expected = sprintf(
+                '<a href="%s">%s</a>',
+                $encryptedMail[0],
+                $encryptedMail[1]
+            );
         }
 
-        static::assertThat(
-            $this->subject->render(null, ['endpoint' => 'avx-impressum']),
+        self::assertThat(
+            $this->subject->render('', ['endpoint' => 'avx-impressum']),
             new StringContains($expected)
         );
+    }
+
+    protected function getEncryptedMailCallable(): callable
+    {
+        $cObj = $this->subject->cObj;
+
+        return static function ($mailAddress, $linkText) use ($cObj) {
+            if (version_compare(Typo3Utility::getTypo3Version(), '12.0', '>=')) {
+                $linkBuilder = GeneralUtility::makeInstance(EmailLinkBuilder::class, $cObj, $GLOBALS['TSFE']);
+                return $linkBuilder->processEmailLink((string)$mailAddress, (string)$linkText);
+            }
+
+            return $cObj->getMailTo($mailAddress, $linkText);
+        };
     }
 
     /**
@@ -138,36 +163,44 @@ class AvalexPluginTest extends FunctionalTestCase
         $avalexResponse = new AvalexResponse('{"de": {"avx-impressum": ""}}');
         $avalexResponse->setIsJsonResponse(true);
 
-        $this->avalexClientProphecy
-            ->processRequest(Argument::type(GetDomainLanguagesRequest::class))
-            ->shouldBeCalled()
+        $this->avalexClientMock
+            ->expects(self::atLeastOnce())
+            ->method('processRequest')
+            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponse);
 
-        $this->apiServiceProphecy
-            ->getHtmlForCurrentRootPage(
-                Argument::type(ImpressumRequest::class),
-                [
-                    'uid' => 1,
-                    'api_key' => 'demo-key-with-online-shop',
-                    'domain' => 'https://example.com',
-                ]
+        $this->apiServiceMock
+            ->expects(self::atLeastOnce())
+            ->method('getHtmlForCurrentRootPage')
+            ->with(
+                self::isInstanceOf(ImpressumRequest::class),
+                self::equalTo(
+                    [
+                        'uid' => 1,
+                        'api_key' => 'demo-key-with-online-shop',
+                        'domain' => 'https://example.com',
+                    ]
+                )
             )
-            ->shouldBeCalled()
             ->willReturn(
-                '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="#hello">Hello World</a>.</p>' . chr(10)
-                . '<p>Want another link? OK: <a href="#world">Another one</a>. <a href="/test.html">Do not replace this</a> ok?</p>' . chr(10)
+                '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! '
+                . '<a href="#hello">Hello World</a>.</p>' . chr(10)
+                . '<p>Want another link? OK: <a href="#world">Another one</a>. '
+                . '<a href="/test.html">Do not replace this</a> ok?</p>' . chr(10)
                 . '<p>And also do <a href="https://domain.tld">not replace this</a>.</p>'
             );
 
         $requestUri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
         $expected = [];
-        $expected[] = '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! <a href="$requestUri#hello">Hello World</a>.</p>';
-        $expected[] = '<p>Want another link? OK: <a href="$requestUri#world">Another one</a>. <a href="/test.html">Do not replace this</a> ok?</p>';
+        $expected[] = '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! '
+            . '<a href="$requestUri#hello">Hello World</a>.</p>';
+        $expected[] = '<p>Want another link? OK: <a href="$requestUri#world">Another one</a>. '
+            . '<a href="/test.html">Do not replace this</a> ok?</p>';
         $expected[] = '<p>And also do <a href="https://domain.tld">not replace this</a>.</p>';
 
         self::assertEquals(
             str_replace('$requestUri', $requestUri, implode(chr(10), $expected)),
-            $this->subject->render(null, ['endpoint' => 'avx-impressum'])
+            $this->subject->render('', ['endpoint' => 'avx-impressum'])
         );
     }
 }

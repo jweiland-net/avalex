@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-namespace JWeiland\Avalex\Backend\Preview;
-
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -11,14 +7,15 @@ namespace JWeiland\Avalex\Backend\Preview;
  * LICENSE file that was distributed with this source code.
  */
 
+namespace JWeiland\Avalex\Backend\Preview;
+
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
+use JWeiland\Avalex\Exception\AvalexConfigurationNotFoundException;
 use JWeiland\Avalex\Exception\InvalidUidException;
 use JWeiland\Avalex\Utility\AvalexUtility;
-use JWeiland\Avalex\Utility\Typo3Utility;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class ContentPreviewRenderer extends \TYPO3\CMS\Backend\Preview\StandardContentPreviewRenderer
 {
@@ -43,20 +40,9 @@ class ContentPreviewRenderer extends \TYPO3\CMS\Backend\Preview\StandardContentP
             '<p><b>Avalex: %s</b></p>',
             $GLOBALS['LANG']->sL(sprintf('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_%s.name', $row['list_type']))
         );
-        $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid,description');
-        if (empty($configuration)) {
-            // could not find any key
-            $itemContent .= sprintf(
-                '<p>%s</p>',
-                $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.no_config')
-            );
-            $itemContent .= sprintf(
-                '<a href="%s" class="btn btn-primary t3-button">%s</a>',
-                $this->getLinkToCreateConfigurationRecord(),
-                $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.add')
-            );
-        } else {
-            // key found
+
+        try {
+            $configuration = $avalexConfigurationRepository->findByWebsiteRoot($rootPage, 'uid,description');
             $itemContent .= sprintf(
                 '<p>%s</p>',
                 sprintf($GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.found_config'), $configuration['description'])
@@ -66,23 +52,35 @@ class ContentPreviewRenderer extends \TYPO3\CMS\Backend\Preview\StandardContentP
                 $this->getLinkToEditConfigurationRecord($configuration['uid']),
                 $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.edit')
             );
+        } catch (AvalexConfigurationNotFoundException $avalexConfigurationNotFoundException) {
+            $itemContent .= sprintf(
+                '<p>%s</p>',
+                $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.no_config')
+            );
+            $itemContent .= sprintf(
+                '<a href="%s" class="btn btn-primary t3-button">%s</a>',
+                $this->getLinkToCreateConfigurationRecord(),
+                $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.add')
+            );
         }
+
         return $itemContent;
     }
 
     /**
-     * @param $uid
+     * @param int $uid
+     *
      * @return string
      */
     protected function getLinkToEditConfigurationRecord($uid)
     {
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $params = [
             'edit' => ['tx_avalex_configuration' => [$uid => 'edit']],
-            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
+            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
         ];
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        $link = (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
-        return $link;
+
+        return (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 
     /**
@@ -90,13 +88,12 @@ class ContentPreviewRenderer extends \TYPO3\CMS\Backend\Preview\StandardContentP
      */
     protected function getLinkToCreateConfigurationRecord()
     {
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $params = [
             'edit' => ['tx_avalex_configuration' => [0 => 'new']],
-            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
+            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
         ];
 
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        $link = (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
-        return $link;
+        return (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 }

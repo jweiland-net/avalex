@@ -29,9 +29,7 @@ class IsApiKeyConfiguredRequest extends AbstractRequest
     /**
      * @var array
      */
-    protected $allowedParameters = [
-        'apikey' => 1,
-    ];
+    protected $allowedParameters = ['apikey' => 1];
 
     /**
      * If this was called, the request will not use the API KEY from Avalex configuration record but

@@ -200,7 +200,8 @@ abstract class AbstractRequest implements RequestInterface
                             // Override value of TYPO3_REQUEST_HOST. Useful for own request objects or test cases
                             $domain = $this->getParameter('domain');
                         } elseif ($avalexConfigurationRecord['domain']) {
-                            // Maybe this parameter will be removed in the future. Working with TYPO3_REQUEST_HOST is the way to go.
+                            // Maybe this parameter will be removed in the future. Working with TYPO3_REQUEST_HOST
+                            // is the way to go.
                             $domain = $avalexConfigurationRecord['domain'];
                         }
                         $this->addParameter('domain', $domain);

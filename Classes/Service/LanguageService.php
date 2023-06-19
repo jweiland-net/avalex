@@ -12,6 +12,7 @@ namespace JWeiland\Avalex\Service;
 use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Client\Request\LocalizeableRequestInterface;
+use JWeiland\Avalex\Utility\Typo3Utility;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
@@ -40,7 +41,10 @@ class LanguageService
     protected $configuration = [];
 
     /**
-     * @param array $configuration e.g. by using AvalexConfigurationRepository::findByWebsiteRoot($rootPage, 'api_key, domain')
+     * Use AvalexConfigurationRepository::findByWebsiteRoot($rootPage, 'api_key, domain')
+     * to find a configuration
+     *
+     * @param array $configuration
      *
      * @throws NoSuchCacheException
      */
@@ -51,20 +55,23 @@ class LanguageService
 
         $this->configuration = [
             'domain' => (string)$configuration['domain'],
-            'api_key' => (string)$configuration['api_key']
+            'api_key' => (string)$configuration['api_key'],
         ];
     }
 
     public function addLanguageToEndpoint(LocalizeableRequestInterface $endpointRequest)
     {
-        // avalex default language
+        // Avalex default language
         $language = 'de';
         $frontendLanguage = $this->getFrontendLocale();
         $avalexLanguageResponse = $this->getLanguageResponseFromCache() ?: $this->fetchLanguageResponse();
         if (
-            is_array($avalexLanguageResponse) &&
-            array_key_exists($frontendLanguage, $avalexLanguageResponse)
-            && array_key_exists($endpointRequest->getEndpointWithoutPrefix(), $avalexLanguageResponse[$frontendLanguage])
+            is_array($avalexLanguageResponse)
+            && array_key_exists($frontendLanguage, $avalexLanguageResponse)
+            && array_key_exists(
+                $endpointRequest->getEndpointWithoutPrefix(),
+                $avalexLanguageResponse[$frontendLanguage]
+            )
         ) {
             $language = $frontendLanguage;
         }
@@ -107,23 +114,27 @@ class LanguageService
 
     public function getFrontendLocale()
     {
-        // Cache locales locally
-        static $frontendLocale = '';
+        $fallBackLanguage = 'en';
+        $frontendLocale = '';
 
-        if ($frontendLocale === '') {
-            if (
-                class_exists(SiteLanguage::class)
-                && isset($GLOBALS['TYPO3_REQUEST'])
-                && $GLOBALS['TYPO3_REQUEST'] instanceof ServerRequestInterface
-                && $GLOBALS['TYPO3_REQUEST']->getAttribute('language') instanceof SiteLanguage) {
-                $siteLanguage = $GLOBALS['TYPO3_REQUEST']->getAttribute('language');
+        if (
+            class_exists(SiteLanguage::class)
+            && isset($GLOBALS['TYPO3_REQUEST'])
+            && $GLOBALS['TYPO3_REQUEST'] instanceof ServerRequestInterface
+            && $GLOBALS['TYPO3_REQUEST']->getAttribute('language') instanceof SiteLanguage
+        ) {
+            /** @var SiteLanguage $siteLanguage */
+            $siteLanguage = $GLOBALS['TYPO3_REQUEST']->getAttribute('language');
+            if (version_compare(Typo3Utility::getTypo3Version(), '12.0', '<')) {
                 $frontendLocale = $siteLanguage ? $siteLanguage->getTwoLetterIsoCode() : '';
-            } elseif (isset($GLOBALS['TSFE']->lang)) {
-                $frontendLocale = $GLOBALS['TSFE']->lang;
+            } else {
+                $frontendLocale = $siteLanguage ? $siteLanguage->getLocale()->getLanguageCode() : '';
             }
+        } elseif (isset($GLOBALS['TSFE']->lang)) {
+            $frontendLocale = $GLOBALS['TSFE']->lang;
         }
 
-        return $frontendLocale;
+        return $frontendLocale ?: $fallBackLanguage;
     }
 
     /**

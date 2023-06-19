@@ -10,9 +10,10 @@
 namespace JWeiland\Avalex\Tests\Functional\Client\Request;
 
 use JWeiland\Avalex\Client\Response\AvalexResponse;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3\TestingFramework\Core\AccessibleObjectInterface;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * Test case.
@@ -22,29 +23,27 @@ class AvalexResponseTest extends FunctionalTestCase
     /**
      * @var string[]
      */
-    protected $testExtensionsToLoad = [
-        'typo3conf/ext/avalex'
+    protected array $testExtensionsToLoad = [
+        'jweiland/avalex',
     ];
 
-    /**
-     * @var AvalexResponse
-     */
-    protected $subject;
+    protected AvalexResponse $subject;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->importDataSet('ntf://Database/pages.xml');
-        $this->importDataSet(__DIR__ . '/../../Fixtures/tx_avalex_configuration.xml');
+
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/pages.csv');
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/tx_avalex_configuration.csv');
 
         // Set is_siteroot to 1
-        parent::setUpFrontendRootPage(1);
+        $this->setUpFrontendRootPage(1);
 
-        /** @var TypoScriptFrontendController|ObjectProphecy $typoScriptFrontendController */
-        $typoScriptFrontendController = $this->prophesize(TypoScriptFrontendController::class);
-        $GLOBALS['TSFE'] = $typoScriptFrontendController->reveal();
+        /** @var TypoScriptFrontendController|MockObject|AccessibleObjectInterface $typoScriptFrontendController */
+        $typoScriptFrontendController = $this->getAccessibleMock(TypoScriptFrontendController::class, [], [], '', false);
+        $GLOBALS['TSFE'] = $typoScriptFrontendController;
         $GLOBALS['TSFE']->id = 1;
-        $GLOBALS['TSFE']->spamProtectEmailAddresses = 1;
+        $GLOBALS['TSFE']->_set('spamProtectEmailAddresses', 1);
     }
 
     protected function tearDown(): void
@@ -88,7 +87,7 @@ class AvalexResponseTest extends FunctionalTestCase
         $this->subject->setIsJsonResponse(true);
         self::assertSame(
             [
-                'firstname' => 'stefan'
+                'firstname' => 'stefan',
             ],
             $this->subject->getBody()
         );
@@ -118,11 +117,11 @@ class AvalexResponseTest extends FunctionalTestCase
         self::assertSame(
             [
                 'Expires' => [
-                    0 => '0'
+                    0 => '0',
                 ],
                 'Content-Length' => [
-                    0 => '123'
-                ]
+                    0 => '123',
+                ],
             ],
             $this->subject->getHeaders()
         );
@@ -143,11 +142,11 @@ class AvalexResponseTest extends FunctionalTestCase
         self::assertSame(
             [
                 'Expires' => [
-                    0 => '0'
+                    0 => '0',
                 ],
                 'Content-Length' => [
-                    0 => '123'
-                ]
+                    0 => '123',
+                ],
             ],
             $this->subject->getHeaders()
         );
@@ -166,7 +165,7 @@ class AvalexResponseTest extends FunctionalTestCase
             'Content-Length' => [
                 0 => '123',
                 1 => '321',
-            ]
+            ],
         ];
         $this->subject = new AvalexResponse('', $headers);
         self::assertSame(

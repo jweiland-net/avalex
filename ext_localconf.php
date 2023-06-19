@@ -1,5 +1,8 @@
 <?php
-defined('TYPO3_MODE') || defined('TYPO3') || die('Access denied.');
+
+if (!defined('TYPO3_MODE') && !defined('TYPO3')) {
+    die('Access denied.');
+}
 
 call_user_func(static function () {
     $wizardItems = 'mod.wizards.newContentElement.wizardItems {
@@ -8,14 +11,19 @@ call_user_func(static function () {
         elements {';
 
     foreach (\JWeiland\Avalex\Utility\AvalexUtility::LIST_TYPES as $listType) {
-        // Use IconRegistry for newer TYPO3 versions
         if (version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '7.4', '>')) {
-            $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);
-            $iconRegistry->registerIcon(
-                $listType,
-                TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
-                ['source' => 'EXT:avalex/Resources/Public/Icons/' . $listType . '.svg']
-            );
+            // Use IconRegistry for TYPO3 versions up to 11.4. Since TYPO3 11.4 we are using Icons.php
+            if (version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '11.4', '<')) {
+                // Use IconRegistry for TYPO3 versions up to 11.4
+                $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                    \TYPO3\CMS\Core\Imaging\IconRegistry::class
+                );
+                $iconRegistry->registerIcon(
+                    $listType,
+                    TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
+                    ['source' => 'EXT:avalex/Resources/Public/Icons/' . $listType . '.svg']
+                );
+            }
             $elementIcon = 'iconIdentifier = ' . $listType;
         } else {
             $elementIcon = 'icon = EXT:avalex/Resources/Public/Icons/' . $listType . '.png';
@@ -82,11 +90,12 @@ call_user_func(static function () {
 
     if (
         version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '10.0', '<') ||
-        (\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\Features::class))->isFeatureEnabled('fluidBasedPageModule') === false
+        (\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\Features::class))
+            ->isFeatureEnabled('fluidBasedPageModule') === false
     ) {
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['avalex_newcontentelement'] = \JWeiland\Avalex\Hooks\PageLayoutView\AvalexPreviewRenderer::class;
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['avalex_newcontentelement']
+            = \JWeiland\Avalex\Hooks\PageLayoutView\AvalexPreviewRenderer::class;
     }
-    // else ContentPreviewRenderer is used
 
     if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class])) {
         $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class] = [];

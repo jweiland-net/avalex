@@ -16,13 +16,17 @@ use JWeiland\Avalex\Client\Request\LocalizeableRequestInterface;
 use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Client\Request\WiderrufRequest;
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
+use JWeiland\Avalex\Exception\AvalexConfigurationNotFoundException;
 use JWeiland\Avalex\Service\ApiService;
 use JWeiland\Avalex\Service\LanguageService;
 use JWeiland\Avalex\Utility\AvalexUtility;
+use JWeiland\Avalex\Utility\Typo3Utility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Typolink\EmailLinkBuilder;
 
 /**
  * Class AvalexPlugin
@@ -64,30 +68,41 @@ class AvalexPlugin
         $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('avalex_content');
         $this->apiService = GeneralUtility::makeInstance(ApiService::class);
         $this->avalexConfigurationRepository = GeneralUtility::makeInstance(AvalexConfigurationRepository::class);
-
-        $this->configuration = $this->avalexConfigurationRepository->findByWebsiteRoot(
-            AvalexUtility::getRootForPage(),
-            'uid, api_key, domain'
-        );
-
-        $this->languageService = $this->getLanguageService($this->configuration);
     }
 
-    public function setContentObjectRenderer(ContentObjectRenderer $cObj)
+    /**
+     * This is the new version to set the COR for UserFunc since TYPO3 11.
+     *
+     * @param ContentObjectRenderer $contentObjectRenderer
+     */
+    public function setContentObjectRenderer(ContentObjectRenderer $contentObjectRenderer)
     {
-        $this->cObj = $cObj;
+        $this->cObj = $contentObjectRenderer;
     }
 
     /**
      * Render plugin
      *
-     * @param string $_ empty string
+     * @param string $content empty string
      * @param array $conf TypoScript configuration
+     *
      * @return string
+     *
      * @throws Exception\InvalidUidException
      */
-    public function render($_, $conf)
+    public function render($content, $conf)
     {
+        try {
+            $this->configuration = $this->avalexConfigurationRepository->findByWebsiteRoot(
+                AvalexUtility::getRootForPage(),
+                'uid, api_key, domain'
+            );
+        } catch (AvalexConfigurationNotFoundException $avalexConfigurationNotFoundException) {
+            return LocalizationUtility::translate('error.noAvalexConfigurationFound', 'Avalex');
+        }
+
+        $this->languageService = $this->getLanguageService($this->configuration);
+
         $endpointRequest = $this->getRequestForEndpoint($conf['endpoint']);
         $cacheIdentifier = $this->getCacheIdentifier($endpointRequest);
         if ($this->cache->has($cacheIdentifier)) {
@@ -101,7 +116,7 @@ class AvalexPlugin
         );
 
         if ($content !== '') {
-            // set cache for successful calls only
+            // Set cache for successful calls only
             $content = $this->processLinks($content);
             $this->cache->set($cacheIdentifier, $content, [], 21600);
         }
@@ -169,23 +184,33 @@ class AvalexPlugin
      */
     protected function processLinks($content)
     {
-        $cObj = $this->cObj;
         $requestUrl = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
+        $encryptMailCallable = $this->getEncryptedMailCallable();
+
         return preg_replace_callback(
-            '@<a href="(?P<href>(?P<type>mailto:|#)[^"\']+)">(?P<text>[^<]+)<\/a>@',
-            static function ($match) use ($cObj, $requestUrl) {
+            '@<a href="(?P<href>(?P<type>mailto:|#)[^"\']+)">(?P<text>[^<]+)</a>@',
+            static function ($match) use ($requestUrl, $encryptMailCallable) {
                 if ($match['type'] === 'mailto:') {
-                    $encrypted = $cObj->getMailTo(substr($match['href'], 7), $match['text']);
+                    $encrypted = $encryptMailCallable(substr($match['href'], 7), $match['text']);
                     if (count($encrypted) === 3) {
                         // TYPO3 >= 11
-                        $html = '<a href="' . $encrypted[0] . '" '
-                            . GeneralUtility::implodeAttributes($encrypted[2], true)
-                            . '>' . $encrypted[1] . '</a>';
+                        $html = sprintf(
+                            '<a href="%s" %s>%s</a>',
+                            $encrypted[0],
+                            GeneralUtility::implodeAttributes($encrypted[2], true),
+                            $encrypted[1]
+                        );
                     } else {
-                        $html = '<a href="' . $encrypted[0] . '">' . $encrypted[1] . '</a>';
+                        $html = sprintf(
+                            '<a href="%s">%s</a>',
+                            $encrypted[0],
+                            $encrypted[1]
+                        );
                     }
+
                     return $html;
                 }
+
                 return (string)str_replace($match['href'], $requestUrl . $match['href'], $match[0]);
             },
             $content
@@ -193,8 +218,23 @@ class AvalexPlugin
     }
 
     /**
-     * @param array $configuration
-     *
+     * @return callable
+     */
+    protected function getEncryptedMailCallable()
+    {
+        $cObj = $this->cObj;
+
+        return static function ($mailAddress, $linkText) use ($cObj) {
+            if (version_compare(Typo3Utility::getTypo3Version(), '12.0', '>=')) {
+                $linkBuilder = GeneralUtility::makeInstance(EmailLinkBuilder::class, $cObj, $GLOBALS['TSFE']);
+                return $linkBuilder->processEmailLink((string)$mailAddress, (string)$linkText);
+            }
+
+            return $cObj->getMailTo($mailAddress, $linkText);
+        };
+    }
+
+    /**
      * @return LanguageService
      */
     protected function getLanguageService(array $configuration)

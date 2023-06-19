@@ -14,14 +14,14 @@ use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Client\Request\ImpressumRequest;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Service\LanguageService;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3\TestingFramework\Core\AccessibleObjectInterface;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * Test case.
@@ -29,33 +29,31 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 class LanguageServiceTest extends FunctionalTestCase
 {
     /**
-     * @var AvalexClient|ObjectProphecy
+     * @var AvalexClient|MockObject
      */
-    protected $avalexClientProphecy;
+    protected $avalexClientMock;
 
-    /**
-     * @var LanguageService
-     */
-    protected $subject;
+    protected LanguageService $subject;
 
     /**
      * @var string[]
      */
-    protected $testExtensionsToLoad = [
-        'typo3conf/ext/avalex'
+    protected array $testExtensionsToLoad = [
+        'jweiland/avalex',
     ];
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->importDataSet('ntf://Database/pages.xml');
-        $this->importDataSet(__DIR__ . '/../Fixtures/tx_avalex_configuration.xml');
+
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/pages.csv');
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/tx_avalex_configuration.csv');
 
         // Set is_siteroot to 1
-        parent::setUpFrontendRootPage(1);
+        $this->setUpFrontendRootPage(1);
 
-        $this->avalexClientProphecy = $this->prophesize(AvalexClient::class);
-        GeneralUtility::addInstance(AvalexClient::class, $this->avalexClientProphecy->reveal());
+        $this->avalexClientMock = $this->createMock(AvalexClient::class);
+        GeneralUtility::addInstance(AvalexClient::class, $this->avalexClientMock);
 
         $this->subject = new LanguageService([
             'domain' => 'https://example.com',
@@ -86,18 +84,18 @@ class LanguageServiceTest extends FunctionalTestCase
                     new Uri('/'),
                     [
                         'enabled' => true,
-                        'iso-639-1' => $language
+                        'iso-639-1' => $language,
                     ]
                 )
             );
         }
 
-        /** @var TypoScriptFrontendController|ObjectProphecy $typoScriptFrontendController */
-        $typoScriptFrontendController = $this->prophesize(TypoScriptFrontendController::class);
-        $GLOBALS['TSFE'] = $typoScriptFrontendController->reveal();
+        /** @var TypoScriptFrontendController|MockObject|AccessibleObjectInterface $typoScriptFrontendControllerMock */
+        $typoScriptFrontendControllerMock = $this->getAccessibleMock(TypoScriptFrontendController::class, [], [], '', false);
+        $GLOBALS['TSFE'] = $typoScriptFrontendControllerMock;
         $GLOBALS['TSFE']->id = 1;
-        $GLOBALS['TSFE']->lang = $language ?: 'en';
-        $GLOBALS['TSFE']->spamProtectEmailAddresses = 1;
+        $GLOBALS['TSFE']->_set('lang', $language ?: 'en');
+        $GLOBALS['TSFE']->_set('spamProtectEmailAddresses', 1);
     }
 
     /**
@@ -107,17 +105,18 @@ class LanguageServiceTest extends FunctionalTestCase
     {
         $this->setEnvironmentWithLanguage('');
 
-        /** @var AvalexResponse|ObjectProphecy $avalexResponseProphecy */
-        $avalexResponseProphecy = $this->prophesize(AvalexResponse::class);
-        $avalexResponseProphecy
-            ->getBody()
-            ->shouldBeCalled()
+        /** @var AvalexResponse|MockObject $avalexResponseMock */
+        $avalexResponseMock = $this->createMock(AvalexResponse::class);
+        $avalexResponseMock
+            ->expects(self::atLeastOnce())
+            ->method('getBody')
             ->willReturn([]);
 
-        $this->avalexClientProphecy
-            ->processRequest(Argument::type(GetDomainLanguagesRequest::class))
-            ->shouldBeCalled()
-            ->willReturn($avalexResponseProphecy->reveal());
+        $this->avalexClientMock
+            ->expects(self::atLeastOnce())
+            ->method('processRequest')
+            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
+            ->willReturn($avalexResponseMock);
 
         $endpoint = new ImpressumRequest();
         $this->subject->addLanguageToEndpoint($endpoint);
@@ -135,21 +134,22 @@ class LanguageServiceTest extends FunctionalTestCase
     {
         $this->setEnvironmentWithLanguage('de');
 
-        /** @var AvalexResponse|ObjectProphecy $avalexResponseProphecy */
-        $avalexResponseProphecy = $this->prophesize(AvalexResponse::class);
-        $avalexResponseProphecy
-            ->getBody()
-            ->shouldBeCalled()
+        /** @var AvalexResponse|MockObject $avalexResponseMock */
+        $avalexResponseMock = $this->createMock(AvalexResponse::class);
+        $avalexResponseMock
+            ->expects(self::atLeastOnce())
+            ->method('getBody')
             ->willReturn([
                 'de' => [
-                    'invalid-endpoint' => 'foo->bar'
-                ]
+                    'invalid-endpoint' => 'foo->bar',
+                ],
             ]);
 
-        $this->avalexClientProphecy
-            ->processRequest(Argument::type(GetDomainLanguagesRequest::class))
-            ->shouldBeCalled()
-            ->willReturn($avalexResponseProphecy->reveal());
+        $this->avalexClientMock
+            ->expects(self::atLeastOnce())
+            ->method('processRequest')
+            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
+            ->willReturn($avalexResponseMock);
 
         $endpoint = new ImpressumRequest();
         $this->subject->addLanguageToEndpoint($endpoint);
@@ -167,21 +167,22 @@ class LanguageServiceTest extends FunctionalTestCase
     {
         $this->setEnvironmentWithLanguage('de');
 
-        /** @var AvalexResponse|ObjectProphecy $avalexResponseProphecy */
-        $avalexResponseProphecy = $this->prophesize(AvalexResponse::class);
-        $avalexResponseProphecy
-            ->getBody()
-            ->shouldBeCalled()
+        /** @var AvalexResponse|MockObject $avalexResponseMock */
+        $avalexResponseMock = $this->createMock(AvalexResponse::class);
+        $avalexResponseMock
+            ->expects(self::atLeastOnce())
+            ->method('getBody')
             ->willReturn([
                 'de' => [
-                    'impressum' => 'TYPO3 works'
-                ]
+                    'impressum' => 'TYPO3 works',
+                ],
             ]);
 
-        $this->avalexClientProphecy
-            ->processRequest(Argument::type(GetDomainLanguagesRequest::class))
-            ->shouldBeCalled()
-            ->willReturn($avalexResponseProphecy->reveal());
+        $this->avalexClientMock
+            ->expects(self::atLeastOnce())
+            ->method('processRequest')
+            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
+            ->willReturn($avalexResponseMock);
 
         $endpoint = new ImpressumRequest();
         $this->subject->addLanguageToEndpoint($endpoint);
@@ -199,24 +200,25 @@ class LanguageServiceTest extends FunctionalTestCase
     {
         $this->setEnvironmentWithLanguage('en');
 
-        /** @var AvalexResponse|ObjectProphecy $avalexResponseProphecy */
-        $avalexResponseProphecy = $this->prophesize(AvalexResponse::class);
-        $avalexResponseProphecy
-            ->getBody()
-            ->shouldBeCalled()
+        /** @var AvalexResponse|MockObject $avalexResponseMock */
+        $avalexResponseMock = $this->createMock(AvalexResponse::class);
+        $avalexResponseMock
+            ->expects(self::atLeastOnce())
+            ->method('getBody')
             ->willReturn([
                 'de' => [
-                    'impressum' => 'TYPO3 klappt'
+                    'impressum' => 'TYPO3 klappt',
                 ],
                 'en' => [
-                    'impressum' => 'TYPO3 works'
-                ]
+                    'impressum' => 'TYPO3 works',
+                ],
             ]);
 
-        $this->avalexClientProphecy
-            ->processRequest(Argument::type(GetDomainLanguagesRequest::class))
-            ->shouldBeCalled()
-            ->willReturn($avalexResponseProphecy->reveal());
+        $this->avalexClientMock
+            ->expects(self::atLeastOnce())
+            ->method('processRequest')
+            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
+            ->willReturn($avalexResponseMock);
 
         $endpoint = new ImpressumRequest();
         $this->subject->addLanguageToEndpoint($endpoint);
