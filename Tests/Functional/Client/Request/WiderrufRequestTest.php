@@ -33,14 +33,14 @@ class WiderrufRequestTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->importCSVDataSet(__DIR__ . '/../Fixtures/pages.csv');
-        $this->importCSVDataSet(__DIR__ . '/../Fixtures/tx_avalex_configuration.csv');
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/pages.csv');
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/tx_avalex_configuration.csv');
 
         // Set is_siteroot to 1
         $this->setUpFrontendRootPage(1);
 
         /** @var TypoScriptFrontendController|MockObject|AccessibleObjectInterface $typoScriptFrontendController */
-        $typoScriptFrontendController = $this->getAccessibleMock(TypoScriptFrontendController::class);
+        $typoScriptFrontendController = $this->getAccessibleMock(TypoScriptFrontendController::class, [], [], '', false);
         $GLOBALS['TSFE'] = $typoScriptFrontendController;
         $GLOBALS['TSFE']->id = 1;
         $GLOBALS['TSFE']->_set('spamProtectEmailAddresses', 1);

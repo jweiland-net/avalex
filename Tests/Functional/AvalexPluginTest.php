@@ -62,7 +62,7 @@ class AvalexPluginTest extends FunctionalTestCase
         $this->setUpFrontendRootPage(1);
 
         /** @var TypoScriptFrontendController|MockObject|AccessibleObjectInterface $typoScriptFrontendController */
-        $typoScriptFrontendController = $this->getAccessibleMock(TypoScriptFrontendController::class);
+        $typoScriptFrontendController = $this->getAccessibleMock(TypoScriptFrontendController::class, [], [], '', false);
         $GLOBALS['TSFE'] = $typoScriptFrontendController;
         $GLOBALS['TSFE']->id = 1;
         $GLOBALS['TSFE']->_set('spamProtectEmailAddresses', 1);
@@ -171,6 +171,7 @@ class AvalexPluginTest extends FunctionalTestCase
 
         $this->apiServiceMock
             ->expects(self::atLeastOnce())
+            ->method('getHtmlForCurrentRootPage')
             ->with(
                 self::isInstanceOf(ImpressumRequest::class),
                 self::equalTo(

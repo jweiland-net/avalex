@@ -48,7 +48,7 @@ class DomainEvaluationTest extends FunctionalTestCase
      */
     public function returnFieldJSWillReturnValidationJavaScript()
     {
-        self::assertContains(
+        self::assertStringContainsString(
             'https://',
             $this->subject->returnFieldJS()
         );

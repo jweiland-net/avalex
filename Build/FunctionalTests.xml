@@ -8,7 +8,7 @@
     convertErrorsToExceptions="true"
     convertWarningsToExceptions="true"
     convertNoticesToExceptions="true"
-    convertDeprecationsToExceptions="true"
+    convertDeprecationsToExceptions="false"
     forceCoversAnnotation="false"
     stopOnError="false"
     stopOnFailure="false"

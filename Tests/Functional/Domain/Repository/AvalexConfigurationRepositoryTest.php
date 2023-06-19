@@ -34,14 +34,14 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->importCSVDataSet(__DIR__ . '/../Fixtures/pages.csv');
-        $this->importCSVDataSet(__DIR__ . '/../Fixtures/tx_avalex_configuration.csv');
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/pages.csv');
+        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/tx_avalex_configuration.csv');
 
         // Set is_siteroot to 1
         $this->setUpFrontendRootPage(1);
 
         /** @var TypoScriptFrontendController|MockObject|AccessibleObjectInterface $typoScriptFrontendController */
-        $typoScriptFrontendController = $this->getAccessibleMock(TypoScriptFrontendController::class);
+        $typoScriptFrontendController = $this->getAccessibleMock(TypoScriptFrontendController::class, [], [], '', false);
         $GLOBALS['TSFE'] = $typoScriptFrontendController;
         $GLOBALS['TSFE']->id = 1;
         $GLOBALS['TSFE']->_set('spamProtectEmailAddresses', 1);
@@ -88,7 +88,8 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
         $this->expectException(AvalexConfigurationNotFoundException::class);
 
         // We have to delete the configuration which is configured as "global"
-        $this->getDatabaseConnection()->delete(
+        $connection = $this->getConnectionPool()->getConnectionForTable('tx_avalex_configuration');
+        $connection->delete(
             'tx_avalex_configuration',
             [
                 'uid' => 1,

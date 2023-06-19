@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Composer
-        run: Build/Scripts/runTests.sh -t 11 -p 8.1 -s composerUpdate
+        run: Build/Scripts/runTests.sh -t 11 -p 7.4 -s composerUpdate
 
       - name: Functional tests with mariadb
         run: Build/Scripts/runTests.sh -t 11 -p ${{ matrix.php }} -d mariadb -s functional

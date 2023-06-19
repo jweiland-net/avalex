@@ -91,7 +91,7 @@ class LanguageServiceTest extends FunctionalTestCase
         }
 
         /** @var TypoScriptFrontendController|MockObject|AccessibleObjectInterface $typoScriptFrontendControllerMock */
-        $typoScriptFrontendControllerMock = $this->getAccessibleMock(TypoScriptFrontendController::class);
+        $typoScriptFrontendControllerMock = $this->getAccessibleMock(TypoScriptFrontendController::class, [], [], '', false);
         $GLOBALS['TSFE'] = $typoScriptFrontendControllerMock;
         $GLOBALS['TSFE']->id = 1;
         $GLOBALS['TSFE']->_set('lang', $language ?: 'en');
