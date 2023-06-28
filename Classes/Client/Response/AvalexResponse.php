@@ -55,7 +55,7 @@ class AvalexResponse implements ResponseInterface
         }
 
         if (MathUtility::canBeInterpretedAsInteger($statusCode)) {
-            $this->statusCode = $statusCode;
+            $this->statusCode = (int)$statusCode;
         }
     }
 
