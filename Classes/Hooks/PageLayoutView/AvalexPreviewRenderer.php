@@ -90,7 +90,6 @@ class AvalexPreviewRenderer implements PageLayoutViewDrawItemHookInterface
                         'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.add'
                     )
                 );
-
             }
 
             $drawItem = false;
