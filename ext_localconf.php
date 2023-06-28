@@ -89,9 +89,11 @@ call_user_func(static function () {
     }
 
     if (
-        version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '10.0', '<') ||
-        (\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\Features::class))
-            ->isFeatureEnabled('fluidBasedPageModule') === false
+        version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '10.0', '<')
+        || (
+            ($features = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\Features::class))
+            && $features->isFeatureEnabled('fluidBasedPageModule') === false
+        )
     ) {
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['avalex_newcontentelement']
             = \JWeiland\Avalex\Hooks\PageLayoutView\AvalexPreviewRenderer::class;

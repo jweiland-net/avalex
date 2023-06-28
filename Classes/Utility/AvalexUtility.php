@@ -20,7 +20,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class AvalexUtility
 {
-    public const LIST_TYPES = [
+    const LIST_TYPES = [
         'avalex_avalex',
         'avalex_imprint',
         'avalex_bedingungen',
