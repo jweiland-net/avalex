@@ -61,7 +61,9 @@ class LanguageService
 
     public function addLanguageToEndpoint(LocalizeableRequestInterface $endpointRequest)
     {
-        // Avalex default language
+        // In customer account of avalex company all texts are always available in german language.
+        // If another language (currently only en is allowed as different language) is not available EXT:avalex
+        // will fallback to the german texts.
         $language = 'de';
         $frontendLanguage = $this->getFrontendLocale();
         $avalexLanguageResponse = $this->getLanguageResponseFromCache() ?: $this->fetchLanguageResponse();
@@ -131,7 +133,8 @@ class LanguageService
                 $frontendLocale = $siteLanguage ? $siteLanguage->getLocale()->getLanguageCode() : '';
             }
         } elseif (isset($GLOBALS['TSFE']->lang)) {
-            $frontendLocale = $GLOBALS['TSFE']->lang;
+            // In case of "default" the TS "config.language" was NOT set. So we expect "en" here.
+            $frontendLocale = $GLOBALS['TSFE']->lang === 'default' ? 'en' : $GLOBALS['TSFE']->lang;
         }
 
         return $frontendLocale ?: $fallBackLanguage;
