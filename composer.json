@@ -27,6 +27,9 @@
 		"typo3/coding-standards": "^0.6",
 		"friendsofphp/php-cs-fixer": "^3.14"
 	},
+	"replace": {
+		"typo3-ter/avalex": "self.version"
+	},
 	"autoload": {
 		"psr-4": {
 			"JWeiland\\Avalex\\": "Classes"
