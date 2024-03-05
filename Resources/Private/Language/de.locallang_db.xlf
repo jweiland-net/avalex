@@ -3,81 +3,81 @@
   <file source-language="en" datatype="plaintext" original="messages" date="2018-03-18T17:38:20Z" product-name="avalex" target-language="de">
     <header/>
     <body>
-      <trans-unit id="tx_avalex_avalex.name">
+      <trans-unit id="tx_avalex_avalex.name" approved="yes">
         <source>Privacy statement</source>
-        <target state="translated">Datenschutzerklärung</target>
+        <target state="final">Datenschutzerklärung</target>
       </trans-unit>
-      <trans-unit id="tx_avalex_avalex.description">
+      <trans-unit id="tx_avalex_avalex.description" approved="yes">
         <source>This plugin displays a privacy statement for your website using the avalex.de API</source>
-        <target state="translated">Das Plugin ermöglicht es, eine Datenschutzerklärung für Ihre webseite über avalex.de zu beziehen.</target>
+        <target state="final">Das Plugin ermöglicht es, eine Datenschutzerklärung für Ihre webseite über avalex.de zu beziehen.</target>
       </trans-unit>
-      <trans-unit id="tx_avalex_imprint.name">
+      <trans-unit id="tx_avalex_imprint.name" approved="yes">
         <source>Imprint</source>
-        <target state="translated">Impressum</target>
+        <target state="final">Impressum</target>
       </trans-unit>
-      <trans-unit id="tx_avalex_imprint.description">
+      <trans-unit id="tx_avalex_imprint.description" approved="yes">
         <source>This plugin displays an imprint for your website using the avalex.de API</source>
-        <target state="translated">Das Plugin ermöglicht es, ein Impressum für Ihre webseite über avalex.de zu beziehen.</target>
+        <target state="final">Das Plugin ermöglicht es, ein Impressum für Ihre webseite über avalex.de zu beziehen.</target>
       </trans-unit>
-      <trans-unit id="tx_avalex_bedingungen.name">
+      <trans-unit id="tx_avalex_bedingungen.name" approved="yes">
         <source>Terms and conditions</source>
-        <target state="translated">Allgemeine Geschäftsbedingungen (AGB)</target>
+        <target state="final">Allgemeine Geschäftsbedingungen (AGB)</target>
       </trans-unit>
-      <trans-unit id="tx_avalex_bedingungen.description">
+      <trans-unit id="tx_avalex_bedingungen.description" approved="yes">
         <source>This plugin displays terms and conditions for your website using the avalex.de API</source>
-        <target state="translated">Das Plugin ermöglicht es, Allgemeine Geschäftsbedingungen für Ihre webseite über avalex.de zu beziehen.</target>
+        <target state="final">Das Plugin ermöglicht es, Allgemeine Geschäftsbedingungen für Ihre webseite über avalex.de zu beziehen.</target>
       </trans-unit>
-      <trans-unit id="tx_avalex_widerruf.name">
+      <trans-unit id="tx_avalex_widerruf.name" approved="yes">
         <source>Cancellation policy</source>
-        <target state="translated">Widerrufsbelehrung</target>
+        <target state="final">Widerrufsbelehrung</target>
       </trans-unit>
-      <trans-unit id="tx_avalex_widerruf.description">
+      <trans-unit id="tx_avalex_widerruf.description" approved="yes">
         <source>This plugin displays a cancellation policy for your website using the avalex.de API</source>
-        <target state="translated">Das Plugin ermöglicht es, eine Widerrufsbelehrung für Ihre webseite über avalex.de zu beziehen.</target>
+        <target state="final">Das Plugin ermöglicht es, eine Widerrufsbelehrung für Ihre webseite über avalex.de zu beziehen.</target>
       </trans-unit>
-      <trans-unit id="tx_avalex_configuration">
+      <trans-unit id="tx_avalex_configuration" approved="yes">
         <source>Avalex configuration</source>
-        <target state="translated">Avalex Konfiguration</target>
+        <target state="final">Avalex Konfiguration</target>
       </trans-unit>
-      <trans-unit id="tx_avalex_configuration.website_root">
+      <trans-unit id="tx_avalex_configuration.website_root" approved="yes">
         <source>For Website(s)</source>
-        <target state="translated">Für Webseite(n)</target>
+        <target state="final">Für Webseite(n)</target>
       </trans-unit>
-      <trans-unit id="tx_avalex_configuration.api_key">
+      <trans-unit id="tx_avalex_configuration.api_key" approved="yes">
         <source>API key</source>
-        <target state="translated">API-Key</target>
+        <target state="final">API-Key</target>
       </trans-unit>
-      <trans-unit id="tx_avalex_configuration.description">
+      <trans-unit id="tx_avalex_configuration.description" approved="yes">
         <source>Description (optional)</source>
-        <target state="translated">Beschreibung (optional)</target>
+        <target state="final">Beschreibung (optional)</target>
       </trans-unit>
-      <trans-unit id="tx_avalex_configuration.global">
+      <trans-unit id="tx_avalex_configuration.global" approved="yes">
         <source>Use this configuration for all websites</source>
-        <target state="translated">Diese Konfiguration für alle Webseiten verwenden</target>
+        <target state="final">Diese Konfiguration für alle Webseiten verwenden</target>
       </trans-unit>
-      <trans-unit id="tx_avalex_configuration.domain">
+      <trans-unit id="tx_avalex_configuration.domain" approved="yes">
         <source>Domain linked with API key (e.g. https://example.com)</source>
-        <target state="translated">Mit dem API-Key verknüpfte Domain (z.B. https://example.com)</target>
+        <target state="final">Mit dem API-Key verknüpfte Domain (z.B. https://example.com)</target>
       </trans-unit>
-      <trans-unit id="wizard_items.tx_avalex">
+      <trans-unit id="wizard_items.tx_avalex" approved="yes">
         <source>Avalex</source>
-        <target state="needs-translation">Avalex</target>
+        <target state="final">Avalex</target>
       </trans-unit>
-      <trans-unit id="preview_renderer.no_config">
+      <trans-unit id="preview_renderer.no_config" approved="yes">
         <source>Could not find any configuration for avalex!</source>
-        <target state="translated">Es konnte keine Avalex Konfiguration gefunden werden!</target>
+        <target state="final">Es konnte keine Avalex Konfiguration gefunden werden!</target>
       </trans-unit>
-      <trans-unit id="preview_renderer.found_config">
+      <trans-unit id="preview_renderer.found_config" approved="yes">
         <source>Using configuration "%s".</source>
-        <target state="translated">Die Konfiguration "%s" wird verwendet.</target>
+        <target state="final">Die Konfiguration "%s" wird verwendet.</target>
       </trans-unit>
-      <trans-unit id="preview_renderer.button.add">
+      <trans-unit id="preview_renderer.button.add" approved="yes">
         <source>Add configuration</source>
-        <target state="translated">Konfiguration hinzufügen</target>
+        <target state="final">Konfiguration hinzufügen</target>
       </trans-unit>
-      <trans-unit id="preview_renderer.button.edit">
+      <trans-unit id="preview_renderer.button.edit" approved="yes">
         <source>Edit configuration</source>
-        <target state="translated">Konfiguration bearbeiten</target>
+        <target state="final">Konfiguration bearbeiten</target>
       </trans-unit>
     </body>
   </file>
