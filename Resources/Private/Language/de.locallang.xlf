@@ -3,21 +3,21 @@
   <file source-language="en" datatype="plaintext" original="messages" date="2018-03-18T17:38:20Z" product-name="avalex" target-language="de">
     <header/>
     <body>
-      <trans-unit id="flash_message.configuration.response_ok">
+      <trans-unit id="flash_message.configuration.response_ok" approved="yes">
         <source>The submitted API key is valid and can be used for the following domain(s): %s</source>
-        <target state="translated">Der eingegebene API-Key ist gültig und kann für die folgende(n) Domain(s) verwendet werden: %s</target>
+        <target state="final">Der eingegebene API-Key ist gültig und kann für die folgende(n) Domain(s) verwendet werden: %s</target>
       </trans-unit>
-      <trans-unit id="flash_message.configuration.key_invalid">
+      <trans-unit id="flash_message.configuration.key_invalid" approved="yes">
         <source>The submitted API key is invalid, please check your input!</source>
-        <target state="translated">Der eingegebene API-Key ist ungültig, bitte überprüfe die Eingabe!</target>
+        <target state="final">Der eingegebene API-Key ist ungültig, bitte überprüfe die Eingabe!</target>
       </trans-unit>
-      <trans-unit id="error.couldNotDetermineRootPage">
+      <trans-unit id="error.couldNotDetermineRootPage" approved="yes">
         <source>The beginning of the website could not be determined! Maybe you forgot to activate the option "Use as start of website" in the page properties of the start page.</source>
-        <target state="translated">Anfang der Webseite konnte nicht ermittelt werden! Evtl. wurde vergessen in den Seiteneigenschaften der Startseite die Option "Als Anfang der Website benutzen" zu aktivieren.</target>
+        <target state="final">Anfang der Webseite konnte nicht ermittelt werden! Evtl. wurde vergessen in den Seiteneigenschaften der Startseite die Option "Als Anfang der Website benutzen" zu aktivieren.</target>
       </trans-unit>
-      <trans-unit id="error.noAvalexConfigurationFound">
+      <trans-unit id="error.noAvalexConfigurationFound" approved="yes">
         <source>No avalex configuration found. Please create an avalex configuration record with api key on page 0 (topmost page with TYPO3 logo).</source>
-        <target state="translated">Es konnte keine avalex Konfiguration gefunden werden. Bitte erstellen Sie einen avalex Konfigurationsdatensatz mit API Key auf der Seite 0 (oberste Seite mit dem TYPO3 Logo).</target>
+        <target state="final">Es konnte keine avalex Konfiguration gefunden werden. Bitte erstellen Sie einen avalex Konfigurationsdatensatz mit API Key auf der Seite 0 (oberste Seite mit dem TYPO3 Logo).</target>
       </trans-unit>
     </body>
   </file>
