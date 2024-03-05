@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<xliff version="1.0">
+  <file source-language="en" datatype="plaintext" original="messages" date="2018-03-18T17:38:20Z" product-name="avalex" target-language="no">
+    <header/>
+    <body>
+      <trans-unit id="tx_avalex_avalex.name">
+        <source>Privacy statement</source>
+        <target state="needs-translation">Privacy statement</target>
+      </trans-unit>
+      <trans-unit id="tx_avalex_avalex.description">
+        <source>This plugin displays a privacy statement for your website using the avalex.de API</source>
+        <target state="needs-translation">This plugin displays a privacy statement for your website using the avalex.de API</target>
+      </trans-unit>
+      <trans-unit id="tx_avalex_imprint.name">
+        <source>Imprint</source>
+        <target state="needs-translation">Imprint</target>
+      </trans-unit>
+      <trans-unit id="tx_avalex_imprint.description">
+        <source>This plugin displays an imprint for your website using the avalex.de API</source>
+        <target state="needs-translation">This plugin displays an imprint for your website using the avalex.de API</target>
+      </trans-unit>
+      <trans-unit id="tx_avalex_bedingungen.name">
+        <source>Terms and conditions</source>
+        <target state="needs-translation">Terms and conditions</target>
+      </trans-unit>
+      <trans-unit id="tx_avalex_bedingungen.description">
+        <source>This plugin displays terms and conditions for your website using the avalex.de API</source>
+        <target state="needs-translation">This plugin displays terms and conditions for your website using the avalex.de API</target>
+      </trans-unit>
+      <trans-unit id="tx_avalex_widerruf.name">
+        <source>Cancellation policy</source>
+        <target state="needs-translation">Cancellation policy</target>
+      </trans-unit>
+      <trans-unit id="tx_avalex_widerruf.description">
+        <source>This plugin displays a cancellation policy for your website using the avalex.de API</source>
+        <target state="needs-translation">This plugin displays a cancellation policy for your website using the avalex.de API</target>
+      </trans-unit>
+      <trans-unit id="tx_avalex_configuration">
+        <source>Avalex configuration</source>
+        <target state="needs-translation">Avalex configuration</target>
+      </trans-unit>
+      <trans-unit id="tx_avalex_configuration.website_root">
+        <source>For Website(s)</source>
+        <target state="needs-translation">For Website(s)</target>
+      </trans-unit>
+      <trans-unit id="tx_avalex_configuration.api_key">
+        <source>API key</source>
+        <target state="needs-translation">API key</target>
+      </trans-unit>
+      <trans-unit id="tx_avalex_configuration.description">
+        <source>Description (optional)</source>
+        <target state="needs-translation">Description (optional)</target>
+      </trans-unit>
+      <trans-unit id="tx_avalex_configuration.global">
+        <source>Use this configuration for all websites</source>
+        <target state="needs-translation">Use this configuration for all websites</target>
+      </trans-unit>
+      <trans-unit id="tx_avalex_configuration.domain">
+        <source>Domain linked with API key (e.g. https://example.com)</source>
+        <target state="needs-translation">Domain linked with API key (e.g. https://example.com)</target>
+      </trans-unit>
+      <trans-unit id="wizard_items.tx_avalex">
+        <source>Avalex</source>
+        <target state="needs-translation">Avalex</target>
+      </trans-unit>
+      <trans-unit id="preview_renderer.no_config">
+        <source>Could not find any configuration for avalex!</source>
+        <target state="needs-translation">Could not find any configuration for avalex!</target>
+      </trans-unit>
+      <trans-unit id="preview_renderer.found_config">
+        <source>Using configuration "%s".</source>
+        <target state="needs-translation">Using configuration "%s".</target>
+      </trans-unit>
+      <trans-unit id="preview_renderer.button.add">
+        <source>Add configuration</source>
+        <target state="needs-translation">Add configuration</target>
+      </trans-unit>
+      <trans-unit id="preview_renderer.button.edit">
+        <source>Edit configuration</source>
+        <target state="needs-translation">Edit configuration</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
