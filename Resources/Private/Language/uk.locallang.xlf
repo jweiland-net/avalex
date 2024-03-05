@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<xliff version="1.0">
+  <file source-language="en" datatype="plaintext" original="messages" date="2018-03-18T17:38:20Z" product-name="avalex" target-language="uk">
+    <header/>
+    <body>
+      <trans-unit id="flash_message.configuration.response_ok">
+        <source>The submitted API key is valid and can be used for the following domain(s): %s</source>
+        <target state="needs-translation">The submitted API key is valid and can be used for the following domain(s): %s</target>
+      </trans-unit>
+      <trans-unit id="flash_message.configuration.key_invalid">
+        <source>The submitted API key is invalid, please check your input!</source>
+        <target state="needs-translation">The submitted API key is invalid, please check your input!</target>
+      </trans-unit>
+      <trans-unit id="error.couldNotDetermineRootPage">
+        <source>The beginning of the website could not be determined! Maybe you forgot to activate the option "Use as start of website" in the page properties of the start page.</source>
+        <target state="needs-translation">The beginning of the website could not be determined! Maybe you forgot to activate the option "Use as start of website" in the page properties of the start page.</target>
+      </trans-unit>
+      <trans-unit id="error.noAvalexConfigurationFound">
+        <source>No avalex configuration found. Please create an avalex configuration record with api key on page 0 (topmost page with TYPO3 logo).</source>
+        <target state="needs-translation">No avalex configuration found. Please create an avalex configuration record with api key on page 0 (topmost page with TYPO3 logo).</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
