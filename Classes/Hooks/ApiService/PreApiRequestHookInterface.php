@@ -20,7 +20,6 @@ interface PreApiRequestHookInterface
      * the request to the avalex servers.
      *
      * @param array $configuration avalex configuration record ['uid' => '<int>', 'api_key' => '<string>', 'domain' => '<string>']
-     * @return string
      */
-    public function preApiRequest(&$configuration);
+    public function preApiRequest(array &$configuration): string;
 }

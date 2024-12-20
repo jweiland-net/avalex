@@ -217,27 +217,17 @@ class AvalexPlugin
         );
     }
 
-    /**
-     * @return callable
-     */
-    protected function getEncryptedMailCallable()
+    protected function getEncryptedMailCallable(): callable
     {
         $cObj = $this->cObj;
 
         return static function ($mailAddress, $linkText) use ($cObj) {
-            if (version_compare(Typo3Utility::getTypo3Version(), '12.0', '>=')) {
-                $linkBuilder = GeneralUtility::makeInstance(EmailLinkBuilder::class, $cObj, $GLOBALS['TSFE']);
-                return $linkBuilder->processEmailLink((string)$mailAddress, (string)$linkText);
-            }
-
-            return $cObj->getMailTo($mailAddress, $linkText);
+            $linkBuilder = GeneralUtility::makeInstance(EmailLinkBuilder::class, $cObj, $GLOBALS['TSFE']);
+            return $linkBuilder->processEmailLink((string)$mailAddress, (string)$linkText);
         };
     }
 
-    /**
-     * @return LanguageService
-     */
-    protected function getLanguageService(array $configuration)
+    protected function getLanguageService(array $configuration): LanguageService
     {
         return GeneralUtility::makeInstance(LanguageService::class, $configuration);
     }

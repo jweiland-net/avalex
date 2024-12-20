@@ -14,60 +14,29 @@ namespace JWeiland\Avalex\Client\Request;
  */
 interface RequestInterface
 {
-    /**
-     * @return bool
-     */
-    public function isValidRequest();
+    public function isValidRequest(): bool;
+
+    public function isJsonRequest(): bool;
+
+    public function getEndpoint(): string;
 
     /**
-     * @return bool
+     * Endpoint 'avx-datenschutzerklaerung' - 'datenschutzerklaerung'
      */
-    public function isJsonRequest();
+    public function getEndpointWithoutPrefix(): string;
+
+    public function getParameters(): array;
+
+    public function setParameters(array $parameters): void;
+
+    public function addParameter(string $parameter, mixed $value): void;
+
+    public function getParameter(string $parameter): mixed;
+
+    public function hasParameter(string $parameter): bool;
 
     /**
-     * @return string
+     * Merge all parameters to build a URI
      */
-    public function getEndpoint();
-
-    /**
-     * Endpoint 'avx-datenschutzerklaerung' ==> 'datenschutzerklaerung'
-     *
-     * @return string
-     */
-    public function getEndpointWithoutPrefix();
-
-    /**
-     * @return array
-     */
-    public function getParameters();
-
-    /**
-     * @param array $parameters
-     */
-    public function setParameters(array $parameters);
-
-    /**
-     * @param string $parameter
-     * @param mixed $value
-     */
-    public function addParameter($parameter, $value);
-
-    /**
-     * @param string $parameter
-     * @return mixed
-     */
-    public function getParameter($parameter);
-
-    /**
-     * @param string $parameter
-     * @return bool
-     */
-    public function hasParameter($parameter);
-
-    /**
-     * Merge all parameters to build an URI
-     *
-     * @return string
-     */
-    public function buildUri();
+    public function buildUri(): string;
 }

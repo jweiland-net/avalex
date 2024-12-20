@@ -20,10 +20,6 @@ interface PostApiRequestHookInterface
     /**
      * Hook that allows you to modify the return value of ApiService::getHtmlForCurrentRootPage() using $content
      * and all public methods for information about the request.
-     *
-     * @param $content
-     * @param ApiService $apiService
-     * @return mixed
      */
-    public function postApiRequest(&$content, ApiService $apiService);
+    public function postApiRequest(string &$content, ApiService $apiService): mixed;
 }

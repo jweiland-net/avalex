@@ -14,8 +14,5 @@ namespace JWeiland\Avalex\Client\Request;
  */
 interface LocalizeableRequestInterface extends RequestInterface
 {
-    /**
-     * @param string $twoLetterLangIsoCode
-     */
-    public function setLang($twoLetterLangIsoCode);
+    public function setLang(string $twoLetterLangIsoCode): void;
 }

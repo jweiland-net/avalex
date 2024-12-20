@@ -12,6 +12,4 @@ namespace JWeiland\Avalex\Exception;
 /**
  * This exception will be thrown, if no avalex configuration could be found in database
  */
-class AvalexConfigurationNotFoundException extends \Exception
-{
-}
+class AvalexConfigurationNotFoundException extends \Exception {}

@@ -1,0 +1,14 @@
+tt_content.avalex_avalex = USER_INT
+tt_content.avalex_avalex {
+  userFunc = JWeiland\Avalex\AvalexPlugin->render
+  endpoint = avx-datenschutzerklaerung
+}
+
+tt_content.avalex_imprint < tt_content.avalex_avalex
+tt_content.avalex_imprint.endpoint = avx-impressum
+
+tt_content.avalex_bedingungen < tt_content.avalex_avalex
+tt_content.avalex_bedingungen.endpoint = avx-bedingungen
+
+tt_content.avalex_widerruf < tt_content.avalex_avalex
+tt_content.avalex_widerruf.endpoint = avx-widerruf

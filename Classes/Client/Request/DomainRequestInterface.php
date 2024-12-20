@@ -14,8 +14,5 @@ namespace JWeiland\Avalex\Client\Request;
  */
 interface DomainRequestInterface extends RequestInterface
 {
-    /**
-     * @param string $domain
-     */
-    public function setDomain($domain);
+    public function setDomain(string $domain): void;
 }

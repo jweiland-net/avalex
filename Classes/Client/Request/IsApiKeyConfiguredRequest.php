@@ -16,28 +16,16 @@ namespace JWeiland\Avalex\Client\Request;
  */
 class IsApiKeyConfiguredRequest extends AbstractRequest
 {
-    /**
-     * @var string
-     */
-    protected $endpoint = 'api_keys/is_configured.json';
+    protected string $endpoint = 'api_keys/is_configured.json';
+
+    protected bool $isJsonRequest = true;
+
+    protected array $allowedParameters = ['apikey' => 1];
 
     /**
-     * @var bool
+     * @param string $apiKey If this was set, the request will not use the API KEY from Avalex configuration record, but uses this one
      */
-    protected $isJsonRequest = true;
-
-    /**
-     * @var array
-     */
-    protected $allowedParameters = ['apikey' => 1];
-
-    /**
-     * If this was called, the request will not use the API KEY from Avalex configuration record but
-     * uses this one. This solution is only valid for just this class!
-     *
-     * @param string $apiKey
-     */
-    public function setApiKey($apiKey)
+    public function __construct(string $apiKey = '')
     {
         $this->overrideApiKey = $apiKey;
     }

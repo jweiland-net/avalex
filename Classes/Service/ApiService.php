@@ -13,8 +13,6 @@ use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Hooks\ApiService\PostApiRequestHookInterface;
 use JWeiland\Avalex\Hooks\ApiService\PreApiRequestHookInterface;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -22,26 +20,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ApiService
 {
-    /**
-     * @var Logger
-     */
-    protected $logger;
+    protected array $hookObjectsArray = [];
 
-    /**
-     * @var AvalexClient
-     */
-    protected $avalexClient;
-
-    /**
-     * @var array
-     */
-    protected $hookObjectsArray = [];
-
-    public function __construct()
+    public function __construct(private readonly AvalexClient $avalexClient)
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
-        $this->avalexClient = GeneralUtility::makeInstance(AvalexClient::class);
-
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][__CLASS__])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][__CLASS__] as $key => $classRef) {
                 $hookObject = GeneralUtility::makeInstance($classRef);
@@ -54,10 +36,9 @@ class ApiService
      * Get HTML content for current page
      *
      * @param RequestInterface $endpointRequest API endpoint to be used e.g. imprint
-     * @param array  $configuration required values: api_key: '', domain: ''
-     * @return string
+     * @param array $configuration required values: api_key: '', domain: ''
      */
-    public function getHtmlForCurrentRootPage(RequestInterface $endpointRequest, array $configuration)
+    public function getHtmlForCurrentRootPage(RequestInterface $endpointRequest, array $configuration): string
     {
         // Hook: Allow to modify $apiKey and $domain before curl sends the request to avalex
         foreach ($this->hookObjectsArray as $hookObject) {

@@ -12,6 +12,4 @@ namespace JWeiland\Avalex\Exception;
 /**
  * Class InvalidUidException
  */
-class InvalidUidException extends \Exception
-{
-}
+class InvalidUidException extends \Exception {}

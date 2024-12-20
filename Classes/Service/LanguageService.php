@@ -12,11 +12,10 @@ namespace JWeiland\Avalex\Service;
 use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Client\Request\LocalizeableRequestInterface;
-use JWeiland\Avalex\Utility\Typo3Utility;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
-use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -25,51 +24,34 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class LanguageService
 {
-    /**
-     * @var VariableFrontend
-     */
-    protected $cache;
-
-    /**
-     * @var AvalexClient
-     */
-    protected $avalexClient;
-
-    /**
-     * @var array required values: api_key: '', domain: ''
-     */
-    protected $configuration = [];
+    protected FrontendInterface $cache;
 
     /**
      * Use AvalexConfigurationRepository::findByWebsiteRoot($rootPage, 'api_key, domain')
      * to find a configuration
      *
-     * @param array $configuration
-     *
      * @throws NoSuchCacheException
      */
-    public function __construct(array $configuration)
-    {
-        $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('avalex_languages');
-        $this->avalexClient = GeneralUtility::makeInstance(AvalexClient::class);
-
-        $this->configuration = [
-            'domain' => (string)$configuration['domain'],
-            'api_key' => (string)$configuration['api_key'],
-        ];
+    public function __construct(
+        private readonly CacheManager $cacheManager,
+        private readonly AvalexClient $avalexClient
+    ) {
+        $this->cache = $this->cacheManager->getCache('avalex_languages');
     }
 
-    public function addLanguageToEndpoint(LocalizeableRequestInterface $endpointRequest)
+    public function addLanguageToEndpoint(LocalizeableRequestInterface $endpointRequest, array $configuration): void
     {
         // In customer account of avalex company all texts are always available in german language.
         // If another language (currently only en is allowed as different language) is not available EXT:avalex
         // will fallback to the german texts.
         $language = 'de';
         $frontendLanguage = $this->getFrontendLocale();
-        $avalexLanguageResponse = $this->getLanguageResponseFromCache() ?: $this->fetchLanguageResponse();
+        $avalexLanguageResponse = $this->getLanguageResponseFromCache($configuration) ?: $this->fetchLanguageResponse(
+            $configuration
+        );
+
         if (
-            is_array($avalexLanguageResponse)
-            && array_key_exists($frontendLanguage, $avalexLanguageResponse)
+            array_key_exists($frontendLanguage, $avalexLanguageResponse)
             && array_key_exists(
                 $endpointRequest->getEndpointWithoutPrefix(),
                 $avalexLanguageResponse[$frontendLanguage]
@@ -81,13 +63,10 @@ class LanguageService
         $endpointRequest->setLang($language);
     }
 
-    /**
-     * @return array
-     */
-    protected function getLanguageResponseFromCache()
+    protected function getLanguageResponseFromCache(array $configuration): array
     {
         $language = '';
-        $cacheIdentifier = $this->getCacheIdentifier();
+        $cacheIdentifier = $this->getCacheIdentifier($configuration);
         if ($this->cache->has($cacheIdentifier)) {
             $language = (array)$this->cache->get($cacheIdentifier);
         }
@@ -95,26 +74,23 @@ class LanguageService
         return $language;
     }
 
-    /**
-     * @return array
-     */
-    protected function fetchLanguageResponse()
+    protected function fetchLanguageResponse(array $configuration): array
     {
         $response = [];
         $getDomainLanguagesRequest = GeneralUtility::makeInstance(GetDomainLanguagesRequest::class);
-        $getDomainLanguagesRequest->setDomain($this->configuration['domain']);
+        $getDomainLanguagesRequest->setDomain($configuration['domain']);
         $result = $this->avalexClient->processRequest($getDomainLanguagesRequest)->getBody();
         if ($result === '') {
             // Error or empty result
             $result = [];
         }
 
-        $this->cache->set($this->getCacheIdentifier(), $response, [], 21600);
+        $this->cache->set($this->getCacheIdentifier($configuration), $response, [], 21600);
 
         return $result;
     }
 
-    public function getFrontendLocale()
+    public function getFrontendLocale(): string
     {
         $fallBackLanguage = 'en';
         $frontendLocale = '';
@@ -127,24 +103,14 @@ class LanguageService
         ) {
             /** @var SiteLanguage $siteLanguage */
             $siteLanguage = $GLOBALS['TYPO3_REQUEST']->getAttribute('language');
-            if (version_compare(Typo3Utility::getTypo3Version(), '12.0', '<')) {
-                $frontendLocale = $siteLanguage ? $siteLanguage->getTwoLetterIsoCode() : '';
-            } else {
-                $frontendLocale = $siteLanguage ? $siteLanguage->getLocale()->getLanguageCode() : '';
-            }
-        } elseif (isset($GLOBALS['TSFE']->lang)) {
-            // In case of "default" the TS "config.language" was NOT set. So we expect "en" here.
-            $frontendLocale = $GLOBALS['TSFE']->lang === 'default' ? 'en' : $GLOBALS['TSFE']->lang;
+            $frontendLocale = $siteLanguage ? $siteLanguage->getLocale()->getLanguageCode() : '';
         }
 
         return $frontendLocale ?: $fallBackLanguage;
     }
 
-    /**
-     * @return string
-     */
-    protected function getCacheIdentifier()
+    protected function getCacheIdentifier(array $configuration): string
     {
-        return md5(sprintf('%s_%s', $this->configuration['domain'], $this->configuration['api_key']));
+        return md5(sprintf('%s_%s', $configuration['domain'], $configuration['api_key']));
     }
 }

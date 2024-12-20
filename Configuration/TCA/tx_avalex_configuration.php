@@ -5,19 +5,8 @@ if (!defined('TYPO3_MODE') && !defined('TYPO3')) {
 }
 
 $locallangTtc = 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:';
-$locallangGeneral = 'LLL:EXT:lang/locallang_general.xlf:';
-
-if (version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '9.3', '>=')) {
-    $locallangGeneral = 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:';
-}
-if (version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '7.4', '<')) {
-    $locallangTtc = 'LLL:EXT:cms/locallang_ttc.xlf:';
-}
-
+$locallangGeneral = 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:';
 $iconFile = 'EXT:avalex/Resources/Public/Icons/Extension.png';
-if (version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '8.7', '<')) {
-    $iconFile = 'EXT:avalex/ext_icon.png';
-}
 
 $tca = [
     'ctrl' => [
@@ -35,9 +24,6 @@ $tca = [
             'endtime' => 'endtime',
         ],
         'iconfile' => $iconFile,
-    ],
-    'interface' => [
-        'showRecordsFieldList' => 'hidden, api_key, website_root',
     ],
     'types' => [
         '1' => [
@@ -138,11 +124,6 @@ $tca = [
     ],
 ];
 
-if (version_compare(\JWeiland\Avalex\Utility\Typo3Utility::getTypo3Version(), '8.5', '<')) {
-    $tca['ctrl']['versioning_followPages'] = true;
-    $tca['ctrl']['versioningWS'] = 2;
-} else {
-    $tca['ctrl']['versioningWS'] = true;
-}
+$tca['ctrl']['versioningWS'] = true;
 
 return $tca;

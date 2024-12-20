@@ -12,37 +12,24 @@ namespace JWeiland\Avalex\Hooks;
 use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\IsApiKeyConfiguredRequest;
 use JWeiland\Avalex\Helper\MessageHelper;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Class DataHandler
  */
-class DataHandler
+class DataHandlerHook
 {
-    /**
-     * @var MessageHelper
-     */
-    protected $messageHelper;
-
-    /**
-     * @var AvalexClient
-     */
-    protected $avalexClient;
-
-    public function __construct()
-    {
-        $this->messageHelper = GeneralUtility::makeInstance(MessageHelper::class);
-        $this->avalexClient = GeneralUtility::makeInstance(AvalexClient::class);
-    }
+    public function __construct(
+        private readonly MessageHelper $messageHelper,
+        private readonly AvalexClient $avalexClient
+    ) {}
 
     /**
      * Check API keys on save
-     *
-     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
      */
-    public function processDatamap_afterAllOperations(\TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler)
+    public function processDatamap_afterAllOperations(DataHandler $dataHandler)
     {
         if (array_key_exists('tx_avalex_configuration', $dataHandler->datamap)) {
             foreach ($dataHandler->datamap['tx_avalex_configuration'] as $avalexConfigurationRecord) {
@@ -56,7 +43,7 @@ class DataHandler
                             'avalex'
                         ),
                         '',
-                        AbstractMessage::ERROR
+                        ContextualFeedbackSeverity::ERROR
                     );
                 }
             }
@@ -65,17 +52,12 @@ class DataHandler
 
     /**
      * Check API key using Avalex API
-     *
-     * @param string $apiKey
-     * @return bool true if key is valid
      */
-    protected function checkApiKey($apiKey)
+    protected function checkApiKey(string $apiKey): bool
     {
         $isValid = true;
-        $isApiKeyConfiguredRequest = GeneralUtility::makeInstance(IsApiKeyConfiguredRequest::class);
-        $isApiKeyConfiguredRequest->setApiKey($apiKey);
 
-        $avalexResponse = $this->avalexClient->processRequest($isApiKeyConfiguredRequest);
+        $avalexResponse = $this->avalexClient->processRequest(new IsApiKeyConfiguredRequest($apiKey));
         $result = $avalexResponse->getBody();
         if (
             is_array($result)

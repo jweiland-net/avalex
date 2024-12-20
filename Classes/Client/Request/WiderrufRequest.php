@@ -16,32 +16,20 @@ namespace JWeiland\Avalex\Client\Request;
  */
 class WiderrufRequest extends AbstractRequest implements DomainRequestInterface, LocalizeableRequestInterface
 {
-    /**
-     * @var string
-     */
-    protected $endpoint = 'avx-widerruf';
+    protected string $endpoint = 'avx-widerruf';
 
-    /**
-     * @var array
-     */
-    protected $allowedParameters = [
+    protected array $allowedParameters = [
         'apikey' => 1,
         'domain' => 1,
         'lang' => 1,
     ];
 
-    /**
-     * @param string $domain
-     */
-    public function setDomain($domain)
+    public function setDomain(string $domain): void
     {
         $this->addParameter('domain', $domain);
     }
 
-    /**
-     * @param string $twoLetterLangIsoCode
-     */
-    public function setLang($twoLetterLangIsoCode)
+    public function setLang(string $twoLetterLangIsoCode): void
     {
         $this->addParameter('lang', $twoLetterLangIsoCode);
     }

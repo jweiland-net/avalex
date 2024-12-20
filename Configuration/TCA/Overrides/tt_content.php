@@ -1,25 +1,67 @@
 <?php
 
+use JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer;
+use TYPO3\CMS\Core\Schema\Struct\SelectItem;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+
 if (!defined('TYPO3_MODE') && !defined('TYPO3')) {
     die('Access denied.');
 }
 
-foreach (\JWeiland\Avalex\Utility\AvalexUtility::LIST_TYPES as $listType) {
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(
-        [
-            'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_' . $listType . '.name',
-            $listType,
-            'EXT:avalex/Resources/Public/Icons/' . $listType . '.png',
-        ],
-        'list_type',
-        'avalex'
-    );
+ExtensionManagementUtility::addPlugin(
+    new SelectItem(
+        'select',
+        // set pluginName as default pluginTitle
+        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_avalex.name',
+        'avalex_avalex',
+        'avalex_avalex',
+        'plugins',
+        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_avalex.description',
+    ),
+    'CType',
+    'avalex'
+);
+ExtensionManagementUtility::addPlugin(
+    new SelectItem(
+        'select',
+        // set pluginName as default pluginTitle
+        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_imprint.name',
+        'avalex_imprint',
+        'avalex_imprint',
+        'plugins',
+        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_imprint.description',
+    ),
+    'CType',
+    'avalex'
+);
+ExtensionManagementUtility::addPlugin(
+    new SelectItem(
+        'select',
+        // set pluginName as default pluginTitle
+        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_bedingungen.name',
+        'avalex_bedingungen',
+        'avalex_bedingungen',
+        'plugins',
+        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_bedingungen.description',
+    ),
+    'CType',
+    'avalex'
+);
+ExtensionManagementUtility::addPlugin(
+    new SelectItem(
+        'select',
+        // set pluginName as default pluginTitle
+        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_widerruf.name',
+        'avalex_widerruf',
+        'avalex_widerruf',
+        'plugins',
+        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_widerruf.description',
+    ),
+    'CType',
+    'avalex'
+);
 
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_excludelist'][$listType] = 'recursive,select_key,pages';
-}
-
-// For fluidBasedPageModule enabled (always for TYPO3 > 11)
-$GLOBALS['TCA']['tt_content']['types']['list']['previewRenderer']['avalex_avalex'] = \JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer::class;
-$GLOBALS['TCA']['tt_content']['types']['list']['previewRenderer']['avalex_imprint'] = \JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer::class;
-$GLOBALS['TCA']['tt_content']['types']['list']['previewRenderer']['avalex_bedingungen'] = \JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer::class;
-$GLOBALS['TCA']['tt_content']['types']['list']['previewRenderer']['avalex_widerruf'] = \JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer::class;
+$GLOBALS['TCA']['tt_content']['types']['avalex_avalex']['previewRenderer'] = ContentPreviewRenderer::class;
+$GLOBALS['TCA']['tt_content']['types']['avalex_imprint']['previewRenderer'] = ContentPreviewRenderer::class;
+$GLOBALS['TCA']['tt_content']['types']['avalex_bedingungen']['previewRenderer'] = ContentPreviewRenderer::class;
+$GLOBALS['TCA']['tt_content']['types']['avalex_widerruf']['previewRenderer'] = ContentPreviewRenderer::class;

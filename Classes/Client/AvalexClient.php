@@ -17,6 +17,7 @@ use JWeiland\Avalex\Helper\MessageHelper;
 use JWeiland\Avalex\Utility\Typo3Utility;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -56,7 +57,7 @@ class AvalexClient
             $this->messageHelper->addFlashMessage(
                 $e->getMessage(),
                 'Request Exception',
-                AbstractMessage::ERROR
+                ContextualFeedbackSeverity::ERROR
             );
             return new AvalexResponse();
         }
@@ -67,24 +68,13 @@ class AvalexClient
         return $avalexResponse;
     }
 
-    /**
-     * @param RequestInterface $request
-     * @return AvalexResponse
-     */
-    protected function request(RequestInterface $request)
+    protected function request(RequestInterface $request): AvalexResponse
     {
-        if (version_compare(Typo3Utility::getTypo3Version(), '8.1', '>=')) {
-            $requestFactory = GeneralUtility::makeInstance(RequestFactory::class);
-            $response = $requestFactory->request($request->buildUri());
-            $content = (string)$response->getBody();
-            $headers = $response->getHeaders();
-            $status = $response->getStatusCode();
-        } else {
-            $result = [];
-            $response = GeneralUtility::getUrl($request->buildUri(), 1, null, $result);
-            list($headers, $content) = explode(CRLF . CRLF, $response);
-            $status = isset($result['http_code']) ? $result['http_code'] : 0;
-        }
+        $requestFactory = GeneralUtility::makeInstance(RequestFactory::class);
+        $response = $requestFactory->request($request->buildUri());
+        $content = (string)$response->getBody();
+        $headers = $response->getHeaders();
+        $status = $response->getStatusCode();
 
         $avalexResponse = new AvalexResponse($content, $headers, $status);
         $avalexResponse->setIsJsonResponse($request->isJsonRequest());
@@ -92,28 +82,22 @@ class AvalexClient
         return $avalexResponse;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasErrors()
+    public function hasErrors(): bool
     {
         return $this->messageHelper->hasErrorMessages();
     }
 
     /**
      * Check response from Avalex for errors
-     *
-     * @param ResponseInterface $response
-     * @return bool
      */
-    protected function hasResponseErrors(ResponseInterface $response)
+    protected function hasResponseErrors(ResponseInterface $response): bool
     {
         if ($response->isJsonResponse()) {
             if (!is_array($response->getBody())) {
                 $this->messageHelper->addFlashMessage(
                     'The response of Avalex could not be converted to array.',
                     'Invalid Avalex JSON response',
-                    AbstractMessage::ERROR
+                    ContextualFeedbackSeverity::ERROR
                 );
                 return true;
             }
@@ -122,7 +106,7 @@ class AvalexClient
                 $this->messageHelper->addFlashMessage(
                     'The JSON response of Avalex is empty.',
                     'Empty Avalex JSON response',
-                    AbstractMessage::ERROR
+                    ContextualFeedbackSeverity::ERROR
                 );
                 return true;
             }
@@ -131,7 +115,7 @@ class AvalexClient
                 $this->messageHelper->addFlashMessage(
                     'The response of Avalex was empty.',
                     'Empty Avalex response',
-                    AbstractMessage::ERROR
+                    ContextualFeedbackSeverity::ERROR
                 );
                 return true;
             }
@@ -140,7 +124,7 @@ class AvalexClient
                 $this->messageHelper->addFlashMessage(
                     $response->getBody(),
                     'Avalex Response Error',
-                    AbstractMessage::ERROR
+                    ContextualFeedbackSeverity::ERROR
                 );
 
                 return true;

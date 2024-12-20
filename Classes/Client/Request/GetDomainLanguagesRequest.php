@@ -16,29 +16,17 @@ namespace JWeiland\Avalex\Client\Request;
  */
 class GetDomainLanguagesRequest extends AbstractRequest implements DomainRequestInterface
 {
-    /**
-     * @var string
-     */
-    protected $endpoint = 'avx-get-domain-langs';
+    protected string $endpoint = 'avx-get-domain-langs';
 
-    /**
-     * @var bool
-     */
-    protected $isJsonRequest = true;
+    protected bool $isJsonRequest = true;
 
-    /**
-     * @var array
-     */
-    protected $allowedParameters = [
+    protected array $allowedParameters = [
         'apikey' => 1,
         'domain' => 1,
         'version' => 1,
     ];
 
-    /**
-     * @param string $domain
-     */
-    public function setDomain($domain)
+    public function setDomain(string $domain): void
     {
         $this->addParameter('domain', $domain);
     }

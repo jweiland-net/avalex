@@ -19,123 +19,81 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 abstract class AbstractRequest implements RequestInterface
 {
-    /**
-     * @var string
-     */
-    private $apiDomain = 'avalex.de';
+    private string $apiDomain = 'avalex.de';
 
-    /**
-     * @var string
-     */
-    private $apiVersion = '3.0.1';
+    private string $apiVersion = '3.0.1';
 
     /**
      * Is this is set, the required parameter API KEY will be overridden by this value.
      * Please use that only within API tests like IsApiKeyConfiguredRequest
-     *
-     * @var string
      */
-    protected $overrideApiKey = '';
+    protected string $overrideApiKey = '';
 
     /**
      * Endpooint is something like "avx-get-domain-langs" or "avx-datenschutzerklaerung"
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
-     * @var string
      */
-    protected $endpoint = '';
+    protected string $endpoint = '';
 
-    /**
-     * @var bool
-     */
-    protected $isJsonRequest = false;
+    protected bool $isJsonRequest = false;
 
-    /**
-     * @var array
-     */
-    protected $parameters = [];
+    protected array $parameters = [];
 
-    /**
-     * @return string
-     */
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         return $this->endpoint;
     }
 
     /**
-     * Endpoint 'avx-datenschutzerklaerung' ==> 'datenschutzerklaerung'
-     *
-     * @return string
+     * Endpoint 'avx-datenschutzerklaerung' - 'datenschutzerklaerung'
      */
-    public function getEndpointWithoutPrefix()
+    public function getEndpointWithoutPrefix(): string
     {
         return substr($this->endpoint, 4);
     }
 
-    /**
-     * @return bool
-     */
-    public function isJsonRequest()
+    public function isJsonRequest(): bool
     {
         return $this->isJsonRequest;
     }
 
-    /**
-     * @return array
-     */
-    public function getParameters()
+    public function getParameters(): array
     {
         $this->setRequiredParameters();
 
         return $this->parameters;
     }
 
-    /**
-     * @param array $parameters
-     */
-    public function setParameters(array $parameters)
+    public function setParameters(array $parameters): void
     {
         $this->parameters = array_intersect_key($parameters, $this->allowedParameters);
     }
 
-    /**
-     * @param string $parameter
-     * @param $value
-     */
-    public function addParameter($parameter, $value)
+    public function addParameter(string $parameter, mixed $value): void
     {
         if (array_key_exists($parameter, $this->allowedParameters)) {
             $this->parameters[$parameter] = $value;
         }
     }
 
-    /**
-     * @param string $parameter
-     * @return mixed
-     */
-    public function getParameter($parameter)
+    public function getParameter(string $parameter): mixed
     {
         return $this->parameters[$parameter];
     }
 
     /**
      * Check, if parameter exists
-     *
-     * @param string $parameter
-     * @return bool
      */
-    public function hasParameter($parameter)
+    public function hasParameter(string $parameter): bool
     {
         return array_key_exists($parameter, $this->parameters);
     }
 
     /**
      * Merge all parameters to build an URI
-     *
-     * @return string
      */
-    public function buildUri()
+    public function buildUri(): string
     {
         return sprintf(
             'https://%s/%s?%s',
@@ -145,10 +103,7 @@ abstract class AbstractRequest implements RequestInterface
         );
     }
 
-    /**
-     * @return bool
-     */
-    public function isValidRequest()
+    public function isValidRequest(): bool
     {
         $isValid = true;
         $uri = $this->buildUri();
@@ -171,7 +126,7 @@ abstract class AbstractRequest implements RequestInterface
         return $isValid;
     }
 
-    protected function setRequiredParameters()
+    protected function setRequiredParameters(): void
     {
         if ($this instanceof IsApiKeyConfiguredRequest && $this->overrideApiKey !== '') {
             $this->addParameter('apikey', $this->overrideApiKey);
@@ -217,10 +172,7 @@ abstract class AbstractRequest implements RequestInterface
         }
     }
 
-    /**
-     * @return AvalexConfigurationRepository
-     */
-    protected function getAvalexConfigurationRepository()
+    protected function getAvalexConfigurationRepository(): AvalexConfigurationRepository
     {
         return GeneralUtility::makeInstance(AvalexConfigurationRepository::class);
     }
