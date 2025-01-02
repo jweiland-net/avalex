@@ -7,7 +7,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\Avalex\Hooks\ApiService;
+namespace JWeiland\Avalex\Hook\ApiService;
 
 use JWeiland\Avalex\Service\ApiService;
 

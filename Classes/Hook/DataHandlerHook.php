@@ -7,7 +7,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\Avalex\Hooks;
+namespace JWeiland\Avalex\Hook;
 
 use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\IsApiKeyConfiguredRequest;
@@ -29,7 +29,7 @@ class DataHandlerHook
     /**
      * Check API keys on save
      */
-    public function processDatamap_afterAllOperations(DataHandler $dataHandler)
+    public function processDatamap_afterAllOperations(DataHandler $dataHandler): void
     {
         if (array_key_exists('tx_avalex_configuration', $dataHandler->datamap)) {
             foreach ($dataHandler->datamap['tx_avalex_configuration'] as $avalexConfigurationRecord) {

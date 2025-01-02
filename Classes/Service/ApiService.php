@@ -11,8 +11,8 @@ namespace JWeiland\Avalex\Service;
 
 use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\RequestInterface;
-use JWeiland\Avalex\Hooks\ApiService\PostApiRequestHookInterface;
-use JWeiland\Avalex\Hooks\ApiService\PreApiRequestHookInterface;
+use JWeiland\Avalex\Hook\ApiService\PostApiRequestHookInterface;
+use JWeiland\Avalex\Hook\ApiService\PreApiRequestHookInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**

@@ -7,6 +7,8 @@ services:
   JWeiland\Avalex\:
     resource: '../Classes/*'
 
+  JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer:
+    public: true
   JWeiland\Avalex\Client\AvalexClient:
     public: true
   JWeiland\Avalex\Client\Request\BedingungenRequest:
@@ -16,4 +18,6 @@ services:
   JWeiland\Avalex\Client\Request\ImpressumRequest:
     public: true
   JWeiland\Avalex\Client\Request\WiderrufRequest:
+    public: true
+  JWeiland\Avalex\Hook\DataHandlerHook:
     public: true

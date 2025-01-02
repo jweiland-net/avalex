@@ -32,7 +32,7 @@ below.
 Modify the configuration before sending the request
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can use the ``JWeiland\Avalex\Hooks\ApiService\PreApiRequestHookInterface``
+You can use the ``JWeiland\Avalex\Hook\ApiService\PreApiRequestHookInterface``
 in your extension to modify the configuration array that contains the api_key
 and the domain before sending the request to avalex.
 
@@ -50,7 +50,7 @@ can modify the output completely.
    <?php
    namespace Your\Extension\Hooks;
 
-   use JWeiland\Avalex\Hooks\ApiService\PostApiRequestHookInterface;
+   use JWeiland\Avalex\Hook\ApiService\PostApiRequestHookInterface;
    use JWeiland\Avalex\Service\ApiService;
 
    class ModifyContentHook implements PostApiRequestHookInterface

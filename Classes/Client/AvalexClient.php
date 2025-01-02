@@ -14,9 +14,7 @@ use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Client\Response\ResponseInterface;
 use JWeiland\Avalex\Helper\MessageHelper;
-use JWeiland\Avalex\Utility\Typo3Utility;
 use TYPO3\CMS\Core\Http\RequestFactory;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -25,27 +23,15 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class AvalexClient
 {
-    /**
-     * @var MessageHelper
-     */
-    protected $messageHelper;
+    public function __construct(private readonly MessageHelper $messageHelper) {}
 
-    public function __construct()
-    {
-        $this->messageHelper = GeneralUtility::makeInstance(MessageHelper::class);
-    }
-
-    /**
-     * @param RequestInterface $request
-     * @return ResponseInterface
-     */
-    public function processRequest(RequestInterface $request)
+    public function processRequest(RequestInterface $request): ResponseInterface
     {
         if (!$request->isValidRequest()) {
             $this->messageHelper->addFlashMessage(
                 'URI is empty or contains invalid chars. URI: ' . $request->buildUri(),
                 'Invalid request URI',
-                AbstractMessage::ERROR
+                ContextualFeedbackSeverity::ERROR
             );
 
             return new AvalexResponse();
