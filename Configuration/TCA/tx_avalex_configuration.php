@@ -101,7 +101,7 @@ $tca = [
             'onChange' => 'reload',
             'config' => [
                 'type' => 'check',
-                'default' => '0',
+                'default' => 0,
             ],
         ],
         'api_key' => [
