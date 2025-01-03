@@ -42,16 +42,16 @@ class AvalexConfigurationRepository
                 ->select('uid', 'api_key', 'domain', 'description')
                 ->from(self::TABLE)
                 ->where(
-                    $queryBuilder->expr()->inSet(
-                        'website_root',
-                        $queryBuilder->createNamedParameter($websiteRoot, Connection::PARAM_INT),
-                    ),
-                )
-                ->orWhere(
-                    $queryBuilder->expr()->eq(
-                        'global',
-                        $queryBuilder->createNamedParameter(1, Connection::PARAM_INT),
-                    ),
+                    $queryBuilder->expr()->or(
+                        $queryBuilder->expr()->inSet(
+                            'website_root',
+                            $queryBuilder->createNamedParameter($websiteRoot, Connection::PARAM_INT),
+                        ),
+                        $queryBuilder->expr()->eq(
+                            'global',
+                            $queryBuilder->createNamedParameter(1, Connection::PARAM_INT),
+                        ),
+                    )
                 )
                 ->orderBy('global', 'ASC')
                 ->executeQuery()
