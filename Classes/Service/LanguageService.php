@@ -28,12 +28,12 @@ readonly class LanguageService
      */
     public function __construct(
         private AvalexClient $avalexClient,
-        private FrontendInterface $cache
+        private FrontendInterface $cache,
     ) {}
 
     public function addLanguageToEndpoint(
         LocalizeableRequestInterface $endpointRequest,
-        AvalexConfiguration $avalexConfiguration
+        AvalexConfiguration $avalexConfiguration,
     ): void {
         // In customer account of avalex company all texts are always available in german language.
         // If another language (currently only en is allowed as different language) is not available EXT:avalex
@@ -49,7 +49,7 @@ readonly class LanguageService
             array_key_exists($frontendLanguage, $avalexLanguageResponse)
             && array_key_exists(
                 $endpointRequest->getEndpointWithoutPrefix(),
-                $avalexLanguageResponse[$frontendLanguage]
+                $avalexLanguageResponse[$frontendLanguage],
             )
         ) {
             $language = $frontendLanguage;
@@ -112,7 +112,7 @@ readonly class LanguageService
         return md5(sprintf(
             '%s_%s',
             $avalexConfiguration->getDomain(),
-            $avalexConfiguration->getApiKey()
+            $avalexConfiguration->getApiKey(),
         ));
     }
 }

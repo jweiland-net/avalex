@@ -33,7 +33,7 @@ class DomainEvaluation
      * @param bool $set Boolean defining if the value is written to the database or not.
      * @return string Evaluated field value
      */
-    public function evaluateFieldValue(string $value , string $isIn, bool &$set): string
+    public function evaluateFieldValue(string $value, string $isIn, bool &$set): string
     {
         if (!str_contains($value, 'http')) {
             $value = 'https://' . $value;

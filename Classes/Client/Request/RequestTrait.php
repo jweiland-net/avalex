@@ -17,9 +17,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 trait RequestTrait
 {
-    const API_DOMAIN = 'avalex.de';
+    public const API_DOMAIN = 'avalex.de';
 
-    const API_VERSION = '3.0.1';
+    public const API_VERSION = '3.0.1';
 
     /**
      * Is this is set, the required parameter API KEY will be overridden by this value.
@@ -95,7 +95,7 @@ trait RequestTrait
             'https://%s/%s?%s',
             self::API_DOMAIN,
             self::ENDPOINT,
-            http_build_query($this->getParameters())
+            http_build_query($this->getParameters()),
         );
     }
 

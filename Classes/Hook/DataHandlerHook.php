@@ -23,7 +23,7 @@ class DataHandlerHook
 {
     public function __construct(
         private readonly MessageHelper $messageHelper,
-        private readonly AvalexClient $avalexClient
+        private readonly AvalexClient $avalexClient,
     ) {}
 
     /**
@@ -40,10 +40,10 @@ class DataHandlerHook
                     $this->messageHelper->addFlashMessage(
                         LocalizationUtility::translate(
                             'flash_message.configuration.key_invalid',
-                            'avalex'
+                            'avalex',
                         ),
                         '',
-                        ContextualFeedbackSeverity::ERROR
+                        ContextualFeedbackSeverity::ERROR,
                     );
                 }
             }
@@ -75,8 +75,8 @@ class DataHandlerHook
                 LocalizationUtility::translate(
                     'flash_message.configuration.response_ok',
                     'avalex',
-                    [$domain]
-                )
+                    [$domain],
+                ),
             );
         } else {
             $isValid = false;

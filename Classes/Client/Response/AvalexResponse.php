@@ -105,7 +105,7 @@ class AvalexResponse implements ResponseInterface
     {
         if (is_string($headers)) {
             foreach (explode(CRLF, $headers) as $headerLine) {
-                list($header, $value) = GeneralUtility::trimExplode(':', $headerLine);
+                [$header, $value] = GeneralUtility::trimExplode(':', $headerLine);
                 $this->addHeader($header, 0, (string)$value);
             }
         }

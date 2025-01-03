@@ -31,7 +31,7 @@ readonly class AvalexClient
             $this->messageHelper->addFlashMessage(
                 'URI is empty or contains invalid chars. URI: ' . $request->buildUri(),
                 'Invalid request URI',
-                ContextualFeedbackSeverity::ERROR
+                ContextualFeedbackSeverity::ERROR,
             );
 
             return new AvalexResponse();
@@ -43,7 +43,7 @@ readonly class AvalexClient
             $this->messageHelper->addFlashMessage(
                 $e->getMessage(),
                 'Request Exception',
-                ContextualFeedbackSeverity::ERROR
+                ContextualFeedbackSeverity::ERROR,
             );
             return new AvalexResponse();
         }
@@ -83,7 +83,7 @@ readonly class AvalexClient
                 $this->messageHelper->addFlashMessage(
                     'The response of Avalex could not be converted to array.',
                     'Invalid Avalex JSON response',
-                    ContextualFeedbackSeverity::ERROR
+                    ContextualFeedbackSeverity::ERROR,
                 );
                 return true;
             }
@@ -92,7 +92,7 @@ readonly class AvalexClient
                 $this->messageHelper->addFlashMessage(
                     'The JSON response of Avalex is empty.',
                     'Empty Avalex JSON response',
-                    ContextualFeedbackSeverity::ERROR
+                    ContextualFeedbackSeverity::ERROR,
                 );
                 return true;
             }
@@ -101,7 +101,7 @@ readonly class AvalexClient
                 $this->messageHelper->addFlashMessage(
                     'The response of Avalex was empty.',
                     'Empty Avalex response',
-                    ContextualFeedbackSeverity::ERROR
+                    ContextualFeedbackSeverity::ERROR,
                 );
                 return true;
             }
@@ -110,7 +110,7 @@ readonly class AvalexClient
                 $this->messageHelper->addFlashMessage(
                     $response->getBody(),
                     'Avalex Response Error',
-                    ContextualFeedbackSeverity::ERROR
+                    ContextualFeedbackSeverity::ERROR,
                 );
 
                 return true;

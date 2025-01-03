@@ -52,7 +52,7 @@ class ImpressumRequestTest extends FunctionalTestCase
     {
         unset(
             $this->subject,
-            $GLOBALS['TSFE']
+            $GLOBALS['TSFE'],
         );
     }
 
@@ -63,7 +63,7 @@ class ImpressumRequestTest extends FunctionalTestCase
     {
         self::assertSame(
             'avx-impressum',
-            $this->subject->getEndpoint()
+            $this->subject->getEndpoint(),
         );
     }
 
@@ -74,7 +74,7 @@ class ImpressumRequestTest extends FunctionalTestCase
     {
         self::assertSame(
             'impressum',
-            $this->subject->getEndpointWithoutPrefix()
+            $this->subject->getEndpointWithoutPrefix(),
         );
     }
 
@@ -88,7 +88,7 @@ class ImpressumRequestTest extends FunctionalTestCase
                 'apikey' => 'demo-key-with-online-shop',
                 'domain' => 'https://example.com',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -103,7 +103,7 @@ class ImpressumRequestTest extends FunctionalTestCase
                 'domain' => 'https://www.jweiland.net',
                 'apikey' => 'demo-key-with-online-shop',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -119,7 +119,7 @@ class ImpressumRequestTest extends FunctionalTestCase
                 'apikey' => 'demo-key-with-online-shop',
                 'domain' => 'https://example.com',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -134,7 +134,7 @@ class ImpressumRequestTest extends FunctionalTestCase
                 'apikey' => 'demo-key-with-online-shop',
                 'domain' => 'https://example.com',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -154,7 +154,7 @@ class ImpressumRequestTest extends FunctionalTestCase
                 'domain' => 'https://www.jweiland.net',
                 'apikey' => 'demo-key-with-online-shop',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 }

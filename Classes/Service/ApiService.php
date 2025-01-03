@@ -23,12 +23,12 @@ readonly class ApiService
 {
     public function __construct(
         private AvalexClient $avalexClient,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function getHtmlContentFromEndpoint(
         RequestInterface $endpointRequest,
-        ContentObjectRenderer $contentObjectRenderer
+        ContentObjectRenderer $contentObjectRenderer,
     ): string {
         $this->eventDispatcher->dispatch(new PreProcessApiRequestEvent($endpointRequest));
 
@@ -36,7 +36,7 @@ readonly class ApiService
 
         /** @var PostProcessApiResponseContentEvent $postProcessApiResponseContentEvent */
         $postProcessApiResponseContentEvent = $this->eventDispatcher->dispatch(
-            new PostProcessApiResponseContentEvent($content, $endpointRequest, $contentObjectRenderer)
+            new PostProcessApiResponseContentEvent($content, $endpointRequest, $contentObjectRenderer),
         );
 
         return $postProcessApiResponseContentEvent->getContent();

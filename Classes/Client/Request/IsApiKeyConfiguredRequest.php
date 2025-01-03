@@ -23,12 +23,12 @@ class IsApiKeyConfiguredRequest implements RequestInterface
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    const ENDPOINT = 'api_keys/is_configured.json';
+    public const ENDPOINT = 'api_keys/is_configured.json';
 
-    const IS_JSON_REQUEST = true;
+    public const IS_JSON_REQUEST = true;
 
     protected array $allowedParameters = [
-        'apikey' => 1
+        'apikey' => 1,
     ];
 
     /**

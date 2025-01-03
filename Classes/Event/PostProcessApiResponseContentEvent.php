@@ -20,7 +20,7 @@ class PostProcessApiResponseContentEvent
     public function __construct(
         private string $content,
         private readonly RequestInterface $endpointRequest,
-        private readonly ContentObjectRenderer $contentObjectRenderer
+        private readonly ContentObjectRenderer $contentObjectRenderer,
     ) {}
 
     public function getContent(): string

@@ -53,7 +53,7 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
     {
         unset(
             $this->subject,
-            $GLOBALS['TSFE']
+            $GLOBALS['TSFE'],
         );
     }
 
@@ -66,17 +66,17 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
 
         self::assertCount(
             2,
-            $allConfigurationRecords
+            $allConfigurationRecords,
         );
 
         $firstConfigurationRecord = current($allConfigurationRecords);
         self::assertSame(
             'demo-key-with-online-shop',
-            $firstConfigurationRecord['api_key']
+            $firstConfigurationRecord['api_key'],
         );
         self::assertSame(
             'https://example.com',
-            $firstConfigurationRecord['domain']
+            $firstConfigurationRecord['domain'],
         );
     }
 
@@ -93,7 +93,7 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
             'tx_avalex_configuration',
             [
                 'uid' => 1,
-            ]
+            ],
         );
 
         $this->subject->findByRootPageUid(12);
@@ -107,11 +107,11 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
         $configurationRecord = $this->subject->findByRootPageUid(25);
         self::assertSame(
             'invalid-key',
-            $configurationRecord['api_key']
+            $configurationRecord['api_key'],
         );
         self::assertSame(
             'https://jweiland.net',
-            $configurationRecord['domain']
+            $configurationRecord['domain'],
         );
     }
 
@@ -123,11 +123,11 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
         $configurationRecord = $this->subject->findByRootPageUid(414);
         self::assertSame(
             'demo-key-with-online-shop',
-            $configurationRecord['api_key']
+            $configurationRecord['api_key'],
         );
         self::assertSame(
             'https://example.com',
-            $configurationRecord['domain']
+            $configurationRecord['domain'],
         );
     }
 }

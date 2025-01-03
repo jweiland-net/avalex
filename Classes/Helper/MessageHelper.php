@@ -9,7 +9,6 @@
 
 namespace JWeiland\Avalex\Helper;
 
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
@@ -27,7 +26,7 @@ class MessageHelper
     public function addFlashMessage(
         string $message,
         string $title = '',
-        ContextualFeedbackSeverity $severity = ContextualFeedbackSeverity::OK
+        ContextualFeedbackSeverity $severity = ContextualFeedbackSeverity::OK,
     ): void {
         // We activate storeInSession, so that messages can be displayed when click on Save&Close button.
         $flashMessage = GeneralUtility::makeInstance(
@@ -35,7 +34,7 @@ class MessageHelper
             $message,
             $title,
             $severity,
-            true
+            true,
         );
 
         try {

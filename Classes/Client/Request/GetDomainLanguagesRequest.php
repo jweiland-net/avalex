@@ -23,9 +23,9 @@ class GetDomainLanguagesRequest implements RequestInterface, DomainRequestInterf
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    const ENDPOINT = 'avx-get-domain-langs';
+    public const ENDPOINT = 'avx-get-domain-langs';
 
-    const IS_JSON_REQUEST = true;
+    public const IS_JSON_REQUEST = true;
 
     protected array $allowedParameters = [
         'apikey' => 1,

@@ -15,7 +15,7 @@ class AvalexConfiguration
         private int $uid,
         private string $apiKey,
         private string $domain,
-        private string $description
+        private string $description,
     ) {}
 
     public function getUid(): string

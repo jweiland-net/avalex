@@ -39,7 +39,7 @@ class DomainEvaluationTest extends FunctionalTestCase
     {
         unset(
             $this->subject,
-            $GLOBALS['TSFE']
+            $GLOBALS['TSFE'],
         );
     }
 
@@ -50,7 +50,7 @@ class DomainEvaluationTest extends FunctionalTestCase
     {
         self::assertStringContainsString(
             'https://',
-            $this->subject->returnFieldJS()
+            $this->subject->returnFieldJS(),
         );
     }
 
@@ -65,8 +65,8 @@ class DomainEvaluationTest extends FunctionalTestCase
             $this->subject->evaluateFieldValue(
                 'https://jweiland.net',
                 '',
-                $set
-            )
+                $set,
+            ),
         );
     }
 
@@ -81,8 +81,8 @@ class DomainEvaluationTest extends FunctionalTestCase
             $this->subject->evaluateFieldValue(
                 'jweiland.net',
                 '',
-                $set
-            )
+                $set,
+            ),
         );
     }
 }

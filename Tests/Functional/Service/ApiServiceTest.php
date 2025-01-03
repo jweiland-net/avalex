@@ -55,7 +55,7 @@ class ApiServiceTest extends FunctionalTestCase
     protected function tearDown(): void
     {
         unset(
-            $this->subject
+            $this->subject,
         );
     }
 
@@ -81,7 +81,7 @@ class ApiServiceTest extends FunctionalTestCase
 
         self::assertSame(
             'german text',
-            $this->subject->getHtmlContentFromEndpoint($endpoint, [])
+            $this->subject->getHtmlContentFromEndpoint($endpoint, []),
         );
     }
 }

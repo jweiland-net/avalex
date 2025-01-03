@@ -50,7 +50,7 @@ class AvalexResponseTest extends FunctionalTestCase
     {
         unset(
             $this->subject,
-            $GLOBALS['TSFE']
+            $GLOBALS['TSFE'],
         );
     }
 
@@ -62,7 +62,7 @@ class AvalexResponseTest extends FunctionalTestCase
         $this->subject = new AvalexResponse('');
         self::assertSame(
             '',
-            $this->subject->getBody()
+            $this->subject->getBody(),
         );
     }
 
@@ -74,7 +74,7 @@ class AvalexResponseTest extends FunctionalTestCase
         $this->subject = new AvalexResponse('test123');
         self::assertSame(
             'test123',
-            $this->subject->getBody()
+            $this->subject->getBody(),
         );
     }
 
@@ -89,7 +89,7 @@ class AvalexResponseTest extends FunctionalTestCase
             [
                 'firstname' => 'stefan',
             ],
-            $this->subject->getBody()
+            $this->subject->getBody(),
         );
     }
 
@@ -101,7 +101,7 @@ class AvalexResponseTest extends FunctionalTestCase
         $this->subject = new AvalexResponse('test123', []);
         self::assertSame(
             [],
-            $this->subject->getHeaders()
+            $this->subject->getHeaders(),
         );
     }
 
@@ -112,7 +112,7 @@ class AvalexResponseTest extends FunctionalTestCase
     {
         $this->subject = new AvalexResponse(
             '',
-            'Expires: 0' . CRLF . 'Content-Length: 123'
+            'Expires: 0' . CRLF . 'Content-Length: 123',
         );
         self::assertSame(
             [
@@ -123,7 +123,7 @@ class AvalexResponseTest extends FunctionalTestCase
                     0 => '123',
                 ],
             ],
-            $this->subject->getHeaders()
+            $this->subject->getHeaders(),
         );
     }
 
@@ -137,7 +137,7 @@ class AvalexResponseTest extends FunctionalTestCase
             [
                 'Expires' => '0',
                 'Content-Length' => '123',
-            ]
+            ],
         );
         self::assertSame(
             [
@@ -148,7 +148,7 @@ class AvalexResponseTest extends FunctionalTestCase
                     0 => '123',
                 ],
             ],
-            $this->subject->getHeaders()
+            $this->subject->getHeaders(),
         );
     }
 
@@ -170,7 +170,7 @@ class AvalexResponseTest extends FunctionalTestCase
         $this->subject = new AvalexResponse('', $headers);
         self::assertSame(
             $headers,
-            $this->subject->getHeaders()
+            $this->subject->getHeaders(),
         );
     }
 
@@ -182,7 +182,7 @@ class AvalexResponseTest extends FunctionalTestCase
         $this->subject = new AvalexResponse();
         self::assertSame(
             200,
-            $this->subject->getStatusCode()
+            $this->subject->getStatusCode(),
         );
     }
 
@@ -194,7 +194,7 @@ class AvalexResponseTest extends FunctionalTestCase
         $this->subject = new AvalexResponse('', [], 401);
         self::assertSame(
             401,
-            $this->subject->getStatusCode()
+            $this->subject->getStatusCode(),
         );
     }
 
@@ -205,7 +205,7 @@ class AvalexResponseTest extends FunctionalTestCase
     {
         $this->subject = new AvalexResponse('');
         self::assertFalse(
-            $this->subject->isJsonResponse()
+            $this->subject->isJsonResponse(),
         );
     }
 
@@ -217,7 +217,7 @@ class AvalexResponseTest extends FunctionalTestCase
         $this->subject = new AvalexResponse('');
         $this->subject->setIsJsonResponse(true);
         self::assertTrue(
-            $this->subject->isJsonResponse()
+            $this->subject->isJsonResponse(),
         );
     }
 }

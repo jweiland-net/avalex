@@ -65,7 +65,7 @@ class LanguageServiceTest extends FunctionalTestCase
     {
         unset(
             $this->subject,
-            $GLOBALS['TSFE']
+            $GLOBALS['TSFE'],
         );
     }
 
@@ -74,7 +74,7 @@ class LanguageServiceTest extends FunctionalTestCase
         if (class_exists(SiteLanguage::class)) {
             $serverRequest = new ServerRequest(
                 new Uri('/'),
-                'GET'
+                'GET',
             );
             $GLOBALS['TYPO3_REQUEST'] = $serverRequest->withAttribute(
                 'language',
@@ -85,8 +85,8 @@ class LanguageServiceTest extends FunctionalTestCase
                     [
                         'enabled' => true,
                         'iso-639-1' => $language,
-                    ]
-                )
+                    ],
+                ),
             );
         }
 
@@ -123,7 +123,7 @@ class LanguageServiceTest extends FunctionalTestCase
 
         self::assertSame(
             'de',
-            $endpoint->getParameter('lang')
+            $endpoint->getParameter('lang'),
         );
     }
 
@@ -156,7 +156,7 @@ class LanguageServiceTest extends FunctionalTestCase
 
         self::assertSame(
             'de',
-            $endpoint->getParameter('lang')
+            $endpoint->getParameter('lang'),
         );
     }
 
@@ -189,7 +189,7 @@ class LanguageServiceTest extends FunctionalTestCase
 
         self::assertSame(
             'de',
-            $endpoint->getParameter('lang')
+            $endpoint->getParameter('lang'),
         );
     }
 
@@ -225,7 +225,7 @@ class LanguageServiceTest extends FunctionalTestCase
 
         self::assertSame(
             'en',
-            $endpoint->getParameter('lang')
+            $endpoint->getParameter('lang'),
         );
     }
 
@@ -249,7 +249,7 @@ class LanguageServiceTest extends FunctionalTestCase
 
         self::assertSame(
             $expected,
-            $this->subject->getFrontendLocale()
+            $this->subject->getFrontendLocale(),
         );
     }
 }

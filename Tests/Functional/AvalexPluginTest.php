@@ -15,7 +15,6 @@ use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Client\Request\ImpressumRequest;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Service\ApiService;
-use JWeiland\Avalex\Utility\Typo3Utility;
 use PHPUnit\Framework\Constraint\StringContains;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -81,7 +80,7 @@ class AvalexPluginTest extends FunctionalTestCase
     {
         unset(
             $this->subject,
-            $GLOBALS['TSFE']
+            $GLOBALS['TSFE'],
         );
     }
 
@@ -109,13 +108,13 @@ class AvalexPluginTest extends FunctionalTestCase
                         'uid' => 1,
                         'api_key' => 'demo-key-with-online-shop',
                         'domain' => 'https://example.com',
-                    ]
-                )
+                    ],
+                ),
             )
             ->willReturn(
                 '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! '
                 . '<a href="mailto:john@doe.tld">johns mail</a>'
-                . '</p>'
+                . '</p>',
             );
 
         $encryptedMail = call_user_func_array($this->getEncryptedMailCallable(), ['john@doe.tld', 'johns mail']);
@@ -125,19 +124,19 @@ class AvalexPluginTest extends FunctionalTestCase
                 '<a href="%s" %s>%s</a>',
                 $encryptedMail[0],
                 GeneralUtility::implodeAttributes($encryptedMail[2], true),
-                $encryptedMail[1]
+                $encryptedMail[1],
             );
         } else {
             $expected = sprintf(
                 '<a href="%s">%s</a>',
                 $encryptedMail[0],
-                $encryptedMail[1]
+                $encryptedMail[1],
             );
         }
 
         self::assertThat(
             $this->subject->render('', ['endpoint' => 'avx-impressum']),
-            new StringContains($expected)
+            new StringContains($expected),
         );
     }
 
@@ -175,15 +174,15 @@ class AvalexPluginTest extends FunctionalTestCase
                         'uid' => 1,
                         'api_key' => 'demo-key-with-online-shop',
                         'domain' => 'https://example.com',
-                    ]
-                )
+                    ],
+                ),
             )
             ->willReturn(
                 '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! '
                 . '<a href="#hello">Hello World</a>.</p>' . chr(10)
                 . '<p>Want another link? OK: <a href="#world">Another one</a>. '
                 . '<a href="/test.html">Do not replace this</a> ok?</p>' . chr(10)
-                . '<p>And also do <a href="https://domain.tld">not replace this</a>.</p>'
+                . '<p>And also do <a href="https://domain.tld">not replace this</a>.</p>',
             );
 
         $requestUri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
@@ -196,7 +195,7 @@ class AvalexPluginTest extends FunctionalTestCase
 
         self::assertEquals(
             str_replace('$requestUri', $requestUri, implode(chr(10), $expected)),
-            $this->subject->render('', ['endpoint' => 'avx-impressum'])
+            $this->subject->render('', ['endpoint' => 'avx-impressum']),
         );
     }
 }

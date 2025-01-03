@@ -23,9 +23,9 @@ class WiderrufRequest implements RequestInterface, DomainRequestInterface, Local
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    const ENDPOINT = 'avx-widerruf';
+    public const ENDPOINT = 'avx-widerruf';
 
-    const IS_JSON_REQUEST = false;
+    public const IS_JSON_REQUEST = false;
 
     protected array $allowedParameters = [
         'apikey' => 1,

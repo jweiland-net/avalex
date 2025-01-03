@@ -52,7 +52,7 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
     {
         unset(
             $this->subject,
-            $GLOBALS['TSFE']
+            $GLOBALS['TSFE'],
         );
     }
 
@@ -63,7 +63,7 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
     {
         self::assertSame(
             'avx-get-domain-langs',
-            $this->subject->getEndpoint()
+            $this->subject->getEndpoint(),
         );
     }
 
@@ -74,7 +74,7 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
     {
         self::assertSame(
             'get-domain-langs',
-            $this->subject->getEndpointWithoutPrefix()
+            $this->subject->getEndpointWithoutPrefix(),
         );
     }
 
@@ -89,7 +89,7 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
                 'domain' => 'https://example.com',
                 'version' => '3.0.1',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -105,7 +105,7 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
                 'apikey' => 'demo-key-with-online-shop',
                 'version' => '3.0.1',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -121,7 +121,7 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
                 'domain' => 'https://example.com',
                 'version' => '3.0.1',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -141,7 +141,7 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
                 'apikey' => 'demo-key-with-online-shop',
                 'version' => '3.0.1',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 }

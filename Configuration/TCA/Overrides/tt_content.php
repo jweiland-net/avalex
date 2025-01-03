@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the package jweiland/avalex.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 use JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer;
 use TYPO3\CMS\Core\Schema\Struct\SelectItem;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -19,7 +26,7 @@ ExtensionManagementUtility::addPlugin(
         'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_avalex.description',
     ),
     'CType',
-    'avalex'
+    'avalex',
 );
 ExtensionManagementUtility::addPlugin(
     new SelectItem(
@@ -32,7 +39,7 @@ ExtensionManagementUtility::addPlugin(
         'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_imprint.description',
     ),
     'CType',
-    'avalex'
+    'avalex',
 );
 ExtensionManagementUtility::addPlugin(
     new SelectItem(
@@ -45,7 +52,7 @@ ExtensionManagementUtility::addPlugin(
         'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_bedingungen.description',
     ),
     'CType',
-    'avalex'
+    'avalex',
 );
 ExtensionManagementUtility::addPlugin(
     new SelectItem(
@@ -58,7 +65,7 @@ ExtensionManagementUtility::addPlugin(
         'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_widerruf.description',
     ),
     'CType',
-    'avalex'
+    'avalex',
 );
 
 $GLOBALS['TCA']['tt_content']['types']['avalex_avalex']['previewRenderer'] = ContentPreviewRenderer::class;

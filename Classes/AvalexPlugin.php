@@ -38,7 +38,7 @@ readonly class AvalexPlugin
         private LanguageService $languageService,
         private FrontendInterface $cache,
         private LoggerInterface $logger,
-        iterable $registeredAvalexRequests
+        iterable $registeredAvalexRequests,
     ) {
         $this->registeredAvalexRequests = $registeredAvalexRequests;
     }
@@ -49,7 +49,7 @@ readonly class AvalexPlugin
     public function render(string $content, array $conf, ServerRequestInterface $request): string
     {
         $avalexConfiguration = $this->avalexConfigurationRepository->findByRootPageUid(
-            $this->detectRootPageUid($request)
+            $this->detectRootPageUid($request),
         );
 
         if (!$avalexConfiguration instanceof AvalexConfiguration) {
@@ -73,7 +73,7 @@ readonly class AvalexPlugin
 
         $content = $this->apiService->getHtmlContentFromEndpoint(
             $endpointRequest,
-            $this->getContentObjectRendererFromRequest($request)
+            $this->getContentObjectRendererFromRequest($request),
         );
 
         if ($content !== '') {
@@ -85,7 +85,7 @@ readonly class AvalexPlugin
 
     protected function getRequestForEndpoint(
         string $endpoint,
-        AvalexConfiguration $avalexConfiguration
+        AvalexConfiguration $avalexConfiguration,
     ): ?RequestInterface {
         foreach ($this->registeredAvalexRequests as $avalexRequest) {
             if ($avalexRequest->getEndpoint() === $endpoint) {
@@ -104,7 +104,7 @@ readonly class AvalexPlugin
             $endpointRequest->getEndpoint(),
             $this->detectCurrentPageUid($request),
             $this->detectRootPageUid($request),
-            $this->languageService->getFrontendLocale()
+            $this->languageService->getFrontendLocale(),
         );
     }
 

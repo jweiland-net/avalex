@@ -52,7 +52,7 @@ class IsApiKeyConfiguredRequestTest extends FunctionalTestCase
     {
         unset(
             $this->subject,
-            $GLOBALS['TSFE']
+            $GLOBALS['TSFE'],
         );
     }
 
@@ -63,7 +63,7 @@ class IsApiKeyConfiguredRequestTest extends FunctionalTestCase
     {
         self::assertSame(
             'api_keys/is_configured.json',
-            $this->subject->getEndpoint()
+            $this->subject->getEndpoint(),
         );
     }
 
@@ -74,7 +74,7 @@ class IsApiKeyConfiguredRequestTest extends FunctionalTestCase
     {
         self::assertSame(
             'keys/is_configured.json',
-            $this->subject->getEndpointWithoutPrefix()
+            $this->subject->getEndpointWithoutPrefix(),
         );
     }
 
@@ -87,7 +87,7 @@ class IsApiKeyConfiguredRequestTest extends FunctionalTestCase
             [
                 'apikey' => 'demo-key-with-online-shop',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -101,7 +101,7 @@ class IsApiKeyConfiguredRequestTest extends FunctionalTestCase
             [
                 'apikey' => 'API_KEY',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -115,7 +115,7 @@ class IsApiKeyConfiguredRequestTest extends FunctionalTestCase
             [
                 'apikey' => 'demo-key-with-online-shop',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -135,7 +135,7 @@ class IsApiKeyConfiguredRequestTest extends FunctionalTestCase
             [
                 'apikey' => 'demo-key-with-online-shop',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 }

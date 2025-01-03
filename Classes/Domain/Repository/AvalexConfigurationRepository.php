@@ -11,7 +11,6 @@ namespace JWeiland\Avalex\Domain\Repository;
 
 use Doctrine\DBAL\Exception;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
-use JWeiland\Avalex\Exception\AvalexConfigurationNotFoundException;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -23,11 +22,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class AvalexConfigurationRepository
 {
-    const TABLE = 'tx_avalex_configuration';
+    public const TABLE = 'tx_avalex_configuration';
 
     public function __construct(
         private readonly QueryBuilder $queryBuilder,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {}
 
     /**
@@ -45,14 +44,14 @@ class AvalexConfigurationRepository
                 ->where(
                     $queryBuilder->expr()->inSet(
                         'website_root',
-                        $queryBuilder->createNamedParameter($websiteRoot, Connection::PARAM_INT)
-                    )
+                        $queryBuilder->createNamedParameter($websiteRoot, Connection::PARAM_INT),
+                    ),
                 )
                 ->orWhere(
                     $queryBuilder->expr()->eq(
                         'global',
-                        $queryBuilder->createNamedParameter(1, Connection::PARAM_INT)
-                    )
+                        $queryBuilder->createNamedParameter(1, Connection::PARAM_INT),
+                    ),
                 )
                 ->orderBy('global', 'ASC')
                 ->executeQuery()

@@ -23,9 +23,9 @@ class BedingungenRequest implements RequestInterface, DomainRequestInterface, Lo
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    const ENDPOINT = 'avx-bedingungen';
+    public const ENDPOINT = 'avx-bedingungen';
 
-    const IS_JSON_REQUEST = false;
+    public const IS_JSON_REQUEST = false;
 
     protected array $allowedParameters = [
         'apikey' => 1,

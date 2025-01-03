@@ -42,7 +42,7 @@ readonly class EncryptEmailLinkTagsEventListener
 
                 return (string)str_replace($match['href'], $requestUrl . $match['href'], $match[0]);
             },
-            $content
+            $content,
         );
 
         $postProcessApiResponseContentEvent->setContent($content);
