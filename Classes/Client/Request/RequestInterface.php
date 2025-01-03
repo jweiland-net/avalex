@@ -9,6 +9,8 @@
 
 namespace JWeiland\Avalex\Client\Request;
 
+use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
+
 /**
  * Interface for avalex requests
  */
@@ -21,7 +23,7 @@ interface RequestInterface
     public function getEndpoint(): string;
 
     /**
-     * Endpoint 'avx-datenschutzerklaerung' - 'datenschutzerklaerung'
+     * Endpoint 'avx-datenschutzerklaerung' will be shorten to 'datenschutzerklaerung'
      */
     public function getEndpointWithoutPrefix(): string;
 
@@ -34,6 +36,8 @@ interface RequestInterface
     public function getParameter(string $parameter): mixed;
 
     public function hasParameter(string $parameter): bool;
+
+    public function setAvalexConfiguration(AvalexConfiguration $avalexConfiguration): void;
 
     /**
      * Merge all parameters to build a URI

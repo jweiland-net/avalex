@@ -9,14 +9,14 @@
 
 namespace JWeiland\Avalex\Domain\Repository;
 
+use Doctrine\DBAL\Exception;
+use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Exception\AvalexConfigurationNotFoundException;
-use JWeiland\Avalex\Utility\Typo3Utility;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Class AvalexConfigurationRepository
@@ -25,76 +25,54 @@ class AvalexConfigurationRepository
 {
     const TABLE = 'tx_avalex_configuration';
 
-    /**
-     * Find all configurations
-     */
-    public function findAll(): array
-    {
-        $result = $this
-            ->getQueryBuilder()
-            ->select('*')
-            ->from(self::TABLE)
-            ->executeQuery()
-            ->fetchAllAssociative();
-
-        return ($result !== null) ? $result : [];
-    }
+    public function __construct(
+        private readonly QueryBuilder $queryBuilder,
+        private readonly LoggerInterface $logger
+    ) {}
 
     /**
-     * @throws AvalexConfigurationNotFoundException
-     * @throws \Doctrine\DBAL\DBALException
+     * Order by "global" to get the individual configuration records first.
      */
-    public function findByWebsiteRoot(int $websiteRoot, string $select = '*'): array
+    public function findByRootPageUid(int $websiteRoot): ?AvalexConfiguration
     {
-        // Order by "global" to get the individual configuration records first.
-        $result = $this
-            ->getQueryBuilder(self::TABLE)
-            ->select(...GeneralUtility::trimExplode(',', $select))
-            ->from(self::TABLE)
-            ->where($this->getQueryBuilder(self::TABLE)->expr()->inSet('website_root', $websiteRoot))
-            ->orWhere($this->getQueryBuilder(self::TABLE)->expr()->eq('global', 1))
-            ->orderBy('global', 'ASC')
-            ->executeQuery()
-            ->fetchAssociative();
+        $queryBuilder = $this->queryBuilder;
+        $queryBuilder->setRestrictions(GeneralUtility::makeInstance(FrontendRestrictionContainer::class));
 
-        if ($result === false) {
-            throw new AvalexConfigurationNotFoundException(
-                'No Avalex configuration could be found in database for page UID: ' . $websiteRoot
+        try {
+            $configurationRecord = $queryBuilder
+                ->select('uid', 'api_key', 'domain', 'description')
+                ->from(self::TABLE)
+                ->where(
+                    $queryBuilder->expr()->inSet(
+                        'website_root',
+                        $queryBuilder->createNamedParameter($websiteRoot, Connection::PARAM_INT)
+                    )
+                )
+                ->orWhere(
+                    $queryBuilder->expr()->eq(
+                        'global',
+                        $queryBuilder->createNamedParameter(1, Connection::PARAM_INT)
+                    )
+                )
+                ->orderBy('global', 'ASC')
+                ->executeQuery()
+                ->fetchAssociative();
+
+            if ($configurationRecord === false) {
+                $this->logger->error('No Avalex configuration could be found in database for page UID: ' . $websiteRoot);
+                return null;
+            }
+
+            return new AvalexConfiguration(
+                (int)$configurationRecord['uid'],
+                $configurationRecord['api_key'],
+                $configurationRecord['domain'],
+                $configurationRecord['description'],
             );
+        } catch (Exception $exception) {
+            $this->logger->error('Error in query of AvalexConfigurationRepository::findByRootPageUid: ' . $exception->getMessage());
         }
 
-        return $result;
-    }
-
-    protected function getQueryBuilder(): QueryBuilder
-    {
-        return GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable(self::TABLE);
-    }
-
-    /**
-     * Get additional where clause for a table
-     */
-    protected function getAdditionalWhereClause(string $table): string
-    {
-        $table = trim($table);
-        $environmentService = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Service\EnvironmentService::class);
-        if ($environmentService->isEnvironmentInFrontendMode()) {
-            $whereClause =  $this->getTypoScriptFrontendController()->sys_page->deleteClause($table)
-                . $this->getTypoScriptFrontendController()->sys_page->enableFields($table);
-        } else {
-            $whereClause = BackendUtility::deleteClause($table) . BackendUtility::BEenableFields($table);
-        }
-        return $whereClause;
-    }
-
-    protected function getDatabaseConnection(): Connection
-    {
-        return $GLOBALS['TYPO3_DB'];
-    }
-
-    protected function getTypoScriptFrontendController(): TypoScriptFrontendController
-    {
-        return $GLOBALS['TSFE'];
+        return null;
     }
 }

@@ -21,9 +21,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * This is the avalex client which will send the request to the avalex server
  */
-class AvalexClient
+readonly class AvalexClient
 {
-    public function __construct(private readonly MessageHelper $messageHelper) {}
+    public function __construct(private MessageHelper $messageHelper) {}
 
     public function processRequest(RequestInterface $request): ResponseInterface
     {

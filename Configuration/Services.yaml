@@ -7,17 +7,59 @@ services:
   JWeiland\Avalex\:
     resource: '../Classes/*'
 
+  cache.avalexContent:
+    class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+    factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
+    arguments: ['avalex_content']
+  cache.avalexLanguages:
+    class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+    factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
+    arguments: ['avalex_languages']
+
+  querybuilder.tx_avalex_configuration:
+    class: 'TYPO3\CMS\Core\Database\Query\QueryBuilder'
+    factory:
+      - '@TYPO3\CMS\Core\Database\ConnectionPool'
+      - 'getQueryBuilderForTable'
+    arguments:
+      - 'tx_avalex_configuration'
+
+  JWeiland\Avalex\AvalexPlugin:
+    public: true
+    arguments:
+      $registeredAvalexRequests: !tagged_iterator { tag: 'avalex.request' }
+      $cache: '@cache.avalexContent'
+
+  JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository:
+    arguments:
+      $queryBuilder: '@querybuilder.tx_avalex_configuration'
+
+  JWeiland\Avalex\Service\LanguageService:
+    arguments:
+      $cache: '@cache.avalexLanguages'
+
   JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer:
     public: true
+
   JWeiland\Avalex\Client\AvalexClient:
     public: true
+
   JWeiland\Avalex\Client\Request\BedingungenRequest:
     public: true
+    tags:
+      - name: 'avalex.request'
   JWeiland\Avalex\Client\Request\DatenschutzerklaerungRequest:
     public: true
+    tags:
+      - name: 'avalex.request'
   JWeiland\Avalex\Client\Request\ImpressumRequest:
     public: true
+    tags:
+      - name: 'avalex.request'
   JWeiland\Avalex\Client\Request\WiderrufRequest:
     public: true
+    tags:
+      - name: 'avalex.request'
+
   JWeiland\Avalex\Hook\DataHandlerHook:
     public: true

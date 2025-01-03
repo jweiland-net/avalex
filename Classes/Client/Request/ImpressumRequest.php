@@ -14,9 +14,18 @@ namespace JWeiland\Avalex\Client\Request;
  *
  * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk#0964aca9-4e31-4a5d-a52b-d2281bbec28c
  */
-class ImpressumRequest extends AbstractRequest implements DomainRequestInterface, LocalizeableRequestInterface
+class ImpressumRequest implements RequestInterface, DomainRequestInterface, LocalizeableRequestInterface
 {
-    protected string $endpoint = 'avx-impressum';
+    use RequestTrait;
+
+    /**
+     * Endpoint is something like "avx-get-domain-langs" or "avx-datenschutzerklaerung"
+     *
+     * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
+     */
+    const ENDPOINT = 'avx-impressum';
+
+    const IS_JSON_REQUEST = false;
 
     protected array $allowedParameters = [
         'apikey' => 1,

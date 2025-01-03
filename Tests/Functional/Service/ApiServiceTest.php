@@ -81,7 +81,7 @@ class ApiServiceTest extends FunctionalTestCase
 
         self::assertSame(
             'german text',
-            $this->subject->getHtmlForCurrentRootPage($endpoint, [])
+            $this->subject->getHtmlContentFromEndpoint($endpoint, [])
         );
     }
 }

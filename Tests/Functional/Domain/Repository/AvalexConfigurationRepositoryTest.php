@@ -96,7 +96,7 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
             ]
         );
 
-        $this->subject->findByWebsiteRoot(12);
+        $this->subject->findByRootPageUid(12);
     }
 
     /**
@@ -104,7 +104,7 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
      */
     public function findByWebsiteRootWithConfigurationWillReturnConfiguration(): void
     {
-        $configurationRecord = $this->subject->findByWebsiteRoot(25);
+        $configurationRecord = $this->subject->findByRootPageUid(25);
         self::assertSame(
             'invalid-key',
             $configurationRecord['api_key']
@@ -120,7 +120,7 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
      */
     public function findByWebsiteRootWithoutConfigurationWillReturnFallbackConfiguration(): void
     {
-        $configurationRecord = $this->subject->findByWebsiteRoot(414);
+        $configurationRecord = $this->subject->findByRootPageUid(414);
         self::assertSame(
             'demo-key-with-online-shop',
             $configurationRecord['api_key']

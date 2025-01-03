@@ -9,226 +9,123 @@
 
 namespace JWeiland\Avalex;
 
-use JWeiland\Avalex\Client\Request\BedingungenRequest;
-use JWeiland\Avalex\Client\Request\DatenschutzerklaerungRequest;
-use JWeiland\Avalex\Client\Request\ImpressumRequest;
 use JWeiland\Avalex\Client\Request\LocalizeableRequestInterface;
 use JWeiland\Avalex\Client\Request\RequestInterface;
-use JWeiland\Avalex\Client\Request\WiderrufRequest;
+use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
-use JWeiland\Avalex\Exception\AvalexConfigurationNotFoundException;
 use JWeiland\Avalex\Service\ApiService;
 use JWeiland\Avalex\Service\LanguageService;
-use JWeiland\Avalex\Utility\AvalexUtility;
-use JWeiland\Avalex\Utility\Typo3Utility;
-use TYPO3\CMS\Core\Cache\CacheManager;
-use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
+use TYPO3\CMS\Core\Routing\PageArguments;
+use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use TYPO3\CMS\Frontend\Typolink\EmailLinkBuilder;
 
 /**
- * Class AvalexPlugin
+ * This is the main class which will be called via TypoScript.
  */
-class AvalexPlugin
+readonly class AvalexPlugin
 {
     /**
-     * @var VariableFrontend
+     * @var RequestInterface[]
      */
-    protected $cache;
+    private iterable $registeredAvalexRequests;
 
-    /**
-     * @var ApiService
-     */
-    protected $apiService;
-
-    /**
-     * @var AvalexConfigurationRepository
-     */
-    protected $avalexConfigurationRepository;
-
-    /**
-     * @var array
-     */
-    protected $configuration = [];
-
-    /**
-     * @var LanguageService
-     */
-    protected $languageService;
-
-    /**
-     * @var ContentObjectRenderer
-     */
-    public $cObj;
-
-    public function __construct()
-    {
-        $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('avalex_content');
-        $this->apiService = GeneralUtility::makeInstance(ApiService::class);
-        $this->avalexConfigurationRepository = GeneralUtility::makeInstance(AvalexConfigurationRepository::class);
+    public function __construct(
+        private ApiService $apiService,
+        private AvalexConfigurationRepository $avalexConfigurationRepository,
+        private LanguageService $languageService,
+        private FrontendInterface $cache,
+        private LoggerInterface $logger,
+        iterable $registeredAvalexRequests
+    ) {
+        $this->registeredAvalexRequests = $registeredAvalexRequests;
     }
 
     /**
-     * This is the new version to set the COR for UserFunc since TYPO3 11.
-     *
-     * @param ContentObjectRenderer $contentObjectRenderer
+     * Main method. This will be called by TypoScript "userFunc"
      */
-    public function setContentObjectRenderer(ContentObjectRenderer $contentObjectRenderer)
+    public function render(string $content, array $conf, ServerRequestInterface $request): string
     {
-        $this->cObj = $contentObjectRenderer;
-    }
+        $avalexConfiguration = $this->avalexConfigurationRepository->findByRootPageUid(
+            $this->detectRootPageUid($request)
+        );
 
-    /**
-     * Render plugin
-     *
-     * @param string $content empty string
-     * @param array $conf TypoScript configuration
-     *
-     * @return string
-     *
-     * @throws Exception\InvalidUidException
-     */
-    public function render($content, $conf)
-    {
-        try {
-            $this->configuration = $this->avalexConfigurationRepository->findByWebsiteRoot(
-                AvalexUtility::getRootForPage(),
-                'uid, api_key, domain'
-            );
-        } catch (AvalexConfigurationNotFoundException $avalexConfigurationNotFoundException) {
-            return LocalizationUtility::translate('error.noAvalexConfigurationFound', 'Avalex');
+        if (!$avalexConfiguration instanceof AvalexConfiguration) {
+            return 'EXT:avalex error: See logs for more details';
         }
 
-        $this->languageService = $this->getLanguageService($this->configuration);
+        $endpointRequest = $this->getRequestForEndpoint($conf['endpoint'], $avalexConfiguration);
+        if ($endpointRequest === null) {
+            $this->logger->error('There is no registered avalex request with specified endpoint: ' . $conf['endpoint']);
+            return 'EXT:avalex error: See logs for more details';
+        }
 
-        $endpointRequest = $this->getRequestForEndpoint($conf['endpoint']);
-        $cacheIdentifier = $this->getCacheIdentifier($endpointRequest);
+        $cacheIdentifier = $this->getCacheIdentifier($endpointRequest, $request);
         if ($this->cache->has($cacheIdentifier)) {
             return (string)$this->cache->get($cacheIdentifier);
         }
 
-        $this->languageService->addLanguageToEndpoint($endpointRequest);
-        $content = $this->apiService->getHtmlForCurrentRootPage(
+        if ($endpointRequest instanceof LocalizeableRequestInterface) {
+            $this->languageService->addLanguageToEndpoint($endpointRequest, $avalexConfiguration);
+        }
+
+        $content = $this->apiService->getHtmlContentFromEndpoint(
             $endpointRequest,
-            $this->configuration
+            $this->getContentObjectRendererFromRequest($request)
         );
 
         if ($content !== '') {
-            // Set cache for successful calls only
-            $content = $this->processLinks($content);
             $this->cache->set($cacheIdentifier, $content, [], 21600);
         }
 
         return $content;
     }
 
-    /**
-     * @param string $endpoint
-     *
-     * @return RequestInterface|LocalizeableRequestInterface
-     */
-    protected function getRequestForEndpoint($endpoint)
-    {
-        if (!is_string($endpoint)) {
-            throw new \InvalidArgumentException(
-                sprintf('The endpoint "%s" must be of type "string"!', $endpoint),
-                1661512525
-            );
+    protected function getRequestForEndpoint(
+        string $endpoint,
+        AvalexConfiguration $avalexConfiguration
+    ): ?RequestInterface {
+        foreach ($this->registeredAvalexRequests as $avalexRequest) {
+            if ($avalexRequest->getEndpoint() === $endpoint) {
+                $avalexRequest->setAvalexConfiguration($avalexConfiguration);
+                return $avalexRequest;
+            }
         }
 
-        switch ($endpoint) {
-            case 'avx-datenschutzerklaerung':
-                $requestClass = DatenschutzerklaerungRequest::class;
-                break;
-            case 'avx-impressum':
-                $requestClass = ImpressumRequest::class;
-                break;
-            case 'avx-bedingungen':
-                $requestClass = BedingungenRequest::class;
-                break;
-            case 'avx-widerruf':
-                $requestClass = WiderrufRequest::class;
-                break;
-            default:
-                throw new \InvalidArgumentException(
-                    sprintf('The endpoint "%s" is invalid!', $endpoint),
-                    1661512662
-                );
-        }
-
-        return GeneralUtility::makeInstance($requestClass);
+        return null;
     }
 
-    /**
-     * @return string
-     *
-     * @throws Exception\InvalidUidException
-     */
-    protected function getCacheIdentifier(RequestInterface $endpointRequest)
+    protected function getCacheIdentifier(RequestInterface $endpointRequest, ServerRequestInterface $request): string
     {
         return sprintf(
             'avalex_%s_%d_%d_%s',
             $endpointRequest->getEndpoint(),
-            AvalexUtility::getRootForPage(),
-            $GLOBALS['TSFE']->id,
+            $this->detectCurrentPageUid($request),
+            $this->detectRootPageUid($request),
             $this->languageService->getFrontendLocale()
         );
     }
 
-    /**
-     * @param string $content
-     *
-     * @return string
-     */
-    protected function processLinks($content)
+    private function getContentObjectRendererFromRequest(ServerRequestInterface $request): ?ContentObjectRenderer
     {
-        $requestUrl = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
-        $encryptMailCallable = $this->getEncryptedMailCallable();
+        $contentObjectRenderer = $request->getAttribute('currentContentObject');
 
-        return preg_replace_callback(
-            '@<a href="(?P<href>(?P<type>mailto:|#)[^"\']+)">(?P<text>[^<]+)</a>@',
-            static function ($match) use ($requestUrl, $encryptMailCallable) {
-                if ($match['type'] === 'mailto:') {
-                    $encrypted = $encryptMailCallable(substr($match['href'], 7), $match['text']);
-                    if (count($encrypted) === 3) {
-                        // TYPO3 >= 11
-                        $html = sprintf(
-                            '<a href="%s" %s>%s</a>',
-                            $encrypted[0],
-                            GeneralUtility::implodeAttributes($encrypted[2], true),
-                            $encrypted[1]
-                        );
-                    } else {
-                        $html = sprintf(
-                            '<a href="%s">%s</a>',
-                            $encrypted[0],
-                            $encrypted[1]
-                        );
-                    }
-
-                    return $html;
-                }
-
-                return (string)str_replace($match['href'], $requestUrl . $match['href'], $match[0]);
-            },
-            $content
-        );
+        return $contentObjectRenderer instanceof ContentObjectRenderer ? $contentObjectRenderer : null;
     }
 
-    protected function getEncryptedMailCallable(): callable
+    private function detectRootPageUid(ServerRequestInterface $request): int
     {
-        $cObj = $this->cObj;
+        $site = $request->getAttribute('site');
 
-        return static function ($mailAddress, $linkText) use ($cObj) {
-            $linkBuilder = GeneralUtility::makeInstance(EmailLinkBuilder::class, $cObj, $GLOBALS['TSFE']);
-            return $linkBuilder->processEmailLink((string)$mailAddress, (string)$linkText);
-        };
+        return $site instanceof Site ? $site->getRootPageId() : 0;
     }
 
-    protected function getLanguageService(array $configuration): LanguageService
+    private function detectCurrentPageUid(ServerRequestInterface $request): int
     {
-        return GeneralUtility::makeInstance(LanguageService::class, $configuration);
+        $pageArguments = $request->getAttribute('routing');
+
+        return $pageArguments instanceof PageArguments ? $pageArguments->getPageId() : 0;
     }
 }

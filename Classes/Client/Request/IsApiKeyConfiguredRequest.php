@@ -14,13 +14,22 @@ namespace JWeiland\Avalex\Client\Request;
  *
  * @link no API doc found
  */
-class IsApiKeyConfiguredRequest extends AbstractRequest
+class IsApiKeyConfiguredRequest implements RequestInterface
 {
-    protected string $endpoint = 'api_keys/is_configured.json';
+    use RequestTrait;
 
-    protected bool $isJsonRequest = true;
+    /**
+     * Endpoint is something like "avx-get-domain-langs" or "avx-datenschutzerklaerung"
+     *
+     * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
+     */
+    const ENDPOINT = 'api_keys/is_configured.json';
 
-    protected array $allowedParameters = ['apikey' => 1];
+    const IS_JSON_REQUEST = true;
+
+    protected array $allowedParameters = [
+        'apikey' => 1
+    ];
 
     /**
      * @param string $apiKey If this was set, the request will not use the API KEY from Avalex configuration record, but uses this one

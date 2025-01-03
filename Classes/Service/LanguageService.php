@@ -12,43 +12,38 @@ namespace JWeiland\Avalex\Service;
 use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Client\Request\LocalizeableRequestInterface;
+use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Cache\CacheManager;
-use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Service to get the frontend language for given endpoint.
  */
-class LanguageService
+readonly class LanguageService
 {
-    protected FrontendInterface $cache;
-
     /**
      * Use AvalexConfigurationRepository::findByWebsiteRoot($rootPage, 'api_key, domain')
      * to find a configuration
-     *
-     * @throws NoSuchCacheException
      */
     public function __construct(
-        private readonly CacheManager $cacheManager,
-        private readonly AvalexClient $avalexClient
-    ) {
-        $this->cache = $this->cacheManager->getCache('avalex_languages');
-    }
+        private AvalexClient $avalexClient,
+        private FrontendInterface $cache
+    ) {}
 
-    public function addLanguageToEndpoint(LocalizeableRequestInterface $endpointRequest, array $configuration): void
-    {
+    public function addLanguageToEndpoint(
+        LocalizeableRequestInterface $endpointRequest,
+        AvalexConfiguration $avalexConfiguration
+    ): void {
         // In customer account of avalex company all texts are always available in german language.
         // If another language (currently only en is allowed as different language) is not available EXT:avalex
-        // will fallback to the german texts.
+        // will fall back to the german texts.
         $language = 'de';
         $frontendLanguage = $this->getFrontendLocale();
-        $avalexLanguageResponse = $this->getLanguageResponseFromCache($configuration) ?: $this->fetchLanguageResponse(
-            $configuration
-        );
+
+        if (($avalexLanguageResponse = $this->getLanguageResponseFromCache($avalexConfiguration)) === null) {
+            $avalexLanguageResponse = $this->fetchLanguageResponse($avalexConfiguration);
+        }
 
         if (
             array_key_exists($frontendLanguage, $avalexLanguageResponse)
@@ -63,10 +58,11 @@ class LanguageService
         $endpointRequest->setLang($language);
     }
 
-    protected function getLanguageResponseFromCache(array $configuration): array
+    protected function getLanguageResponseFromCache(AvalexConfiguration $avalexConfiguration): ?array
     {
-        $language = '';
-        $cacheIdentifier = $this->getCacheIdentifier($configuration);
+        $language = null;
+        $cacheIdentifier = $this->getCacheIdentifier($avalexConfiguration);
+
         if ($this->cache->has($cacheIdentifier)) {
             $language = (array)$this->cache->get($cacheIdentifier);
         }
@@ -74,18 +70,20 @@ class LanguageService
         return $language;
     }
 
-    protected function fetchLanguageResponse(array $configuration): array
+    protected function fetchLanguageResponse(AvalexConfiguration $avalexConfiguration): array
     {
         $response = [];
-        $getDomainLanguagesRequest = GeneralUtility::makeInstance(GetDomainLanguagesRequest::class);
-        $getDomainLanguagesRequest->setDomain($configuration['domain']);
+        $getDomainLanguagesRequest = new GetDomainLanguagesRequest();
+        $getDomainLanguagesRequest->setAvalexConfiguration($avalexConfiguration);
+        $getDomainLanguagesRequest->setDomain($avalexConfiguration->getDomain());
+
         $result = $this->avalexClient->processRequest($getDomainLanguagesRequest)->getBody();
         if ($result === '') {
             // Error or empty result
             $result = [];
         }
 
-        $this->cache->set($this->getCacheIdentifier($configuration), $response, [], 21600);
+        $this->cache->set($this->getCacheIdentifier($avalexConfiguration), $response, [], 21600);
 
         return $result;
     }
@@ -109,8 +107,12 @@ class LanguageService
         return $frontendLocale ?: $fallBackLanguage;
     }
 
-    protected function getCacheIdentifier(array $configuration): string
+    protected function getCacheIdentifier(AvalexConfiguration $avalexConfiguration): string
     {
-        return md5(sprintf('%s_%s', $configuration['domain'], $configuration['api_key']));
+        return md5(sprintf(
+            '%s_%s',
+            $avalexConfiguration->getDomain(),
+            $avalexConfiguration->getApiKey()
+        ));
     }
 }

@@ -14,9 +14,18 @@ namespace JWeiland\Avalex\Client\Request;
  *
  * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk#0964aca9-4e31-4a5d-a52b-d2281bbec28c
  */
-class WiderrufRequest extends AbstractRequest implements DomainRequestInterface, LocalizeableRequestInterface
+class WiderrufRequest implements RequestInterface, DomainRequestInterface, LocalizeableRequestInterface
 {
-    protected string $endpoint = 'avx-widerruf';
+    use RequestTrait;
+
+    /**
+     * Endpoint is something like "avx-get-domain-langs" or "avx-datenschutzerklaerung"
+     *
+     * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
+     */
+    const ENDPOINT = 'avx-widerruf';
+
+    const IS_JSON_REQUEST = false;
 
     protected array $allowedParameters = [
         'apikey' => 1,
