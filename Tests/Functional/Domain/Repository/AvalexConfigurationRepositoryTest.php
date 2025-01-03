@@ -50,7 +50,6 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
     {
         unset(
             $this->subject,
-            $GLOBALS['TSFE'],
         );
     }
 
