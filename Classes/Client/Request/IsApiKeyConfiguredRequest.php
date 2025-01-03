@@ -38,4 +38,13 @@ class IsApiKeyConfiguredRequest implements RequestInterface
     {
         $this->overrideApiKey = $apiKey;
     }
+
+    /**
+     * If this was called, the request will not use the API KEY from Avalex configuration record but
+     * uses this one. This solution is only valid for just this class!
+     */
+    public function setApiKey(string $apiKey): void
+    {
+        $this->overrideApiKey = $apiKey;
+    }
 }

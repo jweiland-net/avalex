@@ -10,6 +10,8 @@
 namespace JWeiland\Avalex\Tests\Functional\Client\Request;
 
 use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
+use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\TestingFramework\Core\AccessibleObjectInterface;
@@ -33,19 +35,13 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/pages.csv');
-        $this->importCSVDataSet(__DIR__ . '/../../Fixtures/tx_avalex_configuration.csv');
-
-        // Set is_siteroot to 1
-        $this->setUpFrontendRootPage(1);
-
-        /** @var TypoScriptFrontendController|MockObject|AccessibleObjectInterface $typoScriptFrontendController */
-        $typoScriptFrontendController = $this->getAccessibleMock(TypoScriptFrontendController::class, [], [], '', false);
-        $GLOBALS['TSFE'] = $typoScriptFrontendController;
-        $GLOBALS['TSFE']->id = 1;
-        $GLOBALS['TSFE']->_set('spamProtectEmailAddresses', 1);
-
         $this->subject = new GetDomainLanguagesRequest();
+        $this->subject->setAvalexConfiguration(new AvalexConfiguration(
+            1,
+            'demo-key-with-online-shop',
+            'https://example.com',
+            ''
+        ));
     }
 
     protected function tearDown(): void
@@ -56,9 +52,7 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getEndpointReturnsEndpoint(): void
     {
         self::assertSame(
@@ -67,9 +61,7 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getEndpointWithoutPrefixReturnsEndpointWithoutPrefix(): void
     {
         self::assertSame(
@@ -78,9 +70,7 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getParametersReturnsRequiredParameters(): void
     {
         self::assertSame(
@@ -93,9 +83,7 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getParametersWithDomainReturnsParametersWithDomain(): void
     {
         $this->subject->setDomain('https://www.jweiland.net');
@@ -109,9 +97,7 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getParametersWithInvalidParametersReturnsRequiredParameters(): void
     {
         $this->subject->addParameter('foo', 'bar');
@@ -125,9 +111,7 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setParametersWillOnlySetAllowedParameters(): void
     {
         $this->subject->setParameters([
