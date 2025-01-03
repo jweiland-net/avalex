@@ -82,14 +82,14 @@ class UpdateLinksInAvalexContentEventListenerTest extends FunctionalTestCase
         $postProcessApiResponseContentEvent = new PostProcessApiResponseContentEvent(
             'Contact me here: <a href="mailto:foo@example.com">Max Mustermann</a>',
             $endpointRequest,
-            $this->contentObjectRenderer
+            $this->contentObjectRenderer,
         );
 
         $this->subject->__invoke($postProcessApiResponseContentEvent);
 
         self::assertSame(
             'Contact me here: <a href="#" data-mailto-token="rfnqyt/kttEjcfruqj3htr" data-mailto-vector="5">Max Mustermann</a>',
-            $postProcessApiResponseContentEvent->getContent()
+            $postProcessApiResponseContentEvent->getContent(),
         );
     }
 }
