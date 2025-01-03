@@ -13,14 +13,20 @@ use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Client\Request\ImpressumRequest;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
+use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Service\LanguageService;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
+use TYPO3\CMS\Core\Routing\PageArguments;
+use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
-use TYPO3\TestingFramework\Core\AccessibleObjectInterface;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -28,10 +34,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class LanguageServiceTest extends FunctionalTestCase
 {
-    /**
-     * @var AvalexClient|MockObject
-     */
-    protected $avalexClientMock;
+    protected AvalexClient|MockObject $avalexClientMock;
 
     protected LanguageService $subject;
 
@@ -55,10 +58,10 @@ class LanguageServiceTest extends FunctionalTestCase
         $this->avalexClientMock = $this->createMock(AvalexClient::class);
         GeneralUtility::addInstance(AvalexClient::class, $this->avalexClientMock);
 
-        $this->subject = new LanguageService([
-            'domain' => 'https://example.com',
-            'api_key' => 'demo-key-with-online-shop',
-        ]);
+        $this->subject = new LanguageService(
+            $this->avalexClientMock,
+            $this->createMock(FrontendInterface::class),
+        );
     }
 
     protected function tearDown(): void
@@ -69,14 +72,16 @@ class LanguageServiceTest extends FunctionalTestCase
         );
     }
 
-    protected function setEnvironmentWithLanguage(string $language): void
+    protected function getRequestWithLanguage(string $language): ServerRequestInterface
     {
-        if (class_exists(SiteLanguage::class)) {
-            $serverRequest = new ServerRequest(
-                new Uri('/'),
-                'GET',
-            );
-            $GLOBALS['TYPO3_REQUEST'] = $serverRequest->withAttribute(
+        $site = new Site('main', 1, []);
+        $routing = new PageArguments(12, '', []);
+
+        return (new ServerRequest(new Uri('/'), 'GET'))
+            ->withAttribute('site', $site)
+            ->withAttribute('routing', $routing)
+            ->withAttribute('currentContentObject', new ContentObjectRenderer())
+            ->withAttribute(
                 'language',
                 new SiteLanguage(
                     1,
@@ -88,23 +93,11 @@ class LanguageServiceTest extends FunctionalTestCase
                     ],
                 ),
             );
-        }
-
-        /** @var TypoScriptFrontendController|MockObject|AccessibleObjectInterface $typoScriptFrontendControllerMock */
-        $typoScriptFrontendControllerMock = $this->getAccessibleMock(TypoScriptFrontendController::class, [], [], '', false);
-        $GLOBALS['TSFE'] = $typoScriptFrontendControllerMock;
-        $GLOBALS['TSFE']->id = 1;
-        $GLOBALS['TSFE']->_set('lang', $language ?: 'en');
-        $GLOBALS['TSFE']->_set('spamProtectEmailAddresses', 1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addLanguageToEndpointWithoutResponseSetsDefaultLanguageToEndpoint(): void
     {
-        $this->setEnvironmentWithLanguage('');
-
         /** @var AvalexResponse|MockObject $avalexResponseMock */
         $avalexResponseMock = $this->createMock(AvalexResponse::class);
         $avalexResponseMock
@@ -118,8 +111,21 @@ class LanguageServiceTest extends FunctionalTestCase
             ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponseMock);
 
+        $avalexConfiguration = new AvalexConfiguration(
+            1,
+            'demo-key-with-online-shop',
+            'https://example.com',
+            '',
+        );
+
         $endpoint = new ImpressumRequest();
-        $this->subject->addLanguageToEndpoint($endpoint);
+        $endpoint->setAvalexConfiguration($avalexConfiguration);
+
+        $this->subject->addLanguageToEndpoint(
+            $endpoint,
+            $avalexConfiguration,
+            $this->getRequestWithLanguage(''),
+        );
 
         self::assertSame(
             'de',
@@ -127,13 +133,9 @@ class LanguageServiceTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addLanguageToEndpointWithoutEndpointSetsDefaultLanguageToEndpoint(): void
     {
-        $this->setEnvironmentWithLanguage('de');
-
         /** @var AvalexResponse|MockObject $avalexResponseMock */
         $avalexResponseMock = $this->createMock(AvalexResponse::class);
         $avalexResponseMock
@@ -151,8 +153,21 @@ class LanguageServiceTest extends FunctionalTestCase
             ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponseMock);
 
+        $avalexConfiguration = new AvalexConfiguration(
+            1,
+            'demo-key-with-online-shop',
+            'https://example.com',
+            '',
+        );
+
         $endpoint = new ImpressumRequest();
-        $this->subject->addLanguageToEndpoint($endpoint);
+        $endpoint->setAvalexConfiguration($avalexConfiguration);
+
+        $this->subject->addLanguageToEndpoint(
+            $endpoint,
+            $avalexConfiguration,
+            $this->getRequestWithLanguage('de'),
+        );
 
         self::assertSame(
             'de',
@@ -160,13 +175,9 @@ class LanguageServiceTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addLanguageToEndpointWithEndpointSetsLanguageToEndpoint(): void
     {
-        $this->setEnvironmentWithLanguage('de');
-
         /** @var AvalexResponse|MockObject $avalexResponseMock */
         $avalexResponseMock = $this->createMock(AvalexResponse::class);
         $avalexResponseMock
@@ -184,8 +195,21 @@ class LanguageServiceTest extends FunctionalTestCase
             ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponseMock);
 
+        $avalexConfiguration = new AvalexConfiguration(
+            1,
+            'demo-key-with-online-shop',
+            'https://example.com',
+            '',
+        );
+
         $endpoint = new ImpressumRequest();
-        $this->subject->addLanguageToEndpoint($endpoint);
+        $endpoint->setAvalexConfiguration($avalexConfiguration);
+
+        $this->subject->addLanguageToEndpoint(
+            $endpoint,
+            $avalexConfiguration,
+            $this->getRequestWithLanguage('de'),
+        );
 
         self::assertSame(
             'de',
@@ -193,13 +217,9 @@ class LanguageServiceTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addLanguageToEndpointWithMultipleEndpointsSetsLanguageToEndpoint(): void
     {
-        $this->setEnvironmentWithLanguage('en');
-
         /** @var AvalexResponse|MockObject $avalexResponseMock */
         $avalexResponseMock = $this->createMock(AvalexResponse::class);
         $avalexResponseMock
@@ -220,8 +240,21 @@ class LanguageServiceTest extends FunctionalTestCase
             ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
             ->willReturn($avalexResponseMock);
 
+        $avalexConfiguration = new AvalexConfiguration(
+            1,
+            'demo-key-with-online-shop',
+            'https://example.com',
+            '',
+        );
+
         $endpoint = new ImpressumRequest();
-        $this->subject->addLanguageToEndpoint($endpoint);
+        $endpoint->setAvalexConfiguration($avalexConfiguration);
+
+        $this->subject->addLanguageToEndpoint(
+            $endpoint,
+            $avalexConfiguration,
+            $this->getRequestWithLanguage('en'),
+        );
 
         self::assertSame(
             'en',
@@ -229,7 +262,7 @@ class LanguageServiceTest extends FunctionalTestCase
         );
     }
 
-    public function languageDataProvider(): array
+    public static function languageDataProvider(): array
     {
         return [
             'language empty. Fallback to en' => ['', 'en'],
@@ -238,18 +271,13 @@ class LanguageServiceTest extends FunctionalTestCase
         ];
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider languageDataProvider
-     */
+    #[Test]
+    #[DataProvider('languageDataProvider')]
     public function getFrontendLocaleReturnsDefaultLanguage(string $language, string $expected): void
     {
-        $this->setEnvironmentWithLanguage($language);
-
         self::assertSame(
             $expected,
-            $this->subject->getFrontendLocale(),
+            $this->subject->getFrontendLocale($this->getRequestWithLanguage($language)),
         );
     }
 }

@@ -68,7 +68,7 @@ readonly class AvalexPlugin
         }
 
         if ($endpointRequest instanceof LocalizeableRequestInterface) {
-            $this->languageService->addLanguageToEndpoint($endpointRequest, $avalexConfiguration);
+            $this->languageService->addLanguageToEndpoint($endpointRequest, $avalexConfiguration, $request);
         }
 
         $content = $this->apiService->getHtmlContentFromEndpoint(
@@ -104,7 +104,7 @@ readonly class AvalexPlugin
             $endpointRequest->getEndpoint(),
             $this->detectCurrentPageUid($request),
             $this->detectRootPageUid($request),
-            $this->languageService->getFrontendLocale(),
+            $this->languageService->getFrontendLocale($request),
         );
     }
 

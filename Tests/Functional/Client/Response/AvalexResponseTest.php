@@ -10,6 +10,7 @@
 namespace JWeiland\Avalex\Tests\Functional\Client\Request;
 
 use JWeiland\Avalex\Client\Response\AvalexResponse;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\TestingFramework\Core\AccessibleObjectInterface;
@@ -54,9 +55,7 @@ class AvalexResponseTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getBodyReturnsEmptyString(): void
     {
         $this->subject = new AvalexResponse('');
@@ -66,9 +65,7 @@ class AvalexResponseTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getBodyReturnsContentAsString(): void
     {
         $this->subject = new AvalexResponse('test123');
@@ -78,9 +75,7 @@ class AvalexResponseTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getBodyReturnsContentAsArray(): void
     {
         $this->subject = new AvalexResponse('{"firstname":"stefan"}');
@@ -93,9 +88,7 @@ class AvalexResponseTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getHeadersReturnsEmptyArray(): void
     {
         $this->subject = new AvalexResponse('test123', []);
@@ -105,9 +98,7 @@ class AvalexResponseTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getHeadersWithStringReturnsArray(): void
     {
         $this->subject = new AvalexResponse(
@@ -127,9 +118,7 @@ class AvalexResponseTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getHeadersWithSimpleArrayReturnsArray(): void
     {
         $this->subject = new AvalexResponse(
@@ -152,9 +141,7 @@ class AvalexResponseTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getHeadersWithComplexArrayReturnsArray(): void
     {
         $headers = [
@@ -174,9 +161,7 @@ class AvalexResponseTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getStatusCodeReturnsInitially200(): void
     {
         $this->subject = new AvalexResponse();
@@ -186,9 +171,7 @@ class AvalexResponseTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getStatusCodeReturns401(): void
     {
         $this->subject = new AvalexResponse('', [], 401);
@@ -198,9 +181,7 @@ class AvalexResponseTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isJsonResponseInitiallyReturnsFalse(): void
     {
         $this->subject = new AvalexResponse('');
@@ -209,9 +190,7 @@ class AvalexResponseTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setJsonResponseSetsJsonResponse(): void
     {
         $this->subject = new AvalexResponse('');

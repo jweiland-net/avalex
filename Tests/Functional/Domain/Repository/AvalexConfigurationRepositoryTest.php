@@ -10,10 +10,9 @@
 namespace JWeiland\Avalex\Tests\Functional\Domain\Repository;
 
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
-use JWeiland\Avalex\Exception\AvalexConfigurationNotFoundException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
-use TYPO3\TestingFramework\Core\AccessibleObjectInterface;
+use Psr\Log\LoggerInterface;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -22,6 +21,8 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 class AvalexConfigurationRepositoryTest extends FunctionalTestCase
 {
     protected AvalexConfigurationRepository $subject;
+
+    protected MockObject|LoggerInterface $logger;
 
     /**
      * @var string[]
@@ -37,16 +38,12 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
         $this->importCSVDataSet(__DIR__ . '/../../Fixtures/pages.csv');
         $this->importCSVDataSet(__DIR__ . '/../../Fixtures/tx_avalex_configuration.csv');
 
-        // Set is_siteroot to 1
-        $this->setUpFrontendRootPage(1);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
-        /** @var TypoScriptFrontendController|MockObject|AccessibleObjectInterface $typoScriptFrontendController */
-        $typoScriptFrontendController = $this->getAccessibleMock(TypoScriptFrontendController::class, [], [], '', false);
-        $GLOBALS['TSFE'] = $typoScriptFrontendController;
-        $GLOBALS['TSFE']->id = 1;
-        $GLOBALS['TSFE']->_set('spamProtectEmailAddresses', 1);
-
-        $this->subject = new AvalexConfigurationRepository();
+        $this->subject = new AvalexConfigurationRepository(
+            $this->getConnectionPool()->getQueryBuilderForTable('tx_avalex_configuration'),
+            $this->logger,
+        );
     }
 
     protected function tearDown(): void
@@ -57,36 +54,9 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function findAllWillFindAllConfigurationRecords(): void
-    {
-        $allConfigurationRecords = $this->subject->findAll();
-
-        self::assertCount(
-            2,
-            $allConfigurationRecords,
-        );
-
-        $firstConfigurationRecord = current($allConfigurationRecords);
-        self::assertSame(
-            'demo-key-with-online-shop',
-            $firstConfigurationRecord['api_key'],
-        );
-        self::assertSame(
-            'https://example.com',
-            $firstConfigurationRecord['domain'],
-        );
-    }
-
-    /**
-     * @test
-     */
+    #[Test]
     public function findByWebsiteRootWithNoConfigurationWillThrowException(): void
     {
-        $this->expectException(AvalexConfigurationNotFoundException::class);
-
         // We have to delete the configuration which is configured as "global"
         $connection = $this->getConnectionPool()->getConnectionForTable('tx_avalex_configuration');
         $connection->delete(
@@ -96,38 +66,43 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
             ],
         );
 
-        $this->subject->findByRootPageUid(12);
+        $this->logger
+            ->expects(self::once())
+            ->method('error')
+            ->with('No Avalex configuration could be found in database for page UID: ' . 12);
+
+        self::assertNull(
+            $this->subject->findByRootPageUid(12),
+        );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findByWebsiteRootWithConfigurationWillReturnConfiguration(): void
     {
-        $configurationRecord = $this->subject->findByRootPageUid(25);
+        $avalexConfiguration = $this->subject->findByRootPageUid(25);
+
         self::assertSame(
             'invalid-key',
-            $configurationRecord['api_key'],
+            $avalexConfiguration->getApiKey(),
         );
         self::assertSame(
             'https://jweiland.net',
-            $configurationRecord['domain'],
+            $avalexConfiguration->getDomain(),
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findByWebsiteRootWithoutConfigurationWillReturnFallbackConfiguration(): void
     {
-        $configurationRecord = $this->subject->findByRootPageUid(414);
+        $avalexConfiguration = $this->subject->findByRootPageUid(414);
+
         self::assertSame(
             'demo-key-with-online-shop',
-            $configurationRecord['api_key'],
+            $avalexConfiguration->getApiKey(),
         );
         self::assertSame(
             'https://example.com',
-            $configurationRecord['domain'],
+            $avalexConfiguration->getDomain(),
         );
     }
 }

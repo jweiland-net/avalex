@@ -12,9 +12,6 @@ namespace JWeiland\Avalex\Tests\Functional\Client\Request;
 use JWeiland\Avalex\Client\Request\DatenschutzerklaerungRequest;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
-use TYPO3\TestingFramework\Core\AccessibleObjectInterface;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -40,7 +37,7 @@ class DatenschutzerklaerungRequestTest extends FunctionalTestCase
             1,
             'demo-key-with-online-shop',
             'https://example.com',
-            ''
+            '',
         ));
     }
 

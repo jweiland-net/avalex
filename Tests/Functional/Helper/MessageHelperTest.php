@@ -10,8 +10,11 @@
 namespace JWeiland\Avalex\Tests\Functional\Helper;
 
 use JWeiland\Avalex\Helper\MessageHelper;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Messaging\FlashMessageService;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -35,7 +38,9 @@ class MessageHelperTest extends FunctionalTestCase
         $this->importCSVDataSet(__DIR__ . '/../Fixtures/be_users.csv');
         $this->setUpBackendUser(1);
 
-        $this->subject = new MessageHelper();
+        $this->subject = new MessageHelper(
+            GeneralUtility::makeInstance(FlashMessageService::class),
+        );
     }
 
     protected function tearDown(): void
@@ -47,15 +52,13 @@ class MessageHelperTest extends FunctionalTestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addFlashMessageWithMessageCallsEnqueue(): void
     {
         $expectedFlashMessage = new FlashMessage(
             'Hello',
             '',
-            AbstractMessage::OK,
+            ContextualFeedbackSeverity::OK,
             true,
         );
 
@@ -67,15 +70,13 @@ class MessageHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addFlashMessageWithMessageAndSubjectCallsEnqueue(): void
     {
         $expectedFlashMessage = new FlashMessage(
             'Hello',
             'Subject',
-            AbstractMessage::OK,
+            ContextualFeedbackSeverity::OK,
             true,
         );
 
@@ -87,19 +88,17 @@ class MessageHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addFlashMessageWithAllArgumentsCallsEnqueue(): void
     {
         $expectedFlashMessage = new FlashMessage(
             'Hello',
             'Subject',
-            AbstractMessage::ERROR,
+            ContextualFeedbackSeverity::ERROR,
             true,
         );
 
-        $this->subject->addFlashMessage('Hello', 'Subject', AbstractMessage::ERROR);
+        $this->subject->addFlashMessage('Hello', 'Subject', ContextualFeedbackSeverity::ERROR);
 
         self::assertEquals(
             [$expectedFlashMessage],
@@ -107,14 +106,12 @@ class MessageHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAllFlashMessagesReturnsAllFlashMessages(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 0);
-        $this->subject->addFlashMessage('all', 'all', 1);
-        $this->subject->addFlashMessage('together', 'together', 2);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::OK);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::ERROR);
 
         // Test two times, to be save that messages were NOT flushed
         self::assertCount(
@@ -127,14 +124,12 @@ class MessageHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAllFlashMessagesReturnsAllFlashMessagesAndFlush(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 0);
-        $this->subject->addFlashMessage('all', 'all', 1);
-        $this->subject->addFlashMessage('together', 'together', 2);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::OK);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::ERROR);
 
         // Test two times, to be save that messages were flushed
         self::assertCount(
@@ -147,86 +142,76 @@ class MessageHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasMessagesChecksQueueIfThereAreAnyMessages(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 0);
-        $this->subject->addFlashMessage('all', 'all', 1);
-        $this->subject->addFlashMessage('together', 'together', 2);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::OK);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::ERROR);
 
         self::assertTrue(
             $this->subject->hasMessages(),
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getFlashMessagesBySeverityAndFlushReturnsFlashMessages(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 1);
-        $this->subject->addFlashMessage('all', 'all', 1);
-        $this->subject->addFlashMessage('together', 'together', 2);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::ERROR);
 
         // Test two times, to be save that messages were flushed
         self::assertCount(
             1,
-            $this->subject->getFlashMessagesBySeverityAndFlush(AbstractMessage::ERROR),
+            $this->subject->getFlashMessagesBySeverityAndFlush(ContextualFeedbackSeverity::ERROR),
         );
         self::assertCount(
             0,
-            $this->subject->getFlashMessagesBySeverityAndFlush(AbstractMessage::ERROR),
+            $this->subject->getFlashMessagesBySeverityAndFlush(ContextualFeedbackSeverity::ERROR),
         );
 
         // Test two times, to be save that messages were flushed
         self::assertCount(
             2,
-            $this->subject->getFlashMessagesBySeverityAndFlush(AbstractMessage::WARNING),
+            $this->subject->getFlashMessagesBySeverityAndFlush(ContextualFeedbackSeverity::WARNING),
         );
         self::assertCount(
             0,
-            $this->subject->getFlashMessagesBySeverityAndFlush(AbstractMessage::WARNING),
+            $this->subject->getFlashMessagesBySeverityAndFlush(ContextualFeedbackSeverity::WARNING),
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasErrorMessagesReturnsTrue(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 1);
-        $this->subject->addFlashMessage('all', 'all', 2);
-        $this->subject->addFlashMessage('together', 'together', 2);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::ERROR);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::ERROR);
 
         self::assertTrue(
             $this->subject->hasErrorMessages(),
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasErrorMessagesReturnsFalse(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 1);
-        $this->subject->addFlashMessage('all', 'all', 0);
-        $this->subject->addFlashMessage('together', 'together', 0);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::OK);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::OK);
 
         self::assertFalse(
             $this->subject->hasErrorMessages(),
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getErrorMessagesReturnsErrorMessages(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 1);
-        $this->subject->addFlashMessage('all', 'all', 2);
-        $this->subject->addFlashMessage('together', 'together', 2);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::ERROR);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::ERROR);
 
         self::assertCount(
             2,
@@ -234,42 +219,36 @@ class MessageHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasWarningMessagesReturnsTrue(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 0);
-        $this->subject->addFlashMessage('all', 'all', 1);
-        $this->subject->addFlashMessage('together', 'together', 1);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::OK);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::WARNING);
 
         self::assertTrue(
             $this->subject->hasWarningMessages(),
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasWarningMessagesReturnsFalse(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 0);
-        $this->subject->addFlashMessage('all', 'all', 2);
-        $this->subject->addFlashMessage('together', 'together', 2);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::OK);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::ERROR);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::ERROR);
 
         self::assertFalse(
             $this->subject->hasWarningMessages(),
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getWarningMessagesReturnsErrorMessages(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 0);
-        $this->subject->addFlashMessage('all', 'all', 1);
-        $this->subject->addFlashMessage('together', 'together', 1);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::OK);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::WARNING);
 
         self::assertCount(
             2,
@@ -277,42 +256,36 @@ class MessageHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasOkMessagesReturnsTrue(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 1);
-        $this->subject->addFlashMessage('all', 'all', 0);
-        $this->subject->addFlashMessage('together', 'together', 0);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::OK);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::OK);
 
         self::assertTrue(
             $this->subject->hasOkMessages(),
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasOkMessagesReturnsFalse(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 2);
-        $this->subject->addFlashMessage('all', 'all', 1);
-        $this->subject->addFlashMessage('together', 'together', 1);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::ERROR);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::WARNING);
 
         self::assertFalse(
             $this->subject->hasOkMessages(),
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getOkMessagesReturnsErrorMessages(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 1);
-        $this->subject->addFlashMessage('all', 'all', 0);
-        $this->subject->addFlashMessage('together', 'together', 0);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::OK);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::OK);
 
         self::assertCount(
             2,
@@ -320,42 +293,36 @@ class MessageHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasInfoMessagesReturnsTrue(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 1);
-        $this->subject->addFlashMessage('all', 'all', -1);
-        $this->subject->addFlashMessage('together', 'together', -1);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::INFO);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::INFO);
 
         self::assertTrue(
             $this->subject->hasInfoMessages(),
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasInfoMessagesReturnsFalse(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 2);
-        $this->subject->addFlashMessage('all', 'all', 1);
-        $this->subject->addFlashMessage('together', 'together', 1);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::ERROR);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::WARNING);
 
         self::assertFalse(
             $this->subject->hasInfoMessages(),
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getInfoMessagesReturnsErrorMessages(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 1);
-        $this->subject->addFlashMessage('all', 'all', -1);
-        $this->subject->addFlashMessage('together', 'together', -1);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::INFO);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::INFO);
 
         self::assertCount(
             2,
@@ -363,42 +330,36 @@ class MessageHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasNoticeMessagesReturnsTrue(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 1);
-        $this->subject->addFlashMessage('all', 'all', -2);
-        $this->subject->addFlashMessage('together', 'together', -2);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::NOTICE);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::NOTICE);
 
         self::assertTrue(
             $this->subject->hasNoticeMessages(),
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasNoticeMessagesReturnsFalse(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 2);
-        $this->subject->addFlashMessage('all', 'all', 1);
-        $this->subject->addFlashMessage('together', 'together', 1);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::ERROR);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::WARNING);
 
         self::assertFalse(
             $this->subject->hasNoticeMessages(),
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getNoticeMessagesReturnsErrorMessages(): void
     {
-        $this->subject->addFlashMessage('Hello', 'Hello', 1);
-        $this->subject->addFlashMessage('all', 'all', -2);
-        $this->subject->addFlashMessage('together', 'together', -2);
+        $this->subject->addFlashMessage('Hello', 'Hello', ContextualFeedbackSeverity::WARNING);
+        $this->subject->addFlashMessage('all', 'all', ContextualFeedbackSeverity::NOTICE);
+        $this->subject->addFlashMessage('together', 'together', ContextualFeedbackSeverity::NOTICE);
 
         self::assertCount(
             2,

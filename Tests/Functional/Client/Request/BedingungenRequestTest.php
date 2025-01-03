@@ -37,7 +37,7 @@ class BedingungenRequestTest extends FunctionalTestCase
             1,
             'demo-key-with-online-shop',
             'https://example.com',
-            ''
+            '',
         ));
     }
 

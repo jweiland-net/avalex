@@ -34,12 +34,13 @@ readonly class LanguageService
     public function addLanguageToEndpoint(
         LocalizeableRequestInterface $endpointRequest,
         AvalexConfiguration $avalexConfiguration,
+        ServerRequestInterface $request,
     ): void {
         // In customer account of avalex company all texts are always available in german language.
         // If another language (currently only en is allowed as different language) is not available EXT:avalex
         // will fall back to the german texts.
         $language = 'de';
-        $frontendLanguage = $this->getFrontendLocale();
+        $frontendLanguage = $this->getFrontendLocale($request);
 
         if (($avalexLanguageResponse = $this->getLanguageResponseFromCache($avalexConfiguration)) === null) {
             $avalexLanguageResponse = $this->fetchLanguageResponse($avalexConfiguration);
@@ -88,20 +89,16 @@ readonly class LanguageService
         return $result;
     }
 
-    public function getFrontendLocale(): string
+    public function getFrontendLocale(ServerRequestInterface $request): string
     {
         $fallBackLanguage = 'en';
         $frontendLocale = '';
 
         if (
-            class_exists(SiteLanguage::class)
-            && isset($GLOBALS['TYPO3_REQUEST'])
-            && $GLOBALS['TYPO3_REQUEST'] instanceof ServerRequestInterface
-            && $GLOBALS['TYPO3_REQUEST']->getAttribute('language') instanceof SiteLanguage
+            ($siteLanguage = $request->getAttribute('language'))
+            && $siteLanguage instanceof SiteLanguage
         ) {
-            /** @var SiteLanguage $siteLanguage */
-            $siteLanguage = $GLOBALS['TYPO3_REQUEST']->getAttribute('language');
-            $frontendLocale = $siteLanguage ? $siteLanguage->getLocale()->getLanguageCode() : '';
+            $frontendLocale = $siteLanguage->getLocale()->getLanguageCode();
         }
 
         return $frontendLocale ?: $fallBackLanguage;

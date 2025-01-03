@@ -10,6 +10,7 @@
 namespace JWeiland\Avalex\Tests\Functional;
 
 use JWeiland\Avalex\Evaluation\DomainEvaluation;
+use PHPUnit\Framework\Attributes\Test;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -43,9 +44,7 @@ class DomainEvaluationTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnFieldJSWillReturnValidationJavaScript()
     {
         self::assertStringContainsString(
@@ -54,9 +53,7 @@ class DomainEvaluationTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateFieldValueWillNotAddScheme()
     {
         $set = false;
@@ -70,9 +67,7 @@ class DomainEvaluationTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateFieldValueWillAddScheme()
     {
         $set = false;

@@ -10,18 +10,24 @@
 namespace JWeiland\Avalex\Tests\Functional;
 
 use JWeiland\Avalex\AvalexPlugin;
-use JWeiland\Avalex\Client\AvalexClient;
-use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
+use JWeiland\Avalex\Client\Request\BedingungenRequest;
+use JWeiland\Avalex\Client\Request\DatenschutzerklaerungRequest;
 use JWeiland\Avalex\Client\Request\ImpressumRequest;
-use JWeiland\Avalex\Client\Response\AvalexResponse;
+use JWeiland\Avalex\Client\Request\RequestInterface;
+use JWeiland\Avalex\Client\Request\WiderrufRequest;
+use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
+use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Service\ApiService;
-use PHPUnit\Framework\Constraint\StringContains;
+use JWeiland\Avalex\Service\LanguageService;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
+use TYPO3\CMS\Core\Http\ServerRequest;
+use TYPO3\CMS\Core\Routing\PageArguments;
+use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
-use TYPO3\CMS\Frontend\Typolink\EmailLinkBuilder;
-use TYPO3\TestingFramework\Core\AccessibleObjectInterface;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -29,17 +35,15 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class AvalexPluginTest extends FunctionalTestCase
 {
-    protected ImpressumRequest $impressumRequest;
+    protected ApiService|MockObject $apiServiceMock;
 
-    /**
-     * @var ApiService|MockObject
-     */
-    protected $apiServiceMock;
+    protected AvalexConfigurationRepository|MockObject $avalexConfigurationRepositoryMock;
 
-    /**
-     * @var AvalexClient|MockObject
-     */
-    protected $avalexClientMock;
+    protected FrontendInterface|MockObject $cacheMock;
+
+    protected LoggerInterface|MockObject $loggerMock;
+
+    protected ServerRequestInterface $request;
 
     protected AvalexPlugin $subject;
 
@@ -57,145 +61,158 @@ class AvalexPluginTest extends FunctionalTestCase
         $this->importCSVDataSet(__DIR__ . '/Fixtures/pages.csv');
         $this->importCSVDataSet(__DIR__ . '/Fixtures/tx_avalex_configuration.csv');
 
-        // Set is_siteroot to 1
-        $this->setUpFrontendRootPage(1);
+        $site = new Site('main', 1, []);
+        $routing = new PageArguments(12, '', []);
 
-        /** @var TypoScriptFrontendController|MockObject|AccessibleObjectInterface $typoScriptFrontendController */
-        $typoScriptFrontendController = $this->getAccessibleMock(TypoScriptFrontendController::class, [], [], '', false);
-        $GLOBALS['TSFE'] = $typoScriptFrontendController;
-        $GLOBALS['TSFE']->id = 1;
-        $GLOBALS['TSFE']->_set('spamProtectEmailAddresses', 1);
+        $this->request = (new ServerRequest())
+            ->withAttribute('site', $site)
+            ->withAttribute('routing', $routing)
+            ->withAttribute('currentContentObject', new ContentObjectRenderer());
 
-        $this->impressumRequest = new ImpressumRequest();
         $this->apiServiceMock = $this->createMock(ApiService::class);
-        GeneralUtility::addInstance(ApiService::class, $this->apiServiceMock);
-        $this->avalexClientMock = $this->createMock(AvalexClient::class);
-        GeneralUtility::addInstance(AvalexClient::class, $this->avalexClientMock);
+        $this->avalexConfigurationRepositoryMock = $this->createMock(AvalexConfigurationRepository::class);
+        $this->cacheMock = $this->createMock(FrontendInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
-        $this->subject = new AvalexPlugin();
-        $this->subject->cObj = new ContentObjectRenderer();
+        $this->subject = new AvalexPlugin(
+            $this->apiServiceMock,
+            $this->avalexConfigurationRepositoryMock,
+            $this->createMock(LanguageService::class),
+            $this->cacheMock,
+            $this->loggerMock,
+            [
+                0 => new BedingungenRequest(),
+                1 => new DatenschutzerklaerungRequest(),
+                2 => new ImpressumRequest(),
+                3 => new WiderrufRequest(),
+            ],
+        );
     }
 
     protected function tearDown(): void
     {
         unset(
+            $this->apiServiceMock,
+            $this->avalexConfigurationRepositoryMock,
             $this->subject,
-            $GLOBALS['TSFE'],
         );
     }
 
-    /**
-     * @test
-     */
-    public function processLinksEncryptsMailToLinks(): void
+    #[Test]
+    public function renderWithNoAvalexConfigurationWillReturnErrorMessage(): void
     {
-        $avalexResponse = new AvalexResponse('{"de": {"avx-impressum": ""}}');
-        $avalexResponse->setIsJsonResponse(true);
+        $this->avalexConfigurationRepositoryMock
+            ->expects(self::once())
+            ->method('findByRootPageUid')
+            ->with(self::identicalTo(1))
+            ->willReturn(null);
 
-        $this->avalexClientMock
-            ->expects(self::atLeastOnce())
-            ->method('processRequest')
-            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
-            ->willReturn($avalexResponse);
-
-        $this->apiServiceMock
-            ->expects(self::atLeastOnce())
-            ->method('getHtmlForCurrentRootPage')
-            ->with(
-                self::isInstanceOf(ImpressumRequest::class),
-                self::equalTo(
-                    [
-                        'uid' => 1,
-                        'api_key' => 'demo-key-with-online-shop',
-                        'domain' => 'https://example.com',
-                    ],
-                ),
-            )
-            ->willReturn(
-                '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! '
-                . '<a href="mailto:john@doe.tld">johns mail</a>'
-                . '</p>',
-            );
-
-        $encryptedMail = call_user_func_array($this->getEncryptedMailCallable(), ['john@doe.tld', 'johns mail']);
-        if (count($encryptedMail) === 3) {
-            // TYPO3 >= 11
-            $expected = sprintf(
-                '<a href="%s" %s>%s</a>',
-                $encryptedMail[0],
-                GeneralUtility::implodeAttributes($encryptedMail[2], true),
-                $encryptedMail[1],
-            );
-        } else {
-            $expected = sprintf(
-                '<a href="%s">%s</a>',
-                $encryptedMail[0],
-                $encryptedMail[1],
-            );
-        }
-
-        self::assertThat(
-            $this->subject->render('', ['endpoint' => 'avx-impressum']),
-            new StringContains($expected),
+        self::assertSame(
+            'EXT:avalex error: See logs for more details',
+            $this->subject->render('', [], $this->request),
         );
     }
 
-    protected function getEncryptedMailCallable(): callable
+    #[Test]
+    public function renderWithNonRegisteredEndpointWillLogError(): void
     {
-        $cObj = $this->subject->cObj;
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('error')
+            ->with(self::identicalTo('There is no registered avalex request with specified endpoint: foo'));
 
-        return static function ($mailAddress, $linkText) use ($cObj) {
-            $linkBuilder = GeneralUtility::makeInstance(EmailLinkBuilder::class, $cObj, $GLOBALS['TSFE']);
-            return $linkBuilder->processEmailLink((string)$mailAddress, (string)$linkText);
-        };
+        $this->avalexConfigurationRepositoryMock
+            ->expects(self::once())
+            ->method('findByRootPageUid')
+            ->with(self::equalTo(1))
+            ->willReturn(new AvalexConfiguration(
+                1,
+                'demo-key-with-online-shop',
+                'https://example.com',
+                '',
+            ));
+
+        self::assertSame(
+            'EXT:avalex error: See logs for more details',
+            $this->subject->render(
+                '',
+                [
+                    'endpoint' => 'foo',
+                ],
+                $this->request,
+            ),
+        );
     }
 
-    /**
-     * @test
-     */
-    public function processLinksAddRequestUrlToAnchors(): void
+    #[Test]
+    public function renderWillReturnContentFromCache(): void
     {
-        $avalexResponse = new AvalexResponse('{"de": {"avx-impressum": ""}}');
-        $avalexResponse->setIsJsonResponse(true);
+        $this->avalexConfigurationRepositoryMock
+            ->expects(self::once())
+            ->method('findByRootPageUid')
+            ->with(self::equalTo(1))
+            ->willReturn(new AvalexConfiguration(
+                1,
+                'demo-key-with-online-shop',
+                'https://example.com',
+                '',
+            ));
 
-        $this->avalexClientMock
-            ->expects(self::atLeastOnce())
-            ->method('processRequest')
-            ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
-            ->willReturn($avalexResponse);
+        $this->cacheMock
+            ->expects(self::once())
+            ->method('has')
+            ->with(self::stringStartsWith('avalex_'))
+            ->willReturn(true);
+        $this->cacheMock
+            ->expects(self::once())
+            ->method('get')
+            ->with(self::stringStartsWith('avalex_'))
+            ->willReturn('Hello World!');
 
+        self::assertSame(
+            'Hello World!',
+            $this->subject->render(
+                '',
+                [
+                    'endpoint' => 'avx-bedingungen',
+                ],
+                $this->request,
+            ),
+        );
+    }
+
+    #[Test]
+    public function renderWillReturnContent(): void
+    {
         $this->apiServiceMock
-            ->expects(self::atLeastOnce())
-            ->method('getHtmlForCurrentRootPage')
+            ->expects(self::once())
+            ->method('getHtmlContentFromEndpoint')
             ->with(
-                self::isInstanceOf(ImpressumRequest::class),
-                self::equalTo(
-                    [
-                        'uid' => 1,
-                        'api_key' => 'demo-key-with-online-shop',
-                        'domain' => 'https://example.com',
-                    ],
-                ),
+                self::isInstanceOf(RequestInterface::class),
+                self::isInstanceOf(ContentObjectRenderer::class),
             )
-            ->willReturn(
-                '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! '
-                . '<a href="#hello">Hello World</a>.</p>' . chr(10)
-                . '<p>Want another link? OK: <a href="#world">Another one</a>. '
-                . '<a href="/test.html">Do not replace this</a> ok?</p>' . chr(10)
-                . '<p>And also do <a href="https://domain.tld">not replace this</a>.</p>',
-            );
+            ->willReturn('Hello World!');
 
-        $requestUri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
-        $expected = [];
-        $expected[] = '<p>Do not upgrade this text without modifying the tests in AvalexPluginTest.php! '
-            . '<a href="$requestUri#hello">Hello World</a>.</p>';
-        $expected[] = '<p>Want another link? OK: <a href="$requestUri#world">Another one</a>. '
-            . '<a href="/test.html">Do not replace this</a> ok?</p>';
-        $expected[] = '<p>And also do <a href="https://domain.tld">not replace this</a>.</p>';
+        $this->avalexConfigurationRepositoryMock
+            ->expects(self::once())
+            ->method('findByRootPageUid')
+            ->with(self::equalTo(1))
+            ->willReturn(new AvalexConfiguration(
+                1,
+                'demo-key-with-online-shop',
+                'https://example.com',
+                '',
+            ));
 
-        self::assertEquals(
-            str_replace('$requestUri', $requestUri, implode(chr(10), $expected)),
-            $this->subject->render('', ['endpoint' => 'avx-impressum']),
+        self::assertSame(
+            'Hello World!',
+            $this->subject->render(
+                '',
+                [
+                    'endpoint' => 'avx-bedingungen',
+                ],
+                $this->request,
+            ),
         );
     }
 }
