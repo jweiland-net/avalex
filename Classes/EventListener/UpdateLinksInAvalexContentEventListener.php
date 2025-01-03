@@ -18,8 +18,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * This listener will search for these tags and encrypts the contained email addresses like configured in TYPO3
  * @see config.spamProtectEmailAddresses
  */
-#[AsEventListener('avalexEncryptEmailLinkTags')]
-readonly class EncryptEmailLinkTagsEventListener
+#[AsEventListener('avalexUpdateLinksInAvalexContent')]
+readonly class UpdateLinksInAvalexContentEventListener
 {
     public function __invoke(PostProcessApiResponseContentEvent $postProcessApiResponseContentEvent): void
     {
