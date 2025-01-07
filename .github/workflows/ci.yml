@@ -34,6 +34,7 @@ jobs:
         run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -s composerNormalize -n
 
       - name: 'CGL'
+        if: ${{ matrix.php <= '8.3' }}
         run: Build/Scripts/runTests.sh -b podman -n -p ${{ matrix.php }} -s cgl
 
       - name: 'Execute functional tests'
