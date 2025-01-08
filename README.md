@@ -6,20 +6,24 @@
 [![TYPO3 8.7](https://img.shields.io/badge/TYPO3-8.7-red.svg)](https://get.typo3.org/version/8)
 [![TYPO3 9.5](https://img.shields.io/badge/TYPO3-9.5-red.svg)](https://get.typo3.org/version/9)
 [![TYPO3 10.4](https://img.shields.io/badge/TYPO3-10.4-yellow.svg)](https://get.typo3.org/version/10)
-[![TYPO3 11.5](https://img.shields.io/badge/TYPO3-11.5-green.svg)](https://get.typo3.org/version/11)
-[![TYPO3 12.4](https://img.shields.io/badge/TYPO3-12.4-green.svg)](https://get.typo3.org/version/12)
+[![TYPO3 11.5](https://img.shields.io/badge/TYPO3-11.5-yellow.svg)](https://get.typo3.org/version/11)
+[![TYPO3 12.4](https://img.shields.io/badge/TYPO3-12.4-yellow.svg)](https://get.typo3.org/version/12)
+[![TYPO3 13.4](https://img.shields.io/badge/TYPO3-13.4-green.svg)](https://get.typo3.org/version/13)
 [![License](http://poser.pugx.org/jweiland/avalex/license)](https://packagist.org/packages/jweiland/avalex)
 [![Total Downloads](https://poser.pugx.org/jweiland/avalex/downloads.svg)](https://packagist.org/packages/jweiland/avalex)
 [![Monthly Downloads](https://poser.pugx.org/jweiland/avalex/d/monthly)](https://packagist.org/packages/jweiland/avalex)
-![Build Status](https://github.com/jweiland-net/avalex/actions/workflows/typo3_11.yml/badge.svg)
-![Build Status](https://github.com/jweiland-net/avalex/actions/workflows/typo3_12.yml/badge.svg)
+![Build Status](https://github.com/jweiland-net/avalex/actions/workflows/ci.yml/badge.svg)
 
 ## Versions
 
-This extension provides two version branches! The `main` branch (avalex 6.x)
-is compatible with TYPO3 6.2 - 12.4.99.
-The `legacy` branch (avalex 4.x) is compatible with TYPO3 4.3 - 6.1.99
-(dinosaur versions).
+This extension provides three versions:
+
+* Version 9.0.* and above
+  * This version is compatible with TYPO3 13.4 and higher.
+* Version 8.0.*
+  * This version is compatible with TYPO3 6.2 - TYPO3 12.4.
+* Version 4.4.* and below
+  * This version is compatible with TYPO3 4.3 - TYPO3 6.1.99.
 
 ## Setup
 
