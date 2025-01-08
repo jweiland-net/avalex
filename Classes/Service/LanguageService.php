@@ -22,6 +22,8 @@ use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
  */
 readonly class LanguageService
 {
+    const CACHE_IDENTIFIER_FORMAT = '%s_%s';
+
     /**
      * Use AvalexConfigurationRepository::findByWebsiteRoot($rootPage, 'api_key, domain')
      * to find a configuration
@@ -107,7 +109,7 @@ readonly class LanguageService
     protected function getCacheIdentifier(AvalexConfiguration $avalexConfiguration): string
     {
         return md5(sprintf(
-            '%s_%s',
+            self::CACHE_IDENTIFIER_FORMAT,
             $avalexConfiguration->getDomain(),
             $avalexConfiguration->getApiKey(),
         ));

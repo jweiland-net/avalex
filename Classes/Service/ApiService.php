@@ -24,6 +24,8 @@ readonly class ApiService
 {
     use SiteTrait;
 
+    const CACHE_IDENTIFIER_FORMAT = 'avalex_%s_%d_%d_%s';
+
     public function __construct(
         private AvalexClient $avalexClient,
         private LanguageService $languageService,
@@ -62,7 +64,7 @@ readonly class ApiService
     protected function getCacheIdentifier(RequestInterface $endpointRequest, ServerRequestInterface $request): string
     {
         return sprintf(
-            'avalex_%s_%d_%d_%s',
+            self::CACHE_IDENTIFIER_FORMAT,
             $endpointRequest->getEndpoint(),
             $this->detectCurrentPageUid($request),
             $this->detectRootPageUid($request),
