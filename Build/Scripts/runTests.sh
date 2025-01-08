@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-# EXT:examples test runner based on docker/podman.
+# EXT:avalex test runner based on docker/podman.
 #
 
 trap 'cleanUp;exit 2' SIGINT
@@ -125,7 +125,7 @@ handleDbmsOptions() {
 loadHelp() {
     # Load help text into $HELP
     read -r -d '' HELP <<EOF
-EXT:examples test runner. Check code styles, lint PHP files and some other details.
+EXT:avalex test runner. Check code styles, lint PHP files and some other details.
 
 Usage: $0 [options] [file]
 
