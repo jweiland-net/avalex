@@ -1,16 +1,16 @@
-﻿.. include:: /Includes.rst.txt
+﻿..  include:: /Includes.rst.txt
 
 
-.. _introduction:
+..  _introduction:
 
 ============
 Introduction
 ============
 
 
-.. _what-it-does:
+..  _what-it-does:
 
-What does it do?
+What Does It Do?
 ================
 
 The avalex extension allows to display automatically generated and updated

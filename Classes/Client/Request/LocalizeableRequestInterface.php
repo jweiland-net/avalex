@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -14,8 +16,5 @@ namespace JWeiland\Avalex\Client\Request;
  */
 interface LocalizeableRequestInterface extends RequestInterface
 {
-    /**
-     * @param string $twoLetterLangIsoCode
-     */
-    public function setLang($twoLetterLangIsoCode);
+    public function setLang(string $twoLetterLangIsoCode): void;
 }

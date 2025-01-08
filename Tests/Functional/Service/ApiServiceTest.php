@@ -10,11 +10,19 @@
 namespace JWeiland\Avalex\Tests\Functional\Service;
 
 use JWeiland\Avalex\Client\AvalexClient;
-use JWeiland\Avalex\Client\Request\ImpressumRequest;
+use JWeiland\Avalex\Client\Request\Endpoint\ImpressumRequest;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Service\ApiService;
+use JWeiland\Avalex\Service\LanguageService;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
+use TYPO3\CMS\Core\Http\ServerRequest;
+use TYPO3\CMS\Core\Routing\PageArguments;
+use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -22,10 +30,11 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class ApiServiceTest extends FunctionalTestCase
 {
-    /**
-     * @var AvalexClient|MockObject
-     */
-    protected $avalexClientMock;
+    protected AvalexClient|MockObject $avalexClientMock;
+
+    protected FrontendInterface|MockObject $cacheMock;
+
+    protected ServerRequestInterface $request;
 
     protected ApiService $subject;
 
@@ -40,48 +49,110 @@ class ApiServiceTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->importCSVDataSet(__DIR__ . '/../Fixtures/pages.csv');
-        $this->importCSVDataSet(__DIR__ . '/../Fixtures/tx_avalex_configuration.csv');
+        $site = new Site('main', 1, []);
+        $routing = new PageArguments(12, '', []);
 
-        // Set is_siteroot to 1
-        $this->setUpFrontendRootPage(1);
+        $this->request = (new ServerRequest())
+            ->withAttribute('site', $site)
+            ->withAttribute('routing', $routing)
+            ->withAttribute('currentContentObject', new ContentObjectRenderer());
 
         $this->avalexClientMock = $this->createMock(AvalexClient::class);
-        GeneralUtility::addInstance(AvalexClient::class, $this->avalexClientMock);
+        $this->cacheMock = $this->createMock(FrontendInterface::class);
 
-        $this->subject = new ApiService();
+        $this->subject = new ApiService(
+            $this->avalexClientMock,
+            $this->createMock(LanguageService::class),
+            $this->cacheMock,
+            $this->getContainer()->get(EventDispatcherInterface::class),
+        );
     }
 
     protected function tearDown(): void
     {
         unset(
-            $this->subject
+            $this->subject,
         );
     }
 
-    /**
-     * @test
-     */
-    public function addLanguageToEndpointWithoutResponseSetsDefaultLanguageToEndpoint(): void
+    #[Test]
+    public function getHtmlContentFromEndpointWillReturnContentFromCache(): void
     {
-        /** @var AvalexResponse|MockObject $avalexResponseMock */
-        $avalexResponseMock = $this->createMock(AvalexResponse::class);
-        $avalexResponseMock
-            ->expects(self::atLeastOnce())
-            ->method('getBody')
-            ->willReturn('german text');
-
         $this->avalexClientMock
-            ->expects(self::atLeastOnce())
-            ->method('processRequest')
-            ->with(self::isInstanceOf(ImpressumRequest::class))
-            ->willReturn($avalexResponseMock);
+            ->expects(self::never())
+            ->method('processRequest');
 
-        $endpoint = new ImpressumRequest();
+        $this->cacheMock
+            ->expects(self::once())
+            ->method('has')
+            ->with(self::stringStartsWith('avalex_'))
+            ->willReturn(true);
+
+        $this->cacheMock
+            ->expects(self::once())
+            ->method('get')
+            ->with(self::stringStartsWith('avalex_'))
+            ->willReturn('Hello World!');
 
         self::assertSame(
-            'german text',
-            $this->subject->getHtmlForCurrentRootPage($endpoint, [])
+            'Hello World!',
+            $this->subject->getHtmlContentFromEndpoint(new ImpressumRequest(), $this->request),
+        );
+    }
+
+    #[Test]
+    public function getHtmlContentFromEndpointWithEmptyContentWillNotCacheContent(): void
+    {
+        $this->avalexClientMock
+            ->expects(self::once())
+            ->method('processRequest')
+            ->with(self::isInstanceOf(ImpressumRequest::class))
+            ->willReturn(new AvalexResponse('', [], 200, false));
+
+        $this->cacheMock
+            ->expects(self::once())
+            ->method('has')
+            ->with(self::stringStartsWith('avalex_'))
+            ->willReturn(false);
+
+        $this->cacheMock
+            ->expects(self::never())
+            ->method('set');
+
+        self::assertSame(
+            '',
+            $this->subject->getHtmlContentFromEndpoint(new ImpressumRequest(), $this->request),
+        );
+    }
+
+    #[Test]
+    public function getHtmlContentFromEndpointWillCacheAndReturnContent(): void
+    {
+        $this->avalexClientMock
+            ->expects(self::once())
+            ->method('processRequest')
+            ->with(self::isInstanceOf(ImpressumRequest::class))
+            ->willReturn(new AvalexResponse('Hello World!', [], 200, false));
+
+        $this->cacheMock
+            ->expects(self::once())
+            ->method('has')
+            ->with(self::stringStartsWith('avalex_'))
+            ->willReturn(false);
+
+        $this->cacheMock
+            ->expects(self::once())
+            ->method('set')
+            ->with(
+                self::stringStartsWith('avalex_'),
+                self::identicalTo('Hello World!'),
+                self::identicalTo([]),
+                self::identicalTo(21600),
+            );
+
+        self::assertSame(
+            'Hello World!',
+            $this->subject->getHtmlContentFromEndpoint(new ImpressumRequest(), $this->request),
         );
     }
 }

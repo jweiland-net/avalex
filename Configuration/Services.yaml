@@ -7,13 +7,78 @@ services:
   JWeiland\Avalex\:
     resource: '../Classes/*'
 
+  cache.avalexContent:
+    class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+    factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
+    arguments: ['avalex_content']
+
+  cache.avalexLanguages:
+    class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+    factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
+    arguments: ['avalex_languages']
+
+  querybuilder.tx_avalex_configuration:
+    class: 'TYPO3\CMS\Core\Database\Query\QueryBuilder'
+    factory:
+      - '@TYPO3\CMS\Core\Database\ConnectionPool'
+      - 'getQueryBuilderForTable'
+    arguments:
+      - 'tx_avalex_configuration'
+
+  JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer:
+    public: true
+
+  JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository:
+    arguments:
+      $queryBuilder: '@querybuilder.tx_avalex_configuration'
+
+  JWeiland\Avalex\Client\Request\Endpoint\BedingungenRequest:
+    public: true
+    tags:
+      - name: 'avalex.request'
+
+  JWeiland\Avalex\Client\Request\Endpoint\DatenschutzerklaerungRequest:
+    public: true
+    tags:
+      - name: 'avalex.request'
+
+  JWeiland\Avalex\Client\Request\Endpoint\GetDomainLanguagesRequest:
+    public: true
+    tags:
+      - name: 'avalex.request'
+
+  JWeiland\Avalex\Client\Request\Endpoint\ImpressumRequest:
+    public: true
+    tags:
+      - name: 'avalex.request'
+
+  JWeiland\Avalex\Client\Request\Endpoint\IsApiKeyConfiguredRequest:
+    public: true
+    tags:
+      - name: 'avalex.request'
+
+  JWeiland\Avalex\Client\Request\Endpoint\WiderrufRequest:
+    public: true
+    tags:
+      - name: 'avalex.request'
+
+  JWeiland\Avalex\Client\Request\RequestFactory:
+    arguments:
+      $registeredAvalexRequests: !tagged_iterator { tag: 'avalex.request' }
+
   JWeiland\Avalex\Client\AvalexClient:
     public: true
-  JWeiland\Avalex\Client\Request\BedingungenRequest:
+
+  JWeiland\Avalex\Hook\DataHandlerHook:
     public: true
-  JWeiland\Avalex\Client\Request\DatenschutzerklaerungRequest:
-    public: true
-  JWeiland\Avalex\Client\Request\ImpressumRequest:
-    public: true
-  JWeiland\Avalex\Client\Request\WiderrufRequest:
+
+  JWeiland\Avalex\Service\ApiService:
+    arguments:
+      $cache: '@cache.avalexContent'
+
+  JWeiland\Avalex\Service\LanguageService:
+    arguments:
+      $cache: '@cache.avalexLanguages'
+
+  JWeiland\Avalex\AvalexPlugin:
     public: true

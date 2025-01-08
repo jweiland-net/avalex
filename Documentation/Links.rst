@@ -1,22 +1,22 @@
-.. include:: /Includes.rst.txt
+..  include:: /Includes.rst.txt
 
 
-.. _links:
+..  _links:
 
 Links
 -----
 
 :TER:
-	https://extensions.typo3.org/extension/avalex/
+    https://extensions.typo3.org/extension/avalex/
 
 :Bug Tracker:
-	https://github.com/jweiland-net/avalex/issues
+    https://github.com/jweiland-net/avalex/issues
 
 :Git Repository:
-	https://github.com/jweiland-net/avalex
+    https://github.com/jweiland-net/avalex
 
 :Contact:
-	https://jweiland.net/kontakt.html
+    https://jweiland.net/kontakt.html
 
 :Avalex:
-  https://www.avalex.de
+    https://www.avalex.de

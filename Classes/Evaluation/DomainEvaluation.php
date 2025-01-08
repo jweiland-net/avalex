@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -16,10 +18,8 @@ class DomainEvaluation
 {
     /**
      * JavaScript code for client side validation/evaluation
-     *
-     * @return string JavaScript code for client side validation/evaluation
      */
-    public function returnFieldJS()
+    public function returnFieldJS(): string
     {
         return 'if (!value.includes(\'http\')) {
           value = \'https://\' + value;
@@ -35,11 +35,12 @@ class DomainEvaluation
      * @param bool $set Boolean defining if the value is written to the database or not.
      * @return string Evaluated field value
      */
-    public function evaluateFieldValue($value, $isIn, &$set)
+    public function evaluateFieldValue(string $value, string $isIn, bool &$set): string
     {
-        if (strpos($value, 'http') === false) {
+        if (!str_starts_with($value, 'http')) {
             $value = 'https://' . $value;
         }
+
         return $value;
     }
 }

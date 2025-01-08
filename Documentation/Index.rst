@@ -1,31 +1,31 @@
-﻿.. include:: /Includes.rst.txt
+﻿..  include:: /Includes.rst.txt
 
 ======
 Avalex
 ======
 
 :Extension key:
-   avalex
+    avalex
 
 :Package name:
-   Avalex
+    Avalex
 
 :Version:
-   |release|
+    |release|
 
 :Language:
-   en
+    en
 
 :Author:
-   Stefan Froemken
+    Stefan Froemken
 
 :License:
-   This document is published under the
-   `Creative Commons BY 4.0 <https://creativecommons.org/licenses/by/4.0/>`__
-   license.
+    This document is published under the
+    `Creative Commons BY 4.0 <https://creativecommons.org/licenses/by/4.0/>`__
+    license.
 
 :Rendered:
-   |today|
+    |today|
 
 ----
 
@@ -37,19 +37,20 @@ cancellation notice as well as terms and conditions.
 
 **Table of Contents:**
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
+..  toctree::
+    :maxdepth: 2
+    :titlesonly:
 
-   Introduction/Index
-   Administrator/Index
-   Developer/Index
-   Links
+    Introduction/Index
+    Installation/Index
+    Administrator/Index
+    Developer/Index
+    ChangeLog/Index
+    Links
 
-.. Meta Menu
+..  Meta Menu
 
-.. toctree::
-   :hidden:
+..  toctree::
+    :hidden:
 
-   Sitemap
-   genindex
+    Sitemap

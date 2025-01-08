@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -11,70 +13,64 @@ namespace JWeiland\Avalex\Service;
 
 use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\RequestInterface;
-use JWeiland\Avalex\Hooks\ApiService\PostApiRequestHookInterface;
-use JWeiland\Avalex\Hooks\ApiService\PreApiRequestHookInterface;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use JWeiland\Avalex\Event\PostProcessApiResponseContentEvent;
+use JWeiland\Avalex\Traits\SiteTrait;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 
 /**
  * API service class for avalex API requests
  */
-class ApiService
+readonly class ApiService
 {
-    /**
-     * @var Logger
-     */
-    protected $logger;
+    use SiteTrait;
 
-    /**
-     * @var AvalexClient
-     */
-    protected $avalexClient;
+    public const CACHE_IDENTIFIER_FORMAT = 'avalex_%s_%d_%d_%s';
 
-    /**
-     * @var array
-     */
-    protected $hookObjectsArray = [];
+    public function __construct(
+        private AvalexClient $avalexClient,
+        private LanguageService $languageService,
+        private FrontendInterface $cache,
+        private EventDispatcherInterface $eventDispatcher,
+    ) {}
 
-    public function __construct()
-    {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
-        $this->avalexClient = GeneralUtility::makeInstance(AvalexClient::class);
-
-        if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][__CLASS__])) {
-            foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][__CLASS__] as $key => $classRef) {
-                $hookObject = GeneralUtility::makeInstance($classRef);
-                $this->hookObjectsArray[$key] = $hookObject;
-            }
-        }
-    }
-
-    /**
-     * Get HTML content for current page
-     *
-     * @param RequestInterface $endpointRequest API endpoint to be used e.g. imprint
-     * @param array  $configuration required values: api_key: '', domain: ''
-     * @return string
-     */
-    public function getHtmlForCurrentRootPage(RequestInterface $endpointRequest, array $configuration)
-    {
-        // Hook: Allow to modify $apiKey and $domain before curl sends the request to avalex
-        foreach ($this->hookObjectsArray as $hookObject) {
-            if ($hookObject instanceof PreApiRequestHookInterface) {
-                $hookObject->preApiRequest($configuration);
-            }
+    public function getHtmlContentFromEndpoint(
+        RequestInterface $endpointRequest,
+        ServerRequestInterface $request,
+    ): string {
+        $cacheIdentifier = $this->getCacheIdentifier($endpointRequest, $request);
+        if ($this->cache->has($cacheIdentifier)) {
+            return (string)$this->cache->get($cacheIdentifier);
         }
 
         $content = $this->avalexClient->processRequest($endpointRequest)->getBody();
 
-        // Hook: Allow to modify $content
-        foreach ($this->hookObjectsArray as $hookObject) {
-            if ($hookObject instanceof PostApiRequestHookInterface) {
-                $hookObject->postApiRequest($content, $this);
-            }
+        /** @var PostProcessApiResponseContentEvent $postProcessApiResponseContentEvent */
+        $postProcessApiResponseContentEvent = $this->eventDispatcher->dispatch(
+            new PostProcessApiResponseContentEvent(
+                $content,
+                $endpointRequest,
+                $this->getContentObjectRendererFromRequest($request),
+            ),
+        );
+
+        $content = $postProcessApiResponseContentEvent->getContent();
+        if ($content !== '') {
+            $this->cache->set($cacheIdentifier, $content, [], 21600);
         }
 
         return $content;
+    }
+
+    protected function getCacheIdentifier(RequestInterface $endpointRequest, ServerRequestInterface $request): string
+    {
+        return sprintf(
+            self::CACHE_IDENTIFIER_FORMAT,
+            $endpointRequest->getEndpoint(),
+            $this->detectCurrentPageUid($request),
+            $this->detectRootPageUid($request),
+            $this->languageService->getFrontendLocale($request),
+        );
     }
 }

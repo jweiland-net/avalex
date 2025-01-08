@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -10,59 +12,28 @@
 namespace JWeiland\Avalex\Client\Response;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
  * avalex Response class which can handle string and json content
  */
-class AvalexResponse implements ResponseInterface
+readonly class AvalexResponse implements ResponseInterface
 {
-    /**
-     * @var string
-     */
-    protected $body = '';
+    private array $headers;
 
-    /**
-     * @var array
-     */
-    protected $headers = [];
-
-    /**
-     * @var int
-     */
-    protected $statusCode = 200;
-
-    /**
-     * @var bool
-     */
-    protected $isJsonResponse = false;
-
-    /**
-     * @param string $content
-     * @param array|string $headers
-     * @param int $statusCode
-     */
-    public function __construct($content = '', $headers = [], $statusCode = 200)
-    {
-        if (is_string($content)) {
-            $this->body = $content;
-        }
-
+    public function __construct(
+        private string $body,
+        array|string $headers,
+        private int $statusCode,
+        private bool $isJsonResponse,
+    ) {
         if (is_array($headers)) {
-            $this->setArrayHeaders($headers);
+            $this->headers = $this->getArrayHeaders($headers);
         } elseif (is_string($headers)) {
-            $this->setStringHeaders($headers);
-        }
-
-        if (MathUtility::canBeInterpretedAsInteger($statusCode)) {
-            $this->statusCode = (int)$statusCode;
+            $this->headers = $this->getStringHeaders($headers);
         }
     }
 
-    /**
-     * @return array|string
-     */
-    public function getBody()
+    public function getBody(): array|string
     {
         if ($this->isJsonResponse) {
             return json_decode($this->body, true);
@@ -76,76 +47,52 @@ class AvalexResponse implements ResponseInterface
      *
      * $header['Content-Length'] => [0 => 123, 1 => 234]
      * $header['Content-Length'] => 345
-     *
-     * @param array $headers
      */
-    protected function setArrayHeaders($headers)
+    private function getArrayHeaders(array $headers): array
     {
-        if (is_array($headers)) {
-            foreach ($headers as $key => $header) {
-                if (is_array($header)) {
-                    foreach ($header as $index => $value) {
-                        $this->addHeader($key, $index, $value);
-                    }
-                } else {
-                    $this->addHeader($key, 0, $header);
+        $headerEntries = [];
+
+        foreach ($headers as $key => $header) {
+            if (is_array($header)) {
+                foreach ($header as $index => $value) {
+                    $headerEntries[$key][$index] = $value;
                 }
+            } else {
+                $headerEntries[$key][0] = $header;
             }
         }
+
+        return $headerEntries;
     }
 
     /**
      * Handles following header types
      *
      * $header = 'Content-Length: 123'
-     *
-     * @param string $headers
      */
-    protected function setStringHeaders($headers)
+    private function getStringHeaders(string $headers): array
     {
-        if (is_string($headers)) {
-            foreach (explode(CRLF, $headers) as $headerLine) {
-                list($header, $value) = GeneralUtility::trimExplode(':', $headerLine);
-                $this->addHeader($header, 0, (string)$value);
-            }
+        $headerEntries = [];
+
+        foreach (explode(CRLF, $headers) as $headerLine) {
+            [$header, $value] = GeneralUtility::trimExplode(':', $headerLine);
+            $headerEntries[$header][0] = $value;
         }
+
+        return $headerEntries;
     }
 
-    protected function addHeader($header, $index, $value)
-    {
-        $this->headers[$header][$index] = $value;
-    }
-
-    /**
-     * @return array
-     */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    /**
-     * @return int
-     */
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->statusCode;
     }
 
-    /**
-     * @param bool$isJsonResponse
-     */
-    public function setIsJsonResponse($isJsonResponse)
-    {
-        if (is_bool($isJsonResponse)) {
-            $this->isJsonResponse = $isJsonResponse;
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    public function isJsonResponse()
+    public function isJsonResponse(): bool
     {
         return $this->isJsonResponse;
     }

@@ -1,0 +1,44 @@
+tt_content.avalex_avalex = USER_INT
+tt_content.avalex_avalex {
+  userFunc = JWeiland\Avalex\AvalexPlugin->render
+  endpoint = avx-datenschutzerklaerung
+}
+
+tt_content.avalex_imprint < tt_content.avalex_avalex
+tt_content.avalex_imprint.endpoint = avx-impressum
+
+tt_content.avalex_bedingungen < tt_content.avalex_avalex
+tt_content.avalex_bedingungen.endpoint = avx-bedingungen
+
+tt_content.avalex_widerruf < tt_content.avalex_avalex
+tt_content.avalex_widerruf.endpoint = avx-widerruf
+
+page.50 = TEXT
+page.50.value = <button id="avalexOriginPrintAgbButton">JW AGB speichern</button>
+
+page.footerData {
+  123 = TEXT
+  123.data = REQUEST:nonce|value
+  123.wrap (
+    <script nonce="|">
+      document.addEventListener('DOMContentLoaded', function() {
+        const avalexAgbButton = document.querySelector('#avalexOriginPrintAgbButton');
+        avalexAgbButton.addEventListener('click', function() {
+          const printContents = document.querySelector('#avalex-printable');
+          const originalContents = document.body.innerHTML;
+          const agbHeadline = document.createElement('h1');
+
+          agbHeadline.innerHTML = 'Allgemeine Geschäftsbedingungen';
+
+          printContents.insertBefore(agbHeadline, printContents.firstChild);
+
+          document.body.innerHTML = printContents.innerHTML;
+
+          window.print();
+
+          document.body.innerHTML = originalContents;
+        });
+      });
+    </script>
+  )
+}

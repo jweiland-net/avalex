@@ -1,65 +1,24 @@
-.. include:: /Includes.rst.txt
+..  include:: /Includes.rst.txt
 
 
-.. _developer-manual:
+..  _developer-manual:
 
 ================
-Developer manual
+Developer Manual
 ================
 
-Usage of hooks
-==============
+Usage of Events
+===============
 
-You can modify the behaviour of some tasks using hooks. There are several
-HookInterfaces that make your life easier. You can find them in
-``Classes/Hooks/``. They are described in this manual.
+You can modify the behaviour of some tasks using PSR-11 (Events).
 
-ApiService hooks
-----------------
+PostProcessApiResponseContentEvent
+----------------------------------
 
-The first step is to add your class to the hook object array in your
-``ext_localconf.php``. You can use
-``Your\Extension\Hooks\YourCustomAvalexHook::class`` for newer TYPO3 versions
-if you want. Now you can proceed with adding the specific interfaces shown
-below.
+This event is triggered after the content from avalex server has been
+retrieved. Here you can adopt changes to the content before it will be written
+to TYPO3 cache. This is useful to modify contained links like email addresses.
 
-**Example:**
-
-.. code-block:: php
-
-   $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class][] = \Your\Extension\Hooks\YourCustomAvalexHook::class;
-
-Modify the configuration before sending the request
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can use the ``JWeiland\Avalex\Hooks\ApiService\PreApiRequestHookInterface``
-in your extension to modify the configuration array that contains the api_key
-and the domain before sending the request to avalex.
-
-Modify the content before caching and rendering it
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can use the ``JWeiland\Avalex\Hooks\ApiService\PostApiRequestHookInterface``
-in your extension to modify the content API returned. Please make sure to take
-a look at the public functions of the ApiService which will be passed to the
-hook as second parameter. The first parameter $content is a reference so you
-can modify the output completely.
-
-.. code-block:: php
-
-   <?php
-   namespace Your\Extension\Hooks;
-
-   use JWeiland\Avalex\Hooks\ApiService\PostApiRequestHookInterface;
-   use JWeiland\Avalex\Service\ApiService;
-
-   class ModifyContentHook implements PostApiRequestHookInterface
-   {
-       public function postApiRequest(&$content, ApiService $apiService)
-       {
-           if ($apiService->getCurlInfo()['http_code'] === 200) {
-               // add class to p tags
-               $content = str_replace('<p>', '<p class="privacy">', $content);
-           }
-       }
-   }
+EXT:avalex itself uses this event to modify links in retrieved content. Have a
+look into file `EventListener/UpdateLinksInAvalexContentEventListener.php` to
+use that as an example for your implementation.
