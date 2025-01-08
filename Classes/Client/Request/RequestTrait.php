@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -60,12 +62,12 @@ trait RequestTrait
 
     public function setParameters(array $parameters): void
     {
-        $this->parameters = array_intersect_key($parameters, $this->allowedParameters);
+        $this->parameters = array_intersect_key($parameters, self::ALLOWED_PARAMETERS);
     }
 
     public function addParameter(string $parameter, mixed $value): void
     {
-        if (array_key_exists($parameter, $this->allowedParameters)) {
+        if (array_key_exists($parameter, self::ALLOWED_PARAMETERS)) {
             $this->parameters[$parameter] = $value;
         }
     }

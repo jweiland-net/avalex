@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -24,7 +26,7 @@ readonly class ApiService
 {
     use SiteTrait;
 
-    const CACHE_IDENTIFIER_FORMAT = 'avalex_%s_%d_%d_%s';
+    public const CACHE_IDENTIFIER_FORMAT = 'avalex_%s_%d_%d_%s';
 
     public function __construct(
         private AvalexClient $avalexClient,

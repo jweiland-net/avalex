@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -26,11 +28,11 @@ class IsApiKeyConfiguredRequest implements RequestInterface
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    public const ENDPOINT = 'api_keys/is_configured.json';
+    protected const ENDPOINT = 'api_keys/is_configured.json';
 
-    public const IS_JSON_REQUEST = true;
+    protected const IS_JSON_REQUEST = true;
 
-    protected array $allowedParameters = [
+    protected const ALLOWED_PARAMETERS = [
         'apikey' => 1,
     ];
 

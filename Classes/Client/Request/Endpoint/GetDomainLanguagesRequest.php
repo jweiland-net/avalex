@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -27,11 +29,11 @@ class GetDomainLanguagesRequest implements RequestInterface, DomainRequestInterf
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    public const ENDPOINT = 'avx-get-domain-langs';
+    protected const ENDPOINT = 'avx-get-domain-langs';
 
-    public const IS_JSON_REQUEST = true;
+    protected const IS_JSON_REQUEST = true;
 
-    protected array $allowedParameters = [
+    protected const ALLOWED_PARAMETERS = [
         'apikey' => 1,
         'domain' => 1,
         'version' => 1,

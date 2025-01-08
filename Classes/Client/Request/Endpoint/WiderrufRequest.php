@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -28,11 +30,11 @@ class WiderrufRequest implements RequestInterface, DomainRequestInterface, Local
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    public const ENDPOINT = 'avx-widerruf';
+    protected const ENDPOINT = 'avx-widerruf';
 
-    public const IS_JSON_REQUEST = false;
+    protected const IS_JSON_REQUEST = false;
 
-    protected array $allowedParameters = [
+    protected const ALLOWED_PARAMETERS = [
         'apikey' => 1,
         'domain' => 1,
         'lang' => 1,

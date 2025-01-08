@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -22,7 +24,7 @@ use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
  */
 readonly class LanguageService
 {
-    const CACHE_IDENTIFIER_FORMAT = '%s_%s';
+    public const CACHE_IDENTIFIER_FORMAT = '%s_%s';
 
     /**
      * Use AvalexConfigurationRepository::findByWebsiteRoot($rootPage, 'api_key, domain')

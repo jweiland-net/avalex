@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -35,7 +37,7 @@ class DomainEvaluation
      */
     public function evaluateFieldValue(string $value, string $isIn, bool &$set): string
     {
-        if (!str_contains($value, 'http')) {
+        if (!str_starts_with($value, 'http')) {
             $value = 'https://' . $value;
         }
 
