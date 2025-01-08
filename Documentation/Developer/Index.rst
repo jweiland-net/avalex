@@ -4,7 +4,7 @@
 ..  _developer-manual:
 
 ================
-Developer manual
+Developer Manual
 ================
 
 Usage of Events

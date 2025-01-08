@@ -7,7 +7,7 @@
 Upgrade
 =======
 
-If you update `avalex` to a newer version, please read this section
+If you are updating `avalex` to a newer version, please read this section
 carefully!
 
 Upgrade to Version 9.0.0
