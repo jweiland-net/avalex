@@ -24,7 +24,7 @@ readonly class AvalexClient
 {
     public function __construct(
         private MessageHelper $messageHelper,
-        private RequestFactory $requestFactory
+        private RequestFactory $requestFactory,
     ) {}
 
     public function processRequest(RequestInterface $request): ResponseInterface

@@ -96,7 +96,7 @@ class ApiServiceTest extends FunctionalTestCase
 
         self::assertSame(
             'Hello World!',
-            $this->subject->getHtmlContentFromEndpoint(new ImpressumRequest(), $this->request)
+            $this->subject->getHtmlContentFromEndpoint(new ImpressumRequest(), $this->request),
         );
     }
 
@@ -121,7 +121,7 @@ class ApiServiceTest extends FunctionalTestCase
 
         self::assertSame(
             '',
-            $this->subject->getHtmlContentFromEndpoint(new ImpressumRequest(), $this->request)
+            $this->subject->getHtmlContentFromEndpoint(new ImpressumRequest(), $this->request),
         );
     }
 
@@ -152,7 +152,7 @@ class ApiServiceTest extends FunctionalTestCase
 
         self::assertSame(
             'Hello World!',
-            $this->subject->getHtmlContentFromEndpoint(new ImpressumRequest(), $this->request)
+            $this->subject->getHtmlContentFromEndpoint(new ImpressumRequest(), $this->request),
         );
     }
 }

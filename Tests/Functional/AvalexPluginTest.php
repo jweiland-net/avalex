@@ -12,7 +12,6 @@ namespace JWeiland\Avalex\Tests\Functional;
 use JWeiland\Avalex\AvalexPlugin;
 use JWeiland\Avalex\Client\Request\Endpoint\ImpressumRequest;
 use JWeiland\Avalex\Client\Request\RequestFactory;
-use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Service\ApiService;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -112,7 +111,7 @@ class AvalexPluginTest extends FunctionalTestCase
             ->method('getHtmlContentFromEndpoint')
             ->with(
                 self::isInstanceOf(ImpressumRequest::class),
-                self::isInstanceOf(ServerRequestInterface::class)
+                self::isInstanceOf(ServerRequestInterface::class),
             )
             ->willReturn('Hello World!');
 

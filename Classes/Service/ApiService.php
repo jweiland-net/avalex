@@ -47,7 +47,7 @@ readonly class ApiService
             new PostProcessApiResponseContentEvent(
                 $content,
                 $endpointRequest,
-                $this->getContentObjectRendererFromRequest($request)
+                $this->getContentObjectRendererFromRequest($request),
             ),
         );
 

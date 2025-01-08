@@ -35,7 +35,7 @@ class AvalexResponseTest extends FunctionalTestCase
                 'Content-Length' => '123',
             ],
             200,
-            false
+            false,
         );
 
         self::assertSame(
@@ -54,7 +54,7 @@ class AvalexResponseTest extends FunctionalTestCase
                 'Content-Length' => '123',
             ],
             200,
-            false
+            false,
         );
 
         self::assertSame(
@@ -73,7 +73,7 @@ class AvalexResponseTest extends FunctionalTestCase
                 'Content-Length' => '123',
             ],
             200,
-            true
+            true,
         );
 
         self::assertSame(
@@ -91,7 +91,7 @@ class AvalexResponseTest extends FunctionalTestCase
             'test123',
             [],
             200,
-            false
+            false,
         );
 
         self::assertSame(
@@ -107,7 +107,7 @@ class AvalexResponseTest extends FunctionalTestCase
             'test123',
             'Expires: 0' . CRLF . 'Content-Length: 123',
             200,
-            false
+            false,
         );
 
         self::assertSame(
@@ -133,7 +133,7 @@ class AvalexResponseTest extends FunctionalTestCase
                 'Content-Length' => '123',
             ],
             200,
-            false
+            false,
         );
 
         self::assertSame(
@@ -181,7 +181,7 @@ class AvalexResponseTest extends FunctionalTestCase
                 'Content-Length' => '123',
             ],
             200,
-            false
+            false,
         );
 
         self::assertSame(
@@ -200,7 +200,7 @@ class AvalexResponseTest extends FunctionalTestCase
                 'Content-Length' => '123',
             ],
             401,
-            false
+            false,
         );
 
         self::assertSame(
@@ -219,7 +219,7 @@ class AvalexResponseTest extends FunctionalTestCase
                 'Content-Length' => '123',
             ],
             200,
-            false
+            false,
         );
 
         self::assertFalse(
@@ -237,7 +237,7 @@ class AvalexResponseTest extends FunctionalTestCase
                 'Content-Length' => '123',
             ],
             200,
-            true
+            true,
         );
 
         self::assertTrue(

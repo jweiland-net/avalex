@@ -30,7 +30,7 @@ class RequestFactory
         private readonly AvalexConfigurationRepository $avalexConfigurationRepository,
         private LanguageService $languageService,
         private readonly LoggerInterface $logger,
-        iterable $registeredAvalexRequests
+        iterable $registeredAvalexRequests,
     ) {
         $this->registeredAvalexRequests = $registeredAvalexRequests;
     }

@@ -9,7 +9,6 @@
 
 namespace JWeiland\Avalex\Tests\Functional\Client\Request;
 
-use JWeiland\Avalex\AvalexPlugin;
 use JWeiland\Avalex\Client\Request\Endpoint\BedingungenRequest;
 use JWeiland\Avalex\Client\Request\Endpoint\DatenschutzerklaerungRequest;
 use JWeiland\Avalex\Client\Request\Endpoint\ImpressumRequest;
@@ -97,7 +96,7 @@ class RequestFactoryTest extends FunctionalTestCase
             ->willReturn(null);
 
         self::assertNull(
-            $this->subject->create('', $this->request)
+            $this->subject->create('', $this->request),
         );
     }
 
@@ -121,7 +120,7 @@ class RequestFactoryTest extends FunctionalTestCase
             ));
 
         self::assertNull(
-            $this->subject->create('foo', $this->request)
+            $this->subject->create('foo', $this->request),
         );
     }
 
@@ -152,7 +151,7 @@ class RequestFactoryTest extends FunctionalTestCase
 
         self::assertInstanceOf(
             $expectedClass,
-            $this->subject->create($endpoint, $this->request)
+            $this->subject->create($endpoint, $this->request),
         );
     }
 }

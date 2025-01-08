@@ -70,7 +70,7 @@ class AvalexClientTest extends FunctionalTestCase
             ->with(
                 self::stringStartsWith('URI is empty or contains invalid chars'),
                 self::identicalTo('Invalid request URI'),
-                self::equalTo(ContextualFeedbackSeverity::ERROR)
+                self::equalTo(ContextualFeedbackSeverity::ERROR),
             );
 
         $impressumRequest = new ImpressumRequest();
@@ -96,7 +96,7 @@ class AvalexClientTest extends FunctionalTestCase
             ->with(
                 self::stringStartsWith('The response of Avalex was empty.'),
                 self::identicalTo('Empty Avalex response'),
-                self::equalTo(ContextualFeedbackSeverity::ERROR)
+                self::equalTo(ContextualFeedbackSeverity::ERROR),
             );
 
         $impressumRequest = new ImpressumRequest();
@@ -148,7 +148,7 @@ class AvalexClientTest extends FunctionalTestCase
             ->with(
                 self::stringStartsWith('Error somewhere at avalex servers'),
                 self::identicalTo('Avalex Response Error'),
-                self::equalTo(ContextualFeedbackSeverity::ERROR)
+                self::equalTo(ContextualFeedbackSeverity::ERROR),
             );
 
         $impressumRequest = new ImpressumRequest();
