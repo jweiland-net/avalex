@@ -12,13 +12,6 @@ Usage of events
 
 You can modify the behaviour of some tasks using PSR-11 (Events).
 
-PreProcessApiRequestEvent
--------------------------
-
-This event will be called just before EXT:avalex will request the avalex
-server for information. Here you have the last chance to change the configured
-API key.
-
 PostProcessApiResponseContentEvent
 ----------------------------------
 

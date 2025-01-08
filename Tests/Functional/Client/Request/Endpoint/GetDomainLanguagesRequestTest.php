@@ -7,9 +7,9 @@
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\Avalex\Tests\Functional\Client\Request;
+namespace JWeiland\Avalex\Tests\Functional\Client\Request\Endpoint;
 
-use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
+use JWeiland\Avalex\Client\Request\Endpoint\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;

@@ -16,28 +16,11 @@ namespace JWeiland\Avalex\Client\Response;
  */
 interface ResponseInterface
 {
-    /**
-     * @return string|array
-     */
-    public function getBody();
+    public function getBody(): array|string;
 
-    /**
-     * @return array
-     */
-    public function getHeaders();
+    public function getHeaders(): array;
 
-    /**
-     * @return int
-     */
-    public function getStatusCode();
+    public function getStatusCode(): int;
 
-    /**
-     * @param bool$isJsonResponse
-     */
-    public function setIsJsonResponse($isJsonResponse);
-
-    /**
-     * @return bool
-     */
-    public function isJsonResponse();
+    public function isJsonResponse(): bool;
 }

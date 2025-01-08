@@ -7,7 +7,10 @@
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\Avalex\Client\Request;
+namespace JWeiland\Avalex\Client\Request\Endpoint;
+
+use JWeiland\Avalex\Client\Request\RequestInterface;
+use JWeiland\Avalex\Client\Request\RequestTrait;
 
 /**
  * Avalex Request to test API KEY

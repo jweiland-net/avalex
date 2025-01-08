@@ -7,9 +7,9 @@
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\Avalex\Tests\Functional\Client\Request;
+namespace JWeiland\Avalex\Tests\Functional\Client\Request\Endpoint;
 
-use JWeiland\Avalex\Client\Request\ImpressumRequest;
+use JWeiland\Avalex\Client\Request\Endpoint\WiderrufRequest;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
@@ -17,7 +17,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 /**
  * Test case.
  */
-class ImpressumRequestTest extends FunctionalTestCase
+class WiderrufRequestTest extends FunctionalTestCase
 {
     /**
      * @var string[]
@@ -26,13 +26,13 @@ class ImpressumRequestTest extends FunctionalTestCase
         'jweiland/avalex',
     ];
 
-    protected ImpressumRequest $subject;
+    protected WiderrufRequest $subject;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->subject = new ImpressumRequest();
+        $this->subject = new WiderrufRequest();
         $this->subject->setAvalexConfiguration(new AvalexConfiguration(
             1,
             'demo-key-with-online-shop',
@@ -53,7 +53,7 @@ class ImpressumRequestTest extends FunctionalTestCase
     public function getEndpointReturnsEndpoint(): void
     {
         self::assertSame(
-            'avx-impressum',
+            'avx-widerruf',
             $this->subject->getEndpoint(),
         );
     }
@@ -62,7 +62,7 @@ class ImpressumRequestTest extends FunctionalTestCase
     public function getEndpointWithoutPrefixReturnsEndpointWithoutPrefix(): void
     {
         self::assertSame(
-            'impressum',
+            'widerruf',
             $this->subject->getEndpointWithoutPrefix(),
         );
     }

@@ -10,8 +10,8 @@
 namespace JWeiland\Avalex\Tests\Functional\Service;
 
 use JWeiland\Avalex\Client\AvalexClient;
-use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
-use JWeiland\Avalex\Client\Request\ImpressumRequest;
+use JWeiland\Avalex\Client\Request\Endpoint\GetDomainLanguagesRequest;
+use JWeiland\Avalex\Client\Request\Endpoint\ImpressumRequest;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Service\LanguageService;

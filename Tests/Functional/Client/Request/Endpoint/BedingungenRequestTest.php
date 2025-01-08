@@ -7,9 +7,9 @@
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\Avalex\Tests\Functional\Client\Request;
+namespace JWeiland\Avalex\Tests\Functional\Client\Request\Endpoint;
 
-use JWeiland\Avalex\Client\Request\DatenschutzerklaerungRequest;
+use JWeiland\Avalex\Client\Request\Endpoint\BedingungenRequest;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
@@ -17,7 +17,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 /**
  * Test case.
  */
-class DatenschutzerklaerungRequestTest extends FunctionalTestCase
+class BedingungenRequestTest extends FunctionalTestCase
 {
     /**
      * @var string[]
@@ -26,13 +26,13 @@ class DatenschutzerklaerungRequestTest extends FunctionalTestCase
         'jweiland/avalex',
     ];
 
-    protected DatenschutzerklaerungRequest $subject;
+    protected BedingungenRequest $subject;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->subject = new DatenschutzerklaerungRequest();
+        $this->subject = new BedingungenRequest();
         $this->subject->setAvalexConfiguration(new AvalexConfiguration(
             1,
             'demo-key-with-online-shop',
@@ -53,7 +53,7 @@ class DatenschutzerklaerungRequestTest extends FunctionalTestCase
     public function getEndpointReturnsEndpoint(): void
     {
         self::assertSame(
-            'avx-datenschutzerklaerung',
+            'avx-bedingungen',
             $this->subject->getEndpoint(),
         );
     }
@@ -62,7 +62,7 @@ class DatenschutzerklaerungRequestTest extends FunctionalTestCase
     public function getEndpointWithoutPrefixReturnsEndpointWithoutPrefix(): void
     {
         self::assertSame(
-            'datenschutzerklaerung',
+            'bedingungen',
             $this->subject->getEndpointWithoutPrefix(),
         );
     }

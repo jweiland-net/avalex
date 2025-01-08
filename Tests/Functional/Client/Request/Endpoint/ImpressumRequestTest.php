@@ -7,9 +7,9 @@
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\Avalex\Tests\Functional\Client\Request;
+namespace JWeiland\Avalex\Tests\Functional\Client\Request\Endpoint;
 
-use JWeiland\Avalex\Client\Request\BedingungenRequest;
+use JWeiland\Avalex\Client\Request\Endpoint\ImpressumRequest;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
@@ -17,7 +17,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 /**
  * Test case.
  */
-class BedingungenRequestTest extends FunctionalTestCase
+class ImpressumRequestTest extends FunctionalTestCase
 {
     /**
      * @var string[]
@@ -26,13 +26,13 @@ class BedingungenRequestTest extends FunctionalTestCase
         'jweiland/avalex',
     ];
 
-    protected BedingungenRequest $subject;
+    protected ImpressumRequest $subject;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->subject = new BedingungenRequest();
+        $this->subject = new ImpressumRequest();
         $this->subject->setAvalexConfiguration(new AvalexConfiguration(
             1,
             'demo-key-with-online-shop',
@@ -53,7 +53,7 @@ class BedingungenRequestTest extends FunctionalTestCase
     public function getEndpointReturnsEndpoint(): void
     {
         self::assertSame(
-            'avx-bedingungen',
+            'avx-impressum',
             $this->subject->getEndpoint(),
         );
     }
@@ -62,7 +62,7 @@ class BedingungenRequestTest extends FunctionalTestCase
     public function getEndpointWithoutPrefixReturnsEndpointWithoutPrefix(): void
     {
         self::assertSame(
-            'bedingungen',
+            'impressum',
             $this->subject->getEndpointWithoutPrefix(),
         );
     }

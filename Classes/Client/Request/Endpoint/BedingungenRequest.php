@@ -7,14 +7,19 @@
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\Avalex\Client\Request;
+namespace JWeiland\Avalex\Client\Request\Endpoint;
+
+use JWeiland\Avalex\Client\Request\DomainRequestInterface;
+use JWeiland\Avalex\Client\Request\LocalizeableRequestInterface;
+use JWeiland\Avalex\Client\Request\RequestInterface;
+use JWeiland\Avalex\Client\Request\RequestTrait;
 
 /**
- * Avalex Request to retrieve domain languages
+ * avalex Request to retrieve domain languages
  *
  * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk#0964aca9-4e31-4a5d-a52b-d2281bbec28c
  */
-class ImpressumRequest implements RequestInterface, DomainRequestInterface, LocalizeableRequestInterface
+class BedingungenRequest implements RequestInterface, DomainRequestInterface, LocalizeableRequestInterface
 {
     use RequestTrait;
 
@@ -23,7 +28,7 @@ class ImpressumRequest implements RequestInterface, DomainRequestInterface, Loca
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    public const ENDPOINT = 'avx-impressum';
+    public const ENDPOINT = 'avx-bedingungen';
 
     public const IS_JSON_REQUEST = false;
 

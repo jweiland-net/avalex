@@ -10,7 +10,7 @@
 namespace JWeiland\Avalex\Service;
 
 use JWeiland\Avalex\Client\AvalexClient;
-use JWeiland\Avalex\Client\Request\GetDomainLanguagesRequest;
+use JWeiland\Avalex\Client\Request\Endpoint\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Client\Request\LocalizeableRequestInterface;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use Psr\Http\Message\ServerRequestInterface;

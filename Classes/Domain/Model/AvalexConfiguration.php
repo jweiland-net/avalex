@@ -9,7 +9,7 @@
 
 namespace JWeiland\Avalex\Domain\Model;
 
-class AvalexConfiguration
+readonly class AvalexConfiguration
 {
     public function __construct(
         private int $uid,
@@ -28,28 +28,13 @@ class AvalexConfiguration
         return $this->apiKey;
     }
 
-    public function setApiKey(string $apiKey): void
-    {
-        $this->apiKey = $apiKey;
-    }
-
     public function getDomain(): string
     {
         return $this->domain;
     }
 
-    public function setDomain(string $domain): void
-    {
-        $this->domain = $domain;
-    }
-
     public function getDescription(): string
     {
         return $this->description;
-    }
-
-    public function setDescription(string $description): void
-    {
-        $this->description = $description;
     }
 }

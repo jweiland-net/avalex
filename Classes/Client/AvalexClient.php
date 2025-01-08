@@ -16,14 +16,16 @@ use JWeiland\Avalex\Client\Response\ResponseInterface;
 use JWeiland\Avalex\Helper\MessageHelper;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * This is the avalex client which will send the request to the avalex server
  */
 readonly class AvalexClient
 {
-    public function __construct(private MessageHelper $messageHelper) {}
+    public function __construct(
+        private MessageHelper $messageHelper,
+        private RequestFactory $requestFactory
+    ) {}
 
     public function processRequest(RequestInterface $request): ResponseInterface
     {
@@ -34,7 +36,7 @@ readonly class AvalexClient
                 ContextualFeedbackSeverity::ERROR,
             );
 
-            return new AvalexResponse();
+            return $this->getEmptyAvalexResponse();
         }
 
         try {
@@ -45,27 +47,28 @@ readonly class AvalexClient
                 'Request Exception',
                 ContextualFeedbackSeverity::ERROR,
             );
-            return new AvalexResponse();
+            return $this->getEmptyAvalexResponse();
         }
         if ($this->hasResponseErrors($avalexResponse)) {
-            $avalexResponse = new AvalexResponse();
+            $avalexResponse = $this->getEmptyAvalexResponse();
         }
 
         return $avalexResponse;
     }
 
-    protected function request(RequestInterface $request): AvalexResponse
+    private function getEmptyAvalexResponse(): AvalexResponse
     {
-        $requestFactory = GeneralUtility::makeInstance(RequestFactory::class);
-        $response = $requestFactory->request($request->buildUri());
-        $content = (string)$response->getBody();
+        return new AvalexResponse('', [], 200, false);
+    }
+
+    private function request(RequestInterface $request): AvalexResponse
+    {
+        $response = $this->requestFactory->request($request->buildUri());
+        $body = (string)$response->getBody();
         $headers = $response->getHeaders();
         $status = $response->getStatusCode();
 
-        $avalexResponse = new AvalexResponse($content, $headers, $status);
-        $avalexResponse->setIsJsonResponse($request->isJsonRequest());
-
-        return $avalexResponse;
+        return new AvalexResponse($body, $headers, $status, $request->isJsonRequest());
     }
 
     public function hasErrors(): bool
@@ -76,7 +79,7 @@ readonly class AvalexClient
     /**
      * Check response from Avalex for errors
      */
-    protected function hasResponseErrors(ResponseInterface $response): bool
+    private function hasResponseErrors(ResponseInterface $response): bool
     {
         if ($response->isJsonResponse()) {
             if (!is_array($response->getBody())) {

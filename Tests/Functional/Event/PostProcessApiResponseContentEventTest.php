@@ -9,7 +9,7 @@
 
 namespace JWeiland\Avalex\Tests\Functional\Event;
 
-use JWeiland\Avalex\Client\Request\BedingungenRequest;
+use JWeiland\Avalex\Client\Request\Endpoint\BedingungenRequest;
 use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Event\PostProcessApiResponseContentEvent;

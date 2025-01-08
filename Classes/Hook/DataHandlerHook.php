@@ -10,7 +10,7 @@
 namespace JWeiland\Avalex\Hook;
 
 use JWeiland\Avalex\Client\AvalexClient;
-use JWeiland\Avalex\Client\Request\IsApiKeyConfiguredRequest;
+use JWeiland\Avalex\Client\Request\Endpoint\IsApiKeyConfiguredRequest;
 use JWeiland\Avalex\Helper\MessageHelper;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;

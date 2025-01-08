@@ -9,6 +9,8 @@
 
 namespace JWeiland\Avalex\Client\Request;
 
+use JWeiland\Avalex\Client\Request\Endpoint\GetDomainLanguagesRequest;
+use JWeiland\Avalex\Client\Request\Endpoint\IsApiKeyConfiguredRequest;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 

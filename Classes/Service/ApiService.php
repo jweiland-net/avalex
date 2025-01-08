@@ -12,33 +12,61 @@ namespace JWeiland\Avalex\Service;
 use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Event\PostProcessApiResponseContentEvent;
-use JWeiland\Avalex\Event\PreProcessApiRequestEvent;
+use JWeiland\Avalex\Traits\SiteTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 
 /**
  * API service class for avalex API requests
  */
 readonly class ApiService
 {
+    use SiteTrait;
+
     public function __construct(
         private AvalexClient $avalexClient,
+        private LanguageService $languageService,
+        private FrontendInterface $cache,
         private EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function getHtmlContentFromEndpoint(
         RequestInterface $endpointRequest,
-        ContentObjectRenderer $contentObjectRenderer,
+        ServerRequestInterface $request,
     ): string {
-        $this->eventDispatcher->dispatch(new PreProcessApiRequestEvent($endpointRequest));
+        $cacheIdentifier = $this->getCacheIdentifier($endpointRequest, $request);
+        if ($this->cache->has($cacheIdentifier)) {
+            return (string)$this->cache->get($cacheIdentifier);
+        }
 
         $content = $this->avalexClient->processRequest($endpointRequest)->getBody();
 
         /** @var PostProcessApiResponseContentEvent $postProcessApiResponseContentEvent */
         $postProcessApiResponseContentEvent = $this->eventDispatcher->dispatch(
-            new PostProcessApiResponseContentEvent($content, $endpointRequest, $contentObjectRenderer),
+            new PostProcessApiResponseContentEvent(
+                $content,
+                $endpointRequest,
+                $this->getContentObjectRendererFromRequest($request)
+            ),
         );
 
-        return $postProcessApiResponseContentEvent->getContent();
+        $content = $postProcessApiResponseContentEvent->getContent();
+        if ($content !== '') {
+            $this->cache->set($cacheIdentifier, $content, [], 21600);
+        }
+
+        return $content;
+    }
+
+    protected function getCacheIdentifier(RequestInterface $endpointRequest, ServerRequestInterface $request): string
+    {
+        return sprintf(
+            'avalex_%s_%d_%d_%s',
+            $endpointRequest->getEndpoint(),
+            $this->detectCurrentPageUid($request),
+            $this->detectRootPageUid($request),
+            $this->languageService->getFrontendLocale($request),
+        );
     }
 }

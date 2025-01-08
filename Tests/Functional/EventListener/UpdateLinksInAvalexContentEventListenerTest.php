@@ -9,7 +9,7 @@
 
 namespace JWeiland\Avalex\Tests\Functional\EventListener;
 
-use JWeiland\Avalex\Client\Request\BedingungenRequest;
+use JWeiland\Avalex\Client\Request\Endpoint\BedingungenRequest;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Event\PostProcessApiResponseContentEvent;
 use JWeiland\Avalex\EventListener\UpdateLinksInAvalexContentEventListener;
