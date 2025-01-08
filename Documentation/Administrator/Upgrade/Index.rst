@@ -15,7 +15,7 @@ Upgrade to Version 9.0.0
 
 With this version we have removed compatibility for TYPO3 versions:
 6, 7, 8, 9, 10, 11, 12. If you still need avalex for these versions please
-install avalex in version <= 8.
+install avalex in version 8 or earlier.
 
 We have changed the hook usage to PSR-11 (Events). If you make use of hooks
 so modify the retrieved content you have to switch to EventListeners now. Please

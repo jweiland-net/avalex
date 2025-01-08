@@ -7,7 +7,7 @@
 Developer manual
 ================
 
-Usage of events
+Usage of Events
 ===============
 
 You can modify the behaviour of some tasks using PSR-11 (Events).
@@ -15,7 +15,7 @@ You can modify the behaviour of some tasks using PSR-11 (Events).
 PostProcessApiResponseContentEvent
 ----------------------------------
 
-This event will be called after the content from avalex server has been
+This event is triggered after the content from avalex server has been
 retrieved. Here you can adopt changes to the content before it will be written
 to TYPO3 cache. This is useful to modify contained links like email addresses.
 

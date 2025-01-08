@@ -9,7 +9,7 @@ Administrator Manual
 
 ..  rst-class:: bignums
 
-1.  Start analysis
+1.  Start Analysis
 
     As a first step you should enter your domain name at https://www.avalex.de
     and start the analysis. The web site is automatically scanned for services
