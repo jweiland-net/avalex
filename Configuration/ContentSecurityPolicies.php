@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the package jweiland/avalex.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Directive;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\HashValue;
 use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Mutation;
@@ -24,9 +31,9 @@ return call_user_func(static function (): Map {
                     Directive::ScriptSrc,
                     $hashScriptTagBody,
                     $hashButtonEvent,
-                    SourceKeyword::unsafeHashes
+                    SourceKeyword::unsafeHashes,
                 ),
             ),
-        ]
+        ],
     );
 });
