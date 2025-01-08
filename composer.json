@@ -30,7 +30,7 @@
 		"typo3/testing-framework": "^9.0.1"
 	},
 	"replace": {
-		"typo3-ter/glossary2": "self.version"
+		"typo3-ter/avalex": "self.version"
 	},
 	"autoload": {
 		"psr-4": {
