@@ -27,7 +27,7 @@ class DataHandlerHook
 {
     public function __construct(
         private readonly AvalexClient $avalexClient,
-        private readonly FlashMessageQueue $flashMessageQueue
+        private readonly FlashMessageQueue $flashMessageQueue,
     ) {}
 
     /**
