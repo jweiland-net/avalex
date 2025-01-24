@@ -11,17 +11,17 @@
         <source>The submitted API key is invalid, please check your input!</source>
         <target state="final">Der eingegebene API-Key ist ungültig, bitte überprüfe die Eingabe!</target>
       </trans-unit>
-      <trans-unit id="error.noAvalexConfiguration">
+      <trans-unit id="error.noAvalexConfiguration" approved="yes">
         <source>No avalex configuration could be determined. Please create a new configuration data record in the backend first.</source>
-        <target state="needs-translation">No avalex configuration could be determined. Please create a new configuration data record in the backend first.</target>
+        <target state="final">Es konnte keine avalex Konfiguration ermittelt werden. Bitte erstellen Sie zuerst einen neuen Konfigurationsdatensatz im Backend.</target>
       </trans-unit>
-      <trans-unit id="error.dbError">
+      <trans-unit id="error.dbError" approved="yes">
         <source>The determination of an avalex configuration led to a serious database error:</source>
-        <target state="needs-translation">The determination of an avalex configuration led to a serious database error:</target>
+        <target state="final">Die Bestimmung einer Ladekonfiguration führte zu einem schwerwiegenden Datenbankfehler:</target>
       </trans-unit>
-      <trans-unit id="error.invalidAvalexRequest">
+      <trans-unit id="error.invalidAvalexRequest" approved="yes">
         <source>An invalid request to the avalex servers was detected.</source>
-        <target state="needs-translation">An invalid request to the avalex servers was detected.</target>
+        <target state="final">Eine ungültige Anfrage an den avalex Server wurde erkannt.</target>
       </trans-unit>
     </body>
   </file>
