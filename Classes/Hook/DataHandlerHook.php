@@ -49,6 +49,7 @@ class DataHandlerHook
                         ),
                         '',
                         ContextualFeedbackSeverity::ERROR,
+                        true,
                     );
                     $this->flashMessageQueue->enqueue($flashMessage);
                 }
@@ -70,6 +71,7 @@ class DataHandlerHook
                 $avalexResponse->getErrorMessage(),
                 '',
                 ContextualFeedbackSeverity::ERROR,
+                true,
             ));
 
             return false;
@@ -95,6 +97,9 @@ class DataHandlerHook
                     'avalex',
                     [$domain],
                 ),
+                '',
+                ContextualFeedbackSeverity::OK,
+                true,
             ));
         } else {
             $isValid = false;
