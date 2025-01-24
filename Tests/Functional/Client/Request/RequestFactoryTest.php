@@ -13,15 +13,16 @@ use JWeiland\Avalex\Client\Request\Endpoint\BedingungenRequest;
 use JWeiland\Avalex\Client\Request\Endpoint\DatenschutzerklaerungRequest;
 use JWeiland\Avalex\Client\Request\Endpoint\ImpressumRequest;
 use JWeiland\Avalex\Client\Request\Endpoint\WiderrufRequest;
+use JWeiland\Avalex\Client\Request\Exception\InvalidAvalexEndpointException;
 use JWeiland\Avalex\Client\Request\RequestFactory;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
+use JWeiland\Avalex\Domain\Repository\Exception\NoAvalexConfigurationException;
 use JWeiland\Avalex\Service\LanguageService;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Site\Entity\Site;
@@ -34,8 +35,6 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 class RequestFactoryTest extends FunctionalTestCase
 {
     protected AvalexConfigurationRepository|MockObject $avalexConfigurationRepositoryMock;
-
-    protected LoggerInterface|MockObject $loggerMock;
 
     protected ServerRequestInterface $request;
 
@@ -61,12 +60,10 @@ class RequestFactoryTest extends FunctionalTestCase
             ->withAttribute('currentContentObject', new ContentObjectRenderer());
 
         $this->avalexConfigurationRepositoryMock = $this->createMock(AvalexConfigurationRepository::class);
-        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->subject = new RequestFactory(
             $this->avalexConfigurationRepositoryMock,
             $this->createMock(LanguageService::class),
-            $this->loggerMock,
             [
                 0 => new BedingungenRequest(),
                 1 => new DatenschutzerklaerungRequest(),
@@ -80,7 +77,6 @@ class RequestFactoryTest extends FunctionalTestCase
     {
         unset(
             $this->avalexConfigurationRepositoryMock,
-            $this->loggerMock,
             $this->request,
             $this->subject,
         );
@@ -89,24 +85,25 @@ class RequestFactoryTest extends FunctionalTestCase
     #[Test]
     public function createWithNoAvalexConfigurationWillReturnErrorMessage(): void
     {
+        $this->expectException(NoAvalexConfigurationException::class);
+
         $this->avalexConfigurationRepositoryMock
             ->expects(self::once())
             ->method('findByRootPageUid')
             ->with(self::identicalTo(1))
-            ->willReturn(null);
+            ->willThrowException(
+                new NoAvalexConfigurationException(
+                    'No Avalex configuration could be found in database for page UID: 1',
+                ),
+            );
 
-        self::assertNull(
-            $this->subject->create('', $this->request),
-        );
+        $this->subject->create('', $this->request);
     }
 
     #[Test]
-    public function createWithNonRegisteredEndpointWillLogError(): void
+    public function createWithNonRegisteredEndpointWillReturnErrorMessage(): void
     {
-        $this->loggerMock
-            ->expects(self::once())
-            ->method('error')
-            ->with(self::identicalTo('There is no registered avalex request with specified endpoint: foo'));
+        $this->expectException(InvalidAvalexEndpointException::class);
 
         $this->avalexConfigurationRepositoryMock
             ->expects(self::once())
@@ -119,9 +116,7 @@ class RequestFactoryTest extends FunctionalTestCase
                 '',
             ));
 
-        self::assertNull(
-            $this->subject->create('foo', $this->request),
-        );
+        $this->subject->create('foo', $this->request);
     }
 
     public static function endpointDataProvider(): array

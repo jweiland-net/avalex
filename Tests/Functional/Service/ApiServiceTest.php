@@ -107,7 +107,7 @@ class ApiServiceTest extends FunctionalTestCase
             ->expects(self::once())
             ->method('processRequest')
             ->with(self::isInstanceOf(ImpressumRequest::class))
-            ->willReturn(new AvalexResponse('', [], 200, false));
+            ->willReturn(new AvalexResponse('', [], 200, false, ''));
 
         $this->cacheMock
             ->expects(self::once())
@@ -132,7 +132,7 @@ class ApiServiceTest extends FunctionalTestCase
             ->expects(self::once())
             ->method('processRequest')
             ->with(self::isInstanceOf(ImpressumRequest::class))
-            ->willReturn(new AvalexResponse('Hello World!', [], 200, false));
+            ->willReturn(new AvalexResponse('Hello World!', [], 200, false, ''));
 
         $this->cacheMock
             ->expects(self::once())
