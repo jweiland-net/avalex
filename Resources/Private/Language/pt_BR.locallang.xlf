@@ -11,9 +11,17 @@
         <source>The submitted API key is invalid, please check your input!</source>
         <target state="needs-translation">The submitted API key is invalid, please check your input!</target>
       </trans-unit>
-      <trans-unit id="error.couldNotDetermineRootPage">
-        <source>The beginning of the website could not be determined! Maybe you forgot to activate the option "Use as start of website" in the page properties of the start page.</source>
-        <target state="needs-translation">The beginning of the website could not be determined! Maybe you forgot to activate the option "Use as start of website" in the page properties of the start page.</target>
+      <trans-unit id="error.noAvalexConfiguration">
+        <source>No avalex configuration could be determined. Please create a new configuration data record in the backend first.</source>
+        <target state="needs-translation">No avalex configuration could be determined. Please create a new configuration data record in the backend first.</target>
+      </trans-unit>
+      <trans-unit id="error.dbError">
+        <source>The determination of an avalex configuration led to a serious database error:</source>
+        <target state="needs-translation">The determination of an avalex configuration led to a serious database error:</target>
+      </trans-unit>
+      <trans-unit id="error.invalidAvalexRequest">
+        <source>An invalid request to the avalex servers was detected.</source>
+        <target state="needs-translation">An invalid request to the avalex servers was detected.</target>
       </trans-unit>
     </body>
   </file>
