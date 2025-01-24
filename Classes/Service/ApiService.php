@@ -44,12 +44,15 @@ readonly class ApiService
             return (string)$this->cache->get($cacheIdentifier);
         }
 
-        $content = $this->avalexClient->processRequest($endpointRequest)->getBody();
+        $avalexResponse = $this->avalexClient->processRequest($endpointRequest);
+        if ($avalexResponse->hasError()) {
+            return $avalexResponse->getErrorMessage();
+        }
 
         /** @var PostProcessApiResponseContentEvent $postProcessApiResponseContentEvent */
         $postProcessApiResponseContentEvent = $this->eventDispatcher->dispatch(
             new PostProcessApiResponseContentEvent(
-                $content,
+                (string)$avalexResponse->getBody(),
                 $endpointRequest,
                 $this->getContentObjectRendererFromRequest($request),
             ),

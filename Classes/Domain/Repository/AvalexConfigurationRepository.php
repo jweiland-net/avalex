@@ -13,31 +13,31 @@ namespace JWeiland\Avalex\Domain\Repository;
 
 use Doctrine\DBAL\Exception;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
-use Psr\Log\LoggerInterface;
+use JWeiland\Avalex\Domain\Repository\Exception\DatabaseQueryException;
+use JWeiland\Avalex\Domain\Repository\Exception\NoAvalexConfigurationException;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Class AvalexConfigurationRepository
+ * This repo can query the avalex configuration record with the highest priority for a given page UID
  */
 class AvalexConfigurationRepository
 {
-    public const TABLE = 'tx_avalex_configuration';
+    private const TABLE = 'tx_avalex_configuration';
 
     public function __construct(
         private readonly QueryBuilder $queryBuilder,
-        private readonly LoggerInterface $logger,
     ) {}
 
     /**
-     * Order by "global" to get the individual configuration records first.
+     * Order by "global" to get the individual configuration record first.
      */
-    public function findByRootPageUid(int $websiteRoot): ?AvalexConfiguration
+    public function findByRootPageUid(int $websiteRoot): AvalexConfiguration
     {
-        $queryBuilder = $this->queryBuilder;
-        $queryBuilder->setRestrictions(GeneralUtility::makeInstance(FrontendRestrictionContainer::class));
+        $queryBuilder = $this->getPreConfiguredQueryBuilder();
 
         try {
             // define inSet filter for website_root to reuse as conditional AND sorting criteria.
@@ -64,7 +64,7 @@ class AvalexConfigurationRepository
             // Define correct multi-level sorting to retrieve higher preceding configuration first.
             // 1st level: $websiteRoot id found in record `website_root` set first, not matching last
             // 2nd level: for each 1st level sort by GLOBAL = 1 first and not global last.
-            // 3nd level: in case 1st and 2nd level is not unique enough which could happen, uid is added as
+            // 3rd level: in case 1st and 2nd level is not unique enough which could happen, uid is added as
             //            third sorting criteria to ensure a deterministic result set sorting and mitigates
             //            result randomization.
             $queryBuilder->getConcreteQueryBuilder()
@@ -79,8 +79,9 @@ class AvalexConfigurationRepository
             $configurationRecord = $queryBuilder->executeQuery()->fetchAssociative();
 
             if ($configurationRecord === false) {
-                $this->logger->error('No Avalex configuration could be found in database for page UID: ' . $websiteRoot);
-                return null;
+                throw new NoAvalexConfigurationException(
+                    'No Avalex configuration could be found in database for page UID: ' . $websiteRoot
+                );
             }
 
             return new AvalexConfiguration(
@@ -90,9 +91,26 @@ class AvalexConfigurationRepository
                 $configurationRecord['description'],
             );
         } catch (Exception $exception) {
-            $this->logger->error('Error in query of AvalexConfigurationRepository::findByRootPageUid: ' . $exception->getMessage());
+            throw new DatabaseQueryException(
+                'Error in query of AvalexConfigurationRepository::findByRootPageUid: ' . $exception->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Hidden records are normally displayed in the context of the TYPO3 backend. However, this can lead
+     * to confusion for backend users if they see an avalex configuration record in the backend, but this record
+     * is not taken into account in the frontend context. For this reason, we also disable the display of
+     * hidden avalex configuration records in the backend (keep DefaultRestriction).
+     */
+    private function getPreConfiguredQueryBuilder(): QueryBuilder
+    {
+        $queryBuilder = $this->queryBuilder;
+
+        if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
+            $queryBuilder->setRestrictions(GeneralUtility::makeInstance(FrontendRestrictionContainer::class));
         }
 
-        return null;
+        return $queryBuilder;
     }
 }

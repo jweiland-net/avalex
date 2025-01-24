@@ -25,6 +25,7 @@ readonly class AvalexResponse implements ResponseInterface
         array|string $headers,
         private int $statusCode,
         private bool $isJsonResponse,
+        private string $errorMessage,
     ) {
         if (is_array($headers)) {
             $this->headers = $this->getArrayHeaders($headers);
@@ -95,5 +96,15 @@ readonly class AvalexResponse implements ResponseInterface
     public function isJsonResponse(): bool
     {
         return $this->isJsonResponse;
+    }
+
+    public function hasError(): bool
+    {
+        return $this->errorMessage !== '';
+    }
+
+    public function getErrorMessage(): string
+    {
+        return $this->errorMessage;
     }
 }

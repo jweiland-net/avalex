@@ -11,8 +11,9 @@ declare(strict_types=1);
 
 namespace JWeiland\Avalex\Backend\Preview;
 
-use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
+use JWeiland\Avalex\Domain\Repository\Exception\DatabaseQueryException;
+use JWeiland\Avalex\Domain\Repository\Exception\NoAvalexConfigurationException;
 use TYPO3\CMS\Backend\Preview\StandardContentPreviewRenderer;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
@@ -36,32 +37,38 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer
 
         $itemContent .= sprintf(
             '<p><b>Avalex: %s</b></p>',
-            $GLOBALS['LANG']->sL(sprintf('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_%s.name', $row['CType'])),
+            $this->getTranslation(sprintf('tx_%s.name', $row['CType'])),
         );
 
-        $avalexConfiguration = $this->avalexConfigurationRepository->findByRootPageUid($rootPage);
-        if ($avalexConfiguration instanceof AvalexConfiguration) {
+        try {
+            $avalexConfiguration = $this->avalexConfigurationRepository->findByRootPageUid($rootPage);
+
             $itemContent .= sprintf(
                 '<p>%s</p>',
                 sprintf(
-                    $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.found_config'),
+                    $this->getTranslation('preview_renderer.found_config'),
                     $avalexConfiguration->getDescription(),
                 ),
             );
             $itemContent .= sprintf(
                 '<a href="%s" class="btn btn-default t3-button">%s</a>',
                 $this->getLinkToEditConfigurationRecord($avalexConfiguration->getUid()),
-                $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.edit'),
+                $this->getTranslation('preview_renderer.button.edit'),
             );
-        } else {
+        } catch (NoAvalexConfigurationException) {
             $itemContent .= sprintf(
                 '<p>%s</p>',
-                $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.no_config'),
+                $this->getTranslation('preview_renderer.no_config'),
             );
             $itemContent .= sprintf(
                 '<a href="%s" class="btn btn-primary t3-button">%s</a>',
                 $this->getLinkToCreateConfigurationRecord(),
                 $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:preview_renderer.button.add'),
+            );
+        } catch (DatabaseQueryException $databaseQueryException) {
+            $itemContent .= sprintf(
+                '<p>%s</p>',
+                $databaseQueryException->getMessage(),
             );
         }
 
@@ -91,11 +98,15 @@ class ContentPreviewRenderer extends StandardContentPreviewRenderer
     private function detectRootPageUid(int $pageUid): int
     {
         try {
-            $site = $this->siteFinder->getSiteByPageId($pageUid);
-            return $site->getRootPageId();
+            return $this->siteFinder->getSiteByPageId($pageUid)->getRootPageId();
         } catch (SiteNotFoundException) {
         }
 
         return 0;
+    }
+
+    private function getTranslation(string $key): string
+    {
+        return $GLOBALS['LANG']->sL('LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:' . $key);
     }
 }

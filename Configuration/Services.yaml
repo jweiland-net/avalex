@@ -17,6 +17,10 @@ services:
     factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
     arguments: ['avalex_languages']
 
+  flashMessageQueue:
+    class: TYPO3\CMS\Core\Messaging\FlashMessageQueue
+    factory: ['@TYPO3\CMS\Core\Messaging\FlashMessageService', 'getMessageQueueByIdentifier']
+
   querybuilder.tx_avalex_configuration:
     class: 'TYPO3\CMS\Core\Database\Query\QueryBuilder'
     factory:
@@ -71,6 +75,8 @@ services:
 
   JWeiland\Avalex\Hook\DataHandlerHook:
     public: true
+    arguments:
+      $flashMessageQueue: '@flashMessageQueue'
 
   JWeiland\Avalex\Service\ApiService:
     arguments:

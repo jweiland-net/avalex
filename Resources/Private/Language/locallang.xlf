@@ -9,8 +9,14 @@
 			<trans-unit id="flash_message.configuration.key_invalid">
 				<source>The submitted API key is invalid, please check your input!</source>
 			</trans-unit>
-			<trans-unit id="error.couldNotDetermineRootPage">
-				<source>The beginning of the website could not be determined! Maybe you forgot to activate the option "Use as start of website" in the page properties of the start page.</source>
+			<trans-unit id="error.noAvalexConfiguration">
+				<source>No avalex configuration could be determined. Please create a new configuration data record in the backend first.</source>
+			</trans-unit>
+			<trans-unit id="error.dbError">
+				<source>The determination of an avalex configuration led to a serious database error:</source>
+			</trans-unit>
+			<trans-unit id="error.invalidAvalexRequest">
+				<source>An invalid request to the avalex servers was detected.</source>
 			</trans-unit>
 		</body>
 	</file>

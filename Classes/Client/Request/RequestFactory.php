@@ -11,11 +11,13 @@ declare(strict_types=1);
 
 namespace JWeiland\Avalex\Client\Request;
 
+use JWeiland\Avalex\Client\Request\Exception\InvalidAvalexEndpointException;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
+use JWeiland\Avalex\Domain\Repository\Exception\DatabaseQueryException;
+use JWeiland\Avalex\Domain\Repository\Exception\NoAvalexConfigurationException;
 use JWeiland\Avalex\Service\LanguageService;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Site\Entity\Site;
 
 /**
@@ -31,20 +33,19 @@ class RequestFactory
     public function __construct(
         private readonly AvalexConfigurationRepository $avalexConfigurationRepository,
         private LanguageService $languageService,
-        private readonly LoggerInterface $logger,
         iterable $registeredAvalexRequests,
     ) {
         $this->registeredAvalexRequests = $registeredAvalexRequests;
     }
 
-    public function create(string $endpoint, ServerRequestInterface $request): ?RequestInterface
+    /**
+     * @throws NoAvalexConfigurationException
+     * @throws DatabaseQueryException
+     * @throws InvalidAvalexEndpointException
+     */
+    public function create(string $endpoint, ServerRequestInterface $request): RequestInterface
     {
         $avalexConfiguration = $this->getAvalexConfiguration($request);
-
-        // Early return, if no avalex configuration could be found.
-        if (!$avalexConfiguration instanceof AvalexConfiguration) {
-            return null;
-        }
 
         $endpointRequest = $this->getRequestForEndpoint($endpoint, $avalexConfiguration);
 
@@ -55,7 +56,11 @@ class RequestFactory
         return $endpointRequest;
     }
 
-    private function getAvalexConfiguration(ServerRequestInterface $request): ?AvalexConfiguration
+    /**
+     * @throws NoAvalexConfigurationException
+     * @throws DatabaseQueryException
+     */
+    private function getAvalexConfiguration(ServerRequestInterface $request): AvalexConfiguration
     {
         return $this->avalexConfigurationRepository->findByRootPageUid(
             $this->detectRootPageUid($request),
@@ -69,10 +74,13 @@ class RequestFactory
         return $site instanceof Site ? $site->getRootPageId() : 0;
     }
 
+    /**
+     * @throws InvalidAvalexEndpointException
+     */
     private function getRequestForEndpoint(
         string $endpoint,
         AvalexConfiguration $avalexConfiguration,
-    ): ?RequestInterface {
+    ): RequestInterface {
         foreach ($this->registeredAvalexRequests as $avalexRequest) {
             if ($avalexRequest->getEndpoint() === $endpoint) {
                 $avalexRequest->setAvalexConfiguration($avalexConfiguration);
@@ -80,8 +88,8 @@ class RequestFactory
             }
         }
 
-        $this->logger->error('There is no registered avalex request with specified endpoint: ' . $endpoint);
-
-        return null;
+        throw new InvalidAvalexEndpointException(
+            'There is no registered avalex request with specified endpoint: ' . $endpoint
+        );
     }
 }

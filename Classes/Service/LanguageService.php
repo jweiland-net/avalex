@@ -82,10 +82,17 @@ readonly class LanguageService
         $getDomainLanguagesRequest->setAvalexConfiguration($avalexConfiguration);
         $getDomainLanguagesRequest->setDomain($avalexConfiguration->getDomain());
 
-        $result = $this->avalexClient->processRequest($getDomainLanguagesRequest)->getBody();
-        if ($result === '') {
-            // Error or empty result
-            $result = [];
+        $avalexResponse = $this->avalexClient->processRequest($getDomainLanguagesRequest);
+        if ($avalexResponse->hasError()) {
+            return [
+                'error' => $avalexResponse->getErrorMessage(),
+            ];
+        }
+
+        if (($result = $avalexResponse->getBody()) === '') {
+            return [
+                'error' => 'Empty response from avalex server.',
+            ];
         }
 
         $this->cache->set($this->getCacheIdentifier($avalexConfiguration), $response, [], 21600);

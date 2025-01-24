@@ -11,10 +11,14 @@ declare(strict_types=1);
 
 namespace JWeiland\Avalex;
 
+use JWeiland\Avalex\Client\Request\Exception\InvalidAvalexEndpointException;
 use JWeiland\Avalex\Client\Request\RequestFactory;
+use JWeiland\Avalex\Domain\Repository\Exception\DatabaseQueryException;
+use JWeiland\Avalex\Domain\Repository\Exception\NoAvalexConfigurationException;
 use JWeiland\Avalex\Service\ApiService;
 use JWeiland\Avalex\Traits\SiteTrait;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * This is the main class which will be called via TypoScript.
@@ -33,11 +37,14 @@ readonly class AvalexPlugin
      */
     public function render(string $content, array $conf, ServerRequestInterface $request): string
     {
-        $endpointRequest = $this->requestFactory->create($conf['endpoint'], $request);
-
-        // Early return, if no endpoint request could be determined
-        if ($endpointRequest === null) {
-            return 'EXT:avalex error: See logs for more details';
+        try {
+            $endpointRequest = $this->requestFactory->create($conf['endpoint'], $request);
+        } catch (NoAvalexConfigurationException) {
+            return LocalizationUtility::translate('error.noAvalexConfiguration', 'avalex');
+        } catch (DatabaseQueryException $databaseQueryException) {
+            return LocalizationUtility::translate('error.dbError', 'avalex') . $databaseQueryException->getMessage();
+        } catch (InvalidAvalexEndpointException) {
+            return LocalizationUtility::translate('error.invalidAvalexRequest', 'avalex');
         }
 
         return $this->apiService->getHtmlContentFromEndpoint($endpointRequest, $request);

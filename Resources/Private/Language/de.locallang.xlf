@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2018-03-18T17:38:20Z"
-				product-name="avalex">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2018-03-18T17:38:20Z" product-name="avalex">
 		<header/>
 		<body>
 			<trans-unit id="flash_message.configuration.response_ok">
@@ -12,9 +11,17 @@
 				<source>The submitted API key is invalid, please check your input!</source>
 				<target>Der eingegebene API-Key ist ungültig, bitte überprüfe die Eingabe!</target>
 			</trans-unit>
-			<trans-unit id="error.couldNotDetermineRootPage">
-				<source>The beginning of the website could not be determined! Maybe you forgot to activate the option "Use as start of website" in the page properties of the start page.</source>
-				<target>Anfang der Webseite konnte nicht ermittelt werden! Evtl. wurde vergessen in den Seiteneigenschaften der Startseite die Option "Als Anfang der Website benutzen" zu aktivieren.</target>
+			<trans-unit id="error.noAvalexConfiguration">
+				<source>No avalex configuration could be determined. Please create a new configuration data record in the backend first.</source>
+				<target>Es konnte keine avalex Konfiguration ermittelt werden. Bitte legen Sie zunächst im Backend einen neuen Konfigurationsdatensatz an.</target>
+			</trans-unit>
+			<trans-unit id="error.dbError">
+				<source>The determination of an avalex configuration led to a serious database error:</source>
+				<target>Die Ermittlung einer avalex Konfiguration führte zu einem schwerwiegenden Datenbank-Fehler:</target>
+			</trans-unit>
+			<trans-unit id="error.invalidAvalexRequest">
+				<source>An invalid request to the avalex servers was detected.</source>
+				<target>Es wurde eine ungültige Anfrage zu den avalex Servern ermittelt.</target>
 			</trans-unit>
 		</body>
 	</file>

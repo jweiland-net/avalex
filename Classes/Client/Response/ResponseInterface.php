@@ -25,4 +25,8 @@ interface ResponseInterface
     public function getStatusCode(): int;
 
     public function isJsonResponse(): bool;
+
+    public function hasError(): bool;
+
+    public function getErrorMessage(): string;
 }

@@ -13,9 +13,11 @@ namespace JWeiland\Avalex\Hook;
 
 use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\Endpoint\IsApiKeyConfiguredRequest;
-use JWeiland\Avalex\Helper\MessageHelper;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -24,8 +26,8 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 class DataHandlerHook
 {
     public function __construct(
-        private readonly MessageHelper $messageHelper,
         private readonly AvalexClient $avalexClient,
+        private readonly FlashMessageQueue $flashMessageQueue
     ) {}
 
     /**
@@ -39,7 +41,8 @@ class DataHandlerHook
                     array_key_exists('api_key', $avalexConfigurationRecord)
                     && !$this->checkApiKey($avalexConfigurationRecord['api_key'])
                 ) {
-                    $this->messageHelper->addFlashMessage(
+                    $flashMessage = GeneralUtility::makeInstance(
+                        FlashMessage::class,
                         LocalizationUtility::translate(
                             'flash_message.configuration.key_invalid',
                             'avalex',
@@ -47,6 +50,7 @@ class DataHandlerHook
                         '',
                         ContextualFeedbackSeverity::ERROR,
                     );
+                    $this->flashMessageQueue->enqueue($flashMessage);
                 }
             }
         }
@@ -60,6 +64,17 @@ class DataHandlerHook
         $isValid = true;
 
         $avalexResponse = $this->avalexClient->processRequest(new IsApiKeyConfiguredRequest($apiKey));
+        if ($avalexResponse->hasError()) {
+            $this->flashMessageQueue->enqueue(GeneralUtility::makeInstance(
+                FlashMessage::class,
+                $avalexResponse->getErrorMessage(),
+                '',
+                ContextualFeedbackSeverity::ERROR,
+            ));
+
+            return false;
+        }
+
         $result = $avalexResponse->getBody();
         if (
             is_array($result)
@@ -73,13 +88,14 @@ class DataHandlerHook
                 $domain = '-';
             }
 
-            $this->messageHelper->addFlashMessage(
+            $this->flashMessageQueue->enqueue(GeneralUtility::makeInstance(
+                FlashMessage::class,
                 LocalizationUtility::translate(
                     'flash_message.configuration.response_ok',
                     'avalex',
                     [$domain],
                 ),
-            );
+            ));
         } else {
             $isValid = false;
         }
