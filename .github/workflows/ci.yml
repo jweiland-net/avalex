@@ -41,7 +41,7 @@ jobs:
         run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -d mysql -i 8.0 -s functional
 
       - name: 'Execute functional tests'
-        run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -d mariadb -i 10.4 -s functional
+        run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -d mariadb -i 10.11 -s functional
 
       - name: 'Execute functional tests'
         run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -d postgres -i 10 -s functional
