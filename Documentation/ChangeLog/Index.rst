@@ -7,6 +7,11 @@
 ChangeLog
 =========
 
+Version 9.0.2
+=============
+
+*   [TASK] Output error messages directly in frontend/backend insteadof logging
+
 Version 9.0.0
 =============
 
