@@ -36,6 +36,7 @@ class AvalexResponseTest extends FunctionalTestCase
             ],
             200,
             false,
+            '',
         );
 
         self::assertSame(
@@ -55,6 +56,7 @@ class AvalexResponseTest extends FunctionalTestCase
             ],
             200,
             false,
+            '',
         );
 
         self::assertSame(
@@ -74,6 +76,7 @@ class AvalexResponseTest extends FunctionalTestCase
             ],
             200,
             true,
+            '',
         );
 
         self::assertSame(
@@ -92,6 +95,7 @@ class AvalexResponseTest extends FunctionalTestCase
             [],
             200,
             false,
+            '',
         );
 
         self::assertSame(
@@ -108,6 +112,7 @@ class AvalexResponseTest extends FunctionalTestCase
             'Expires: 0' . CRLF . 'Content-Length: 123',
             200,
             false,
+            '',
         );
 
         self::assertSame(
@@ -134,6 +139,7 @@ class AvalexResponseTest extends FunctionalTestCase
             ],
             200,
             false,
+            '',
         );
 
         self::assertSame(
@@ -163,7 +169,7 @@ class AvalexResponseTest extends FunctionalTestCase
             ],
         ];
 
-        $subject = new AvalexResponse('', $headers, 200, false);
+        $subject = new AvalexResponse('', $headers, 200, false, '');
 
         self::assertSame(
             $headers,
@@ -182,6 +188,7 @@ class AvalexResponseTest extends FunctionalTestCase
             ],
             200,
             false,
+            '',
         );
 
         self::assertSame(
@@ -201,6 +208,7 @@ class AvalexResponseTest extends FunctionalTestCase
             ],
             401,
             false,
+            '',
         );
 
         self::assertSame(
@@ -220,6 +228,7 @@ class AvalexResponseTest extends FunctionalTestCase
             ],
             200,
             false,
+            '',
         );
 
         self::assertFalse(
@@ -238,6 +247,7 @@ class AvalexResponseTest extends FunctionalTestCase
             ],
             200,
             true,
+            '',
         );
 
         self::assertTrue(

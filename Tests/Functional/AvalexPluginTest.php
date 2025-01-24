@@ -11,6 +11,7 @@ namespace JWeiland\Avalex\Tests\Functional;
 
 use JWeiland\Avalex\AvalexPlugin;
 use JWeiland\Avalex\Client\Request\Endpoint\ImpressumRequest;
+use JWeiland\Avalex\Client\Request\Exception\InvalidAvalexEndpointException;
 use JWeiland\Avalex\Client\Request\RequestFactory;
 use JWeiland\Avalex\Service\ApiService;
 use PHPUnit\Framework\Attributes\Test;
@@ -77,16 +78,20 @@ class AvalexPluginTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function renderWithEmptyEndpointWillReturnErrorMessage(): void
+    public function renderWithEmptyEndpointWillThrowException(): void
     {
         $this->requestFactoryMock
             ->expects(self::once())
             ->method('create')
             ->with(self::equalTo('foo'))
-            ->willReturn(null);
+            ->willThrowException(
+                new InvalidAvalexEndpointException(
+                    'There is no registered avalex request with specified endpoint: foo',
+                ),
+            );
 
         self::assertSame(
-            'EXT:avalex error: See logs for more details',
+            'An invalid request to the avalex servers was detected.',
             $this->subject->render(
                 '',
                 [

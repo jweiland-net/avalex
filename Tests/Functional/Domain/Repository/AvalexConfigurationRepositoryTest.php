@@ -10,9 +10,12 @@
 namespace JWeiland\Avalex\Tests\Functional\Domain\Repository;
 
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
+use JWeiland\Avalex\Domain\Repository\Exception\NoAvalexConfigurationException;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
+use TYPO3\CMS\Core\Http\ServerRequest;
+use TYPO3\CMS\Core\Routing\PageArguments;
+use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -21,8 +24,6 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 class AvalexConfigurationRepositoryTest extends FunctionalTestCase
 {
     protected AvalexConfigurationRepository $subject;
-
-    protected MockObject|LoggerInterface $logger;
 
     /**
      * @var string[]
@@ -38,11 +39,16 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
         $this->importCSVDataSet(__DIR__ . '/../../Fixtures/pages.csv');
         $this->importCSVDataSet(__DIR__ . '/../../Fixtures/tx_avalex_configuration.csv');
 
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $site = new Site('main', 1, []);
+        $routing = new PageArguments(12, '', []);
+
+        $GLOBALS['TYPO3_REQUEST'] = (new ServerRequest())
+            ->withAttribute('site', $site)
+            ->withAttribute('routing', $routing)
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
 
         $this->subject = new AvalexConfigurationRepository(
             $this->getConnectionPool()->getQueryBuilderForTable('tx_avalex_configuration'),
-            $this->logger,
         );
     }
 
@@ -56,6 +62,8 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
     #[Test]
     public function findByWebsiteRootWithNoConfigurationWillThrowException(): void
     {
+        $this->expectException(NoAvalexConfigurationException::class);
+
         // We have to delete the configuration which is configured as "global"
         $connection = $this->getConnectionPool()->getConnectionForTable('tx_avalex_configuration');
         $connection->delete(
@@ -65,14 +73,7 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
             ],
         );
 
-        $this->logger
-            ->expects(self::once())
-            ->method('error')
-            ->with('No Avalex configuration could be found in database for page UID: ' . 12);
-
-        self::assertNull(
-            $this->subject->findByRootPageUid(12),
-        );
+        $this->subject->findByRootPageUid(12);
     }
 
     #[Test]
