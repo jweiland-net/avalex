@@ -9,7 +9,6 @@
 [![TYPO3 11.5](https://img.shields.io/badge/TYPO3-11.5-yellow.svg)](https://get.typo3.org/version/11)
 [![TYPO3 12.4](https://img.shields.io/badge/TYPO3-12.4-yellow.svg)](https://get.typo3.org/version/12)
 [![TYPO3 13.4](https://img.shields.io/badge/TYPO3-13.4-green.svg)](https://get.typo3.org/version/13)
-[![License](http://poser.pugx.org/jweiland/avalex/license)](https://packagist.org/packages/jweiland/avalex)
 [![Total Downloads](https://poser.pugx.org/jweiland/avalex/downloads.svg)](https://packagist.org/packages/jweiland/avalex)
 [![Monthly Downloads](https://poser.pugx.org/jweiland/avalex/d/monthly)](https://packagist.org/packages/jweiland/avalex)
 ![Build Status](https://github.com/jweiland-net/avalex/actions/workflows/ci.yml/badge.svg)
