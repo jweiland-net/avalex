@@ -35,3 +35,9 @@ You can install the extension using...
 ## Documentation
 
 Follow this link: https://docs.typo3.org/typo3cms/extensions/avalex/
+
+## Support
+
+Free Support is available via [GitHub Issue Tracker](https://github.com/jweiland-net/avalex/issues).
+
+For commercial support, please contact us at [support@jweiland.net](support@jweiland.net).
