@@ -1,11 +1,11 @@
 ﻿..  include:: /Includes.rst.txt
 
 
-..  _admin-manual:
+..  _installation:
 
-====================
-Administrator Manual
-====================
+============
+Installation
+============
 
 ..  rst-class:: bignums
 
