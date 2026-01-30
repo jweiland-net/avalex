@@ -29,7 +29,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Typolink\EmailLinkBuilder;
 
 /**
- * Class AvalexPlugin
+ * This is the main class that will be called via TypoScript.
  */
 class AvalexPlugin
 {
@@ -81,7 +81,7 @@ class AvalexPlugin
     }
 
     /**
-     * Render plugin
+     * Main method. This will be called by TypoScript "userFunc"
      *
      * @param string $content empty string
      * @param array $conf TypoScript configuration

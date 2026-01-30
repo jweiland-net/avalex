@@ -100,7 +100,6 @@ class LanguageService
      */
     protected function fetchLanguageResponse()
     {
-        $response = [];
         $getDomainLanguagesRequest = GeneralUtility::makeInstance(GetDomainLanguagesRequest::class);
         $getDomainLanguagesRequest->setDomain($this->configuration['domain']);
         $result = $this->avalexClient->processRequest($getDomainLanguagesRequest)->getBody();
@@ -109,7 +108,7 @@ class LanguageService
             $result = [];
         }
 
-        $this->cache->set($this->getCacheIdentifier(), $response, [], 21600);
+        $this->cache->set($this->getCacheIdentifier(), $result, [], 21600);
 
         return $result;
     }
