@@ -21,7 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
- * This is the main class which will be called via TypoScript.
+ * This is the main class that will be called via TypoScript.
  */
 readonly class AvalexPlugin
 {

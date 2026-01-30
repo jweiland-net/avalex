@@ -40,9 +40,9 @@ readonly class LanguageService
         AvalexConfiguration $avalexConfiguration,
         ServerRequestInterface $request,
     ): void {
-        // In customer account of avalex company all texts are always available in german language.
-        // If another language (currently only en is allowed as different language) is not available EXT:avalex
-        // will fall back to the german texts.
+        // In Avalex customer accounts, all texts are always available in German.
+        // If another language (currently only English is supported) is not available in EXT:avalex,
+        // the extension will fall back to the German texts.
         $language = 'de';
         $frontendLanguage = $this->getFrontendLocale($request);
 
@@ -77,7 +77,6 @@ readonly class LanguageService
 
     protected function fetchLanguageResponse(AvalexConfiguration $avalexConfiguration): array
     {
-        $response = [];
         $getDomainLanguagesRequest = new GetDomainLanguagesRequest();
         $getDomainLanguagesRequest->setAvalexConfiguration($avalexConfiguration);
         $getDomainLanguagesRequest->setDomain($avalexConfiguration->getDomain());
@@ -95,7 +94,7 @@ readonly class LanguageService
             ];
         }
 
-        $this->cache->set($this->getCacheIdentifier($avalexConfiguration), $response, [], 21600);
+        $this->cache->set($this->getCacheIdentifier($avalexConfiguration), $result, [], 21600);
 
         return $result;
     }
