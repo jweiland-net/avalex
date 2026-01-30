@@ -85,9 +85,7 @@ class AvalexPlugin
      *
      * @param string $content empty string
      * @param array $conf TypoScript configuration
-     *
      * @return string
-     *
      * @throws Exception\InvalidUidException
      */
     public function render($content, $conf)
