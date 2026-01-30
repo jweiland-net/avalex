@@ -7,6 +7,11 @@
 ChangeLog
 =========
 
+Version 9.0.3
+=============
+
+*   [BUGFIX] Repair cache handling for translated content
+
 Version 9.0.2
 =============
 
