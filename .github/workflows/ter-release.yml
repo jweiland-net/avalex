@@ -1,17 +1,22 @@
 name: ter-release.yml
+
 on:
   release:
     types: [published]
+
 jobs:
+
   publish:
     name: Publish Extension to TYPO3 Extension Repository (TER)
     runs-on: ubuntu-latest
+
     env:
       TYPO3_EXTENSION_KEY: ${{ secrets.TYPO3_EXTENSION_KEY }}
       TYPO3_REPOSITORY_URL: ${{ secrets.TYPO3_REPOSITORY_URL }}
       TYPO3_API_TOKEN: ${{ secrets.TYPO3_API_TOKEN }}
       TYPO3_API_USERNAME: ${{ secrets.TYPO3_API_USERNAME }}
       TYPO3_API_PASSWORD: ${{ secrets.TYPO3_API_PASSWORD }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,7 +38,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: intl, mbstring, json, libxml, xml, soap, zip, curl
+          extensions: intl, mbstring, json, libxml, xml, zip, curl
           tools: composer:v2
 
       - name: Install TYPO3 Tailor Extension

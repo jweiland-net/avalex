@@ -38,6 +38,6 @@ class MigratePluginToContentElementUpgrade extends AbstractListTypeToCTypeUpdate
     public function getDescription(): string
     {
         return 'The modern way to register plugins for TYPO3 is to register them as content element types. '
-            . 'Running this wizard will migrate all events2 plugins to content element (CType)';
+            . 'Running this wizard will migrate all avalex plugins to content element (CType)';
     }
 }
