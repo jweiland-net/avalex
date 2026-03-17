@@ -11,22 +11,24 @@ if (!defined('TYPO3')) {
     die('Access denied.');
 }
 
-call_user_func(static function () {
-    // Use hook to check API key while saving the record
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['avalex'] =
-        \JWeiland\Avalex\Hook\DataHandlerHook::class;
+use JWeiland\Avalex\Evaluation\DomainEvaluation;
+use JWeiland\Avalex\Hook\DataHandlerHook;
+use JWeiland\Avalex\Service\ApiService;
 
-    if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_languages'])) {
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_languages'] = [];
-    }
+// Use hook to check API key while saving the record
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['avalex'] =
+    DataHandlerHook::class;
 
-    if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_content'])) {
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_content'] = [];
-    }
+if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_languages'])) {
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_languages'] = [];
+}
 
-    if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class])) {
-        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][\JWeiland\Avalex\Service\ApiService::class] = [];
-    }
+if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_content'])) {
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_content'] = [];
+}
 
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals'][\JWeiland\Avalex\Evaluation\DomainEvaluation::class] = '';
-});
+if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][ApiService::class])) {
+    $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['avalex'][ApiService::class] = [];
+}
+
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals'][DomainEvaluation::class] = '';
