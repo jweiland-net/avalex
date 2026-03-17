@@ -7,6 +7,11 @@
 ChangeLog
 =========
 
+Version 9.1.0
+=============
+
+*   [TASK] New upgrade wizard for list_type to CType
+
 Version 9.0.3
 =============
 
