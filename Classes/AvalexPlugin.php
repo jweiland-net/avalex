@@ -18,6 +18,7 @@ use JWeiland\Avalex\Domain\Repository\Exception\NoAvalexConfigurationException;
 use JWeiland\Avalex\Service\ApiService;
 use JWeiland\Avalex\Traits\SiteTrait;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Attribute\AsAllowedCallable;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -35,6 +36,7 @@ readonly class AvalexPlugin
     /**
      * Main method. This will be called by TypoScript "userFunc"
      */
+    #[AsAllowedCallable]
     public function render(string $content, array $conf, ServerRequestInterface $request): string
     {
         try {
