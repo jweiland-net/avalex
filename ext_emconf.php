@@ -8,17 +8,17 @@
  */
 
 $EM_CONF[$_EXTKEY] = [
-    'title' => 'avalex',
-    'description' => 'The avalex extension allows to display an automatically generated and updated "Data Privacy Statement", "Imprint", "Cancellation Policy" and "Terms and conditions" within a TYPO3 web site.',
+    'title' => 'avalex: Automated Legal Texts',
+    'description' => 'Integrates automatically updated and legally compliant texts (Imprint, Privacy, Cancellation notice, and Terms and conditions) into your TYPO3 website. Protects against legal warnings through automatic updates via the avalex API.',
     'category' => 'plugin',
     'author' => 'Stefan Froemken',
     'author_email' => 'support@jweiland.net',
     'author_company' => 'jweiland.net',
     'state' => 'stable',
-    'version' => '9.1.0',
+    'version' => '10.0.0',
     'constraints' => [
         'depends' => [
-            'typo3' => '13.4.0-13.4.99',
+            'typo3' => '14.3.0-14.3.99',
         ],
         'conflicts' => [],
         'suggests' => [],
