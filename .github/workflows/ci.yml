@@ -1,6 +1,7 @@
 name: Tests
 
-on: [pull_request]
+on:
+  pull_request:
 
 jobs:
   testing:
@@ -9,7 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      fail-fast: true
+      # This prevents cancellation of matrix job runs, if one or more already failed
+      # and let the remaining matrix jobs be executed anyway.
+      fail-fast: false
 
       matrix:
         php:
@@ -37,11 +40,15 @@ jobs:
         if: ${{ matrix.php <= '8.3' }}
         run: Build/Scripts/runTests.sh -b podman -n -p ${{ matrix.php }} -s cgl
 
-      - name: 'Execute functional tests'
-        run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -d mysql -i 8.0 -s functional
+      - name: 'Execute unit tests'
+        run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -s unit
 
       - name: 'Execute functional tests'
-        run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -d mariadb -i 10.11 -s functional
+        run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -d mysql -s functional
 
       - name: 'Execute functional tests'
-        run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -d postgres -i 10 -s functional
+        run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -d mariadb -s functional
+
+      - name: 'Execute functional tests'
+        run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -d postgres -s functional
+
