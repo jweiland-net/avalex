@@ -8,67 +8,68 @@
  */
 
 use JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer;
+use JWeiland\Avalex\LegalTextContentTypeEnum;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Schema\Struct\SelectItem;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-if (!defined('TYPO3_MODE') && !defined('TYPO3')) {
+if (!defined('TYPO3')) {
     die('Access denied.');
 }
 
-ExtensionManagementUtility::addPlugin(
-    new SelectItem(
-        'select',
-        // set pluginName as default pluginTitle
-        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_avalex.name',
-        'avalex_avalex',
-        'avalex_avalex',
-        'plugins',
-        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_avalex.description',
-    ),
-    'CType',
-    'avalex',
-);
-ExtensionManagementUtility::addPlugin(
-    new SelectItem(
-        'select',
-        // set pluginName as default pluginTitle
-        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_imprint.name',
-        'avalex_imprint',
-        'avalex_imprint',
-        'plugins',
-        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_imprint.description',
-    ),
-    'CType',
-    'avalex',
-);
-ExtensionManagementUtility::addPlugin(
-    new SelectItem(
-        'select',
-        // set pluginName as default pluginTitle
-        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_bedingungen.name',
-        'avalex_bedingungen',
-        'avalex_bedingungen',
-        'plugins',
-        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_bedingungen.description',
-    ),
-    'CType',
-    'avalex',
-);
-ExtensionManagementUtility::addPlugin(
-    new SelectItem(
-        'select',
-        // set pluginName as default pluginTitle
-        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_widerruf.name',
-        'avalex_widerruf',
-        'avalex_widerruf',
-        'plugins',
-        'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_widerruf.description',
-    ),
-    'CType',
-    'avalex',
-);
+$contentElementDefinitions = [
+    LegalTextContentTypeEnum::PRIVACY_POLICY->value => [
+        new SelectItem(
+            'select',
+            'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_avalex.name',
+            LegalTextContentTypeEnum::PRIVACY_POLICY->value,
+            LegalTextContentTypeEnum::PRIVACY_POLICY->value,
+            'plugins',
+            'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_avalex.description',
+        ),
+    ],
+    LegalTextContentTypeEnum::IMPRINT->value => [
+        new SelectItem(
+            'select',
+            'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_imprint.name',
+            LegalTextContentTypeEnum::IMPRINT->value,
+            LegalTextContentTypeEnum::IMPRINT->value,
+            'plugins',
+            'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_imprint.description',
+        ),
+    ],
+    LegalTextContentTypeEnum::TERMS_AND_CONDITIONS->value => [
+        new SelectItem(
+            'select',
+            'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_bedingungen.name',
+            LegalTextContentTypeEnum::TERMS_AND_CONDITIONS->value,
+            LegalTextContentTypeEnum::TERMS_AND_CONDITIONS->value,
+            'plugins',
+            'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_bedingungen.description',
+        ),
+    ],
+    LegalTextContentTypeEnum::CANCELLATION_NOTICE->value => [
+        new SelectItem(
+            'select',
+            'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_widerruf.name',
+            LegalTextContentTypeEnum::CANCELLATION_NOTICE->value,
+            LegalTextContentTypeEnum::CANCELLATION_NOTICE->value,
+            'plugins',
+            'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_widerruf.description',
+        ),
+    ],
+];
 
-$GLOBALS['TCA']['tt_content']['types']['avalex_avalex']['previewRenderer'] = ContentPreviewRenderer::class;
-$GLOBALS['TCA']['tt_content']['types']['avalex_imprint']['previewRenderer'] = ContentPreviewRenderer::class;
-$GLOBALS['TCA']['tt_content']['types']['avalex_bedingungen']['previewRenderer'] = ContentPreviewRenderer::class;
-$GLOBALS['TCA']['tt_content']['types']['avalex_widerruf']['previewRenderer'] = ContentPreviewRenderer::class;
+$typo3Version = GeneralUtility::makeInstance(Typo3Version::class);
+if (version_compare($typo3Version->getVersion(), '14.0.0', '<')) {
+    foreach ($contentElementDefinitions as &$contentElementDefinition) {
+        $contentElementDefinition[] = 'CType';
+        $contentElementDefinition[] = 'avalex';
+    }
+}
+
+foreach ($contentElementDefinitions as $contentElementType => $contentElementDefinition) {
+    ExtensionManagementUtility::addPlugin(...$contentElementDefinition);
+    $GLOBALS['TCA']['tt_content']['types'][$contentElementType]['previewRenderer'] = ContentPreviewRenderer::class;
+}
