@@ -31,7 +31,7 @@ final readonly class DatenschutzerklaerungRequest implements RequestInterface, D
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    public const ENDPOINT = AvalexEndpointEnum::PRIVACY_POLICY;
+    public const ENDPOINT = AvalexEndpointEnum::PRIVACY_POLICY->value;
 
     public const IS_JSON_REQUEST = false;
 

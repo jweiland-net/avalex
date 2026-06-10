@@ -18,11 +18,13 @@ use JWeiland\Avalex\Client\Response\ResponseInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
 
 /**
- * This is the avalex client which will send the request to the avalex server
+ * This is the avalex client that will send the request to the avalex server
  */
 readonly class AvalexClient
 {
-    public function __construct(private RequestFactory $requestFactory) {}
+    public function __construct(
+        private RequestFactory $requestFactory,
+    ) {}
 
     public function processRequest(RequestInterface $request): ResponseInterface
     {
@@ -58,7 +60,7 @@ readonly class AvalexClient
         $headers = $response->getHeaders();
         $status = $response->getStatusCode();
 
-        $avalexResponse = new AvalexResponse($body, $headers, $status, $request->isJsonRequest(), '');
+        $avalexResponse = new AvalexResponse($body, $headers, $status, $request::IS_JSON_REQUEST, '');
 
         // Check for errors
         if ($avalexResponse->isJsonResponse()) {
@@ -67,7 +69,7 @@ readonly class AvalexClient
                     '',
                     $headers,
                     $status,
-                    $request->isJsonRequest(),
+                    $request::IS_JSON_REQUEST,
                     'The response of Avalex could not be converted to array.',
                 );
             }
@@ -77,7 +79,7 @@ readonly class AvalexClient
                     '',
                     $headers,
                     $status,
-                    $request->isJsonRequest(),
+                    $request::IS_JSON_REQUEST,
                     'The JSON response of Avalex is empty.',
                 );
             }
@@ -87,7 +89,7 @@ readonly class AvalexClient
                     '',
                     $headers,
                     $status,
-                    $request->isJsonRequest(),
+                    $request::IS_JSON_REQUEST,
                     'The response of Avalex was empty.',
                 );
             }
@@ -97,7 +99,7 @@ readonly class AvalexClient
                     '',
                     $headers,
                     $status,
-                    $request->isJsonRequest(),
+                    $request::IS_JSON_REQUEST,
                     'Avalex Response Error' . $avalexResponse->getBody(),
                 );
             }

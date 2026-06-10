@@ -20,6 +20,8 @@ interface RequestInterface
 {
     public const ENDPOINT = '';
 
+    public const IS_JSON_REQUEST = false;
+
     public function isValidRequest(): bool;
 
     /**

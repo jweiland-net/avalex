@@ -31,7 +31,7 @@ final readonly class WiderrufRequest implements RequestInterface, DomainRequestI
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    public const ENDPOINT = AvalexEndpointEnum::CANCELLATION_NOTICE;
+    public const ENDPOINT = AvalexEndpointEnum::CANCELLATION_NOTICE->value;
 
     public const IS_JSON_REQUEST = false;
 

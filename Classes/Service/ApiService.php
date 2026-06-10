@@ -26,13 +26,13 @@ readonly class ApiService
 {
     use SiteTrait;
 
-    public const CACHE_IDENTIFIER_FORMAT = 'avalex_%s_%d_%d_%s';
+    protected const CACHE_IDENTIFIER_FORMAT = 'avalex_%s_%d_%d_%s';
 
     public function __construct(
-        private AvalexClient $avalexClient,
-        private LanguageService $languageService,
-        private FrontendInterface $cache,
-        private EventDispatcherInterface $eventDispatcher,
+        protected AvalexClient $avalexClient,
+        protected LanguageService $languageService,
+        protected FrontendInterface $cache,
+        protected EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function getHtmlContentFromEndpoint(
@@ -70,7 +70,7 @@ readonly class ApiService
     {
         return sprintf(
             self::CACHE_IDENTIFIER_FORMAT,
-            $endpointRequest->getEndpoint(),
+            $endpointRequest::ENDPOINT->value,
             $this->detectCurrentPageUid($request),
             $this->detectRootPageUid($request),
             $this->languageService->getFrontendLocale($request),

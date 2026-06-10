@@ -31,7 +31,7 @@ final readonly class BedingungenRequest implements RequestInterface, DomainReque
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    public const ENDPOINT = AvalexEndpointEnum::TERMS_AND_CONDITIONS;
+    public const ENDPOINT = AvalexEndpointEnum::TERMS_AND_CONDITIONS->value;
 
     public const IS_JSON_REQUEST = false;
 

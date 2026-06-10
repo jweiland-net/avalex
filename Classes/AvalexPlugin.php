@@ -42,7 +42,7 @@ readonly class AvalexPlugin
     {
         try {
             $endpointRequest = $this->requestFactory->create(
-                AvalexEndpointEnum::from($conf['endpoint']),
+                AvalexEndpointEnum::from($conf['endpoint'])->value,
                 $request,
             );
         } catch (NoAvalexConfigurationException) {

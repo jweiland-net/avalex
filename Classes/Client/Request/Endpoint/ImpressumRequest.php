@@ -31,7 +31,7 @@ final readonly class ImpressumRequest implements RequestInterface, DomainRequest
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    public const ENDPOINT = AvalexEndpointEnum::IMPRINT;
+    public const ENDPOINT = AvalexEndpointEnum::IMPRINT->value;
 
     public const IS_JSON_REQUEST = false;
 
