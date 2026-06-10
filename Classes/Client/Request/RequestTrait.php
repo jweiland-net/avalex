@@ -26,7 +26,7 @@ trait RequestTrait
     public const API_VERSION = '3.0.1';
 
     /**
-     * Is this is set, the required parameter API KEY will be overridden by this value.
+     * Is this is set, this value will override the required parameter API KEY.
      * Please use that only within API tests like IsApiKeyConfiguredRequest
      */
     protected string $overrideApiKey = '';

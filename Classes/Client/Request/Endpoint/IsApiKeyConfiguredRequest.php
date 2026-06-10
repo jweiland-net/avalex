@@ -19,7 +19,7 @@ use JWeiland\Avalex\Client\Request\RequestTrait;
  *
  * @link no API doc found
  */
-class IsApiKeyConfiguredRequest implements RequestInterface
+final readonly class IsApiKeyConfiguredRequest implements RequestInterface
 {
     use RequestTrait;
 
@@ -28,11 +28,11 @@ class IsApiKeyConfiguredRequest implements RequestInterface
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    protected const ENDPOINT = 'api_keys/is_configured.json';
+    private const ENDPOINT = 'api_keys/is_configured.json';
 
-    protected const IS_JSON_REQUEST = true;
+    private const IS_JSON_REQUEST = true;
 
-    protected const ALLOWED_PARAMETERS = [
+    private const ALLOWED_PARAMETERS = [
         'apikey' => 1,
     ];
 

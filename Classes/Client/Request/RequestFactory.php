@@ -23,15 +23,15 @@ use TYPO3\CMS\Core\Site\Entity\Site;
 /**
  * Factory to create a new request object based on a given endpoint configuration
  */
-class RequestFactory
+readonly class RequestFactory
 {
     public function __construct(
-        private readonly AvalexConfigurationRepository $avalexConfigurationRepository,
-        private readonly LanguageService $languageService,
+        private AvalexConfigurationRepository $avalexConfigurationRepository,
+        private LanguageService $languageService,
         /**
          * @var RequestInterface[]
          */
-        private readonly iterable $registeredAvalexRequests,
+        private iterable $registeredAvalexRequests,
     ) {}
 
     /**

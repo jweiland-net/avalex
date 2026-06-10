@@ -57,7 +57,7 @@ class RequestFactoryTest extends FunctionalTestCase
         $this->request = (new ServerRequest())
             ->withAttribute('site', $site)
             ->withAttribute('routing', $routing)
-            ->withAttribute('currentContentObject', new ContentObjectRenderer());
+            ->withAttribute('currentContentObject', $this->get(ContentObjectRenderer::class));
 
         $this->avalexConfigurationRepositoryMock = $this->createMock(AvalexConfigurationRepository::class);
 

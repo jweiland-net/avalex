@@ -20,7 +20,7 @@ use JWeiland\Avalex\Client\Request\RequestTrait;
  *
  * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk#0964aca9-4e31-4a5d-a52b-d2281bbec28c
  */
-class GetDomainLanguagesRequest implements RequestInterface, DomainRequestInterface
+final readonly class GetDomainLanguagesRequest implements RequestInterface, DomainRequestInterface
 {
     use RequestTrait;
 
@@ -29,11 +29,11 @@ class GetDomainLanguagesRequest implements RequestInterface, DomainRequestInterf
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    protected const ENDPOINT = 'avx-get-domain-langs';
+    private const ENDPOINT = 'avx-get-domain-langs';
 
-    protected const IS_JSON_REQUEST = true;
+    private const IS_JSON_REQUEST = true;
 
-    protected const ALLOWED_PARAMETERS = [
+    private const ALLOWED_PARAMETERS = [
         'apikey' => 1,
         'domain' => 1,
         'version' => 1,

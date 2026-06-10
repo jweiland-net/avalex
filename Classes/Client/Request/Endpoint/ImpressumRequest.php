@@ -21,7 +21,7 @@ use JWeiland\Avalex\Client\Request\RequestTrait;
  *
  * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk#0964aca9-4e31-4a5d-a52b-d2281bbec28c
  */
-class ImpressumRequest implements RequestInterface, DomainRequestInterface, LocalizeableRequestInterface
+final readonly class ImpressumRequest implements RequestInterface, DomainRequestInterface, LocalizeableRequestInterface
 {
     use RequestTrait;
 
@@ -30,11 +30,11 @@ class ImpressumRequest implements RequestInterface, DomainRequestInterface, Loca
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    protected const ENDPOINT = 'avx-impressum';
+    private const ENDPOINT = 'avx-impressum';
 
-    protected const IS_JSON_REQUEST = false;
+    private const IS_JSON_REQUEST = false;
 
-    protected const ALLOWED_PARAMETERS = [
+    private const ALLOWED_PARAMETERS = [
         'apikey' => 1,
         'domain' => 1,
         'lang' => 1,

@@ -64,12 +64,12 @@ $contentElementDefinitions = [
 $typo3Version = GeneralUtility::makeInstance(Typo3Version::class);
 if (version_compare($typo3Version->getVersion(), '14.0.0', '<')) {
     foreach ($contentElementDefinitions as &$contentElementDefinition) {
-        $contentElementDefinition[] = 'CType';
+        $contentElementDefinition[] = ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT;
         $contentElementDefinition[] = 'avalex';
     }
 }
 
 foreach ($contentElementDefinitions as $contentElementType => $contentElementDefinition) {
-    ExtensionManagementUtility::addPlugin(...$contentElementDefinition, ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT);
+    ExtensionManagementUtility::addPlugin(...$contentElementDefinition);
     $GLOBALS['TCA']['tt_content']['types'][$contentElementType]['previewRenderer'] = ContentPreviewRenderer::class;
 }
