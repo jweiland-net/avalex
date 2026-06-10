@@ -25,18 +25,14 @@ use TYPO3\CMS\Core\Site\Entity\Site;
  */
 class RequestFactory
 {
-    /**
-     * @var RequestInterface[]
-     */
-    private iterable $registeredAvalexRequests;
-
     public function __construct(
         private readonly AvalexConfigurationRepository $avalexConfigurationRepository,
-        private LanguageService $languageService,
-        iterable $registeredAvalexRequests,
-    ) {
-        $this->registeredAvalexRequests = $registeredAvalexRequests;
-    }
+        private readonly LanguageService $languageService,
+        /**
+         * @var RequestInterface[]
+         */
+        private readonly iterable $registeredAvalexRequests,
+    ) {}
 
     /**
      * @throws NoAvalexConfigurationException
@@ -90,6 +86,7 @@ class RequestFactory
 
         throw new InvalidAvalexEndpointException(
             'There is no registered avalex request with specified endpoint: ' . $endpoint,
+            6684879585,
         );
     }
 }

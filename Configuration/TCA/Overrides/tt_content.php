@@ -6,13 +6,13 @@
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
-
 use JWeiland\Avalex\Backend\Preview\ContentPreviewRenderer;
 use JWeiland\Avalex\LegalTextContentTypeEnum;
 use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Schema\Struct\SelectItem;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 if (!defined('TYPO3')) {
     die('Access denied.');
@@ -70,6 +70,6 @@ if (version_compare($typo3Version->getVersion(), '14.0.0', '<')) {
 }
 
 foreach ($contentElementDefinitions as $contentElementType => $contentElementDefinition) {
-    ExtensionManagementUtility::addPlugin(...$contentElementDefinition);
+    ExtensionManagementUtility::addPlugin(...$contentElementDefinition, ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT);
     $GLOBALS['TCA']['tt_content']['types'][$contentElementType]['previewRenderer'] = ContentPreviewRenderer::class;
 }

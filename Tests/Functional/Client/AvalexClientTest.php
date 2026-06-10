@@ -84,26 +84,26 @@ class AvalexClientTest extends FunctionalTestCase
 
         $streamMock = $this->createMock(StreamInterface::class);
         $streamMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('__toString')
             ->willReturn('');
 
         $responseMock = $this->createMock(ResponseInterface::class);
         $responseMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getBody')
             ->willReturn($streamMock);
         $responseMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getHeaders')
             ->willReturn([]);
         $responseMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getStatusCode')
             ->willReturn(200);
 
         $this->requestFactoryMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('request')
             ->with('https://avalex.de/avx-impressum?apikey=demo-key-with-online-shop&domain=https%3A%2F%2Fexample.com')
             ->willReturn($responseMock);
@@ -127,26 +127,26 @@ class AvalexClientTest extends FunctionalTestCase
 
         $streamMock = $this->createMock(StreamInterface::class);
         $streamMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('__toString')
             ->willReturn('Error somewhere at avalex servers');
 
         $responseMock = $this->createMock(ResponseInterface::class);
         $responseMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getBody')
             ->willReturn($streamMock);
         $responseMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getHeaders')
             ->willReturn([]);
         $responseMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getStatusCode')
             ->willReturn(503);
 
         $this->requestFactoryMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('request')
             ->with('https://avalex.de/avx-impressum?apikey=demo-key-with-online-shop&domain=https%3A%2F%2Fexample.com')
             ->willReturn($responseMock);
@@ -170,26 +170,26 @@ class AvalexClientTest extends FunctionalTestCase
 
         $streamMock = $this->createMock(StreamInterface::class);
         $streamMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('__toString')
             ->willReturn('Hello World!');
 
         $responseMock = $this->createMock(ResponseInterface::class);
         $responseMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getBody')
             ->willReturn($streamMock);
         $responseMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getHeaders')
             ->willReturn([]);
         $responseMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getStatusCode')
             ->willReturn(200);
 
         $this->requestFactoryMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('request')
             ->with('https://avalex.de/avx-impressum?apikey=demo-key-with-online-shop&domain=https%3A%2F%2Fexample.com')
             ->willReturn($responseMock);

@@ -79,17 +79,17 @@ class ApiServiceTest extends FunctionalTestCase
     public function getHtmlContentFromEndpointWillReturnContentFromCache(): void
     {
         $this->avalexClientMock
-            ->expects(self::never())
+            ->expects($this->never())
             ->method('processRequest');
 
         $this->cacheMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('has')
             ->with(self::stringStartsWith('avalex_'))
             ->willReturn(true);
 
         $this->cacheMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('get')
             ->with(self::stringStartsWith('avalex_'))
             ->willReturn('Hello World!');
@@ -104,19 +104,19 @@ class ApiServiceTest extends FunctionalTestCase
     public function getHtmlContentFromEndpointWithEmptyContentWillNotCacheContent(): void
     {
         $this->avalexClientMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('processRequest')
             ->with(self::isInstanceOf(ImpressumRequest::class))
             ->willReturn(new AvalexResponse('', [], 200, false, ''));
 
         $this->cacheMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('has')
             ->with(self::stringStartsWith('avalex_'))
             ->willReturn(false);
 
         $this->cacheMock
-            ->expects(self::never())
+            ->expects($this->never())
             ->method('set');
 
         self::assertSame(
@@ -129,19 +129,19 @@ class ApiServiceTest extends FunctionalTestCase
     public function getHtmlContentFromEndpointWillCacheAndReturnContent(): void
     {
         $this->avalexClientMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('processRequest')
             ->with(self::isInstanceOf(ImpressumRequest::class))
             ->willReturn(new AvalexResponse('Hello World!', [], 200, false, ''));
 
         $this->cacheMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('has')
             ->with(self::stringStartsWith('avalex_'))
             ->willReturn(false);
 
         $this->cacheMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('set')
             ->with(
                 self::stringStartsWith('avalex_'),

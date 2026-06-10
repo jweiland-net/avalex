@@ -81,6 +81,7 @@ class AvalexConfigurationRepository
             if ($configurationRecord === false) {
                 throw new NoAvalexConfigurationException(
                     'No Avalex configuration could be found in database for page UID: ' . $websiteRoot,
+                    6417673362,
                 );
             }
 
@@ -91,9 +92,7 @@ class AvalexConfigurationRepository
                 $configurationRecord['description'],
             );
         } catch (Exception $exception) {
-            throw new DatabaseQueryException(
-                'Error in query of AvalexConfigurationRepository::findByRootPageUid: ' . $exception->getMessage(),
-            );
+            throw new DatabaseQueryException('Error in query of AvalexConfigurationRepository::findByRootPageUid: ' . $exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 

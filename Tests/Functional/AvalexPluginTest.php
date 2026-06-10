@@ -81,7 +81,7 @@ class AvalexPluginTest extends FunctionalTestCase
     public function renderWithEmptyEndpointWillThrowException(): void
     {
         $this->requestFactoryMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('create')
             ->with(self::equalTo('foo'))
             ->willThrowException(
@@ -106,13 +106,13 @@ class AvalexPluginTest extends FunctionalTestCase
     public function renderWillReturnContent(): void
     {
         $this->requestFactoryMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('create')
             ->with(self::equalTo('avx-impressum'))
             ->willReturn(new ImpressumRequest());
 
         $this->apiServiceMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getHtmlContentFromEndpoint')
             ->with(
                 self::isInstanceOf(ImpressumRequest::class),

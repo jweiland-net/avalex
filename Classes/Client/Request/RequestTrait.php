@@ -120,7 +120,7 @@ trait RequestTrait
         }
 
         if (!filter_var($uri, FILTER_VALIDATE_URL)) {
-            $isValid = false;
+            return false;
         }
 
         return $isValid;
@@ -144,7 +144,7 @@ trait RequestTrait
             if ($this->hasParameter('domain')) {
                 // Override value of TYPO3_REQUEST_HOST. Useful for own request objects or test cases
                 $domain = $this->getParameter('domain');
-            } elseif ($this->avalexConfiguration->getDomain()) {
+            } elseif ($this->avalexConfiguration->getDomain() !== '' && $this->avalexConfiguration->getDomain() !== '0') {
                 // Maybe this parameter will be removed in the future. Working with TYPO3_REQUEST_HOST
                 // is the way to go.
                 $domain = $this->avalexConfiguration->getDomain();

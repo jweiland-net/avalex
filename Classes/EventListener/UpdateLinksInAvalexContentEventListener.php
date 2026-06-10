@@ -35,7 +35,7 @@ readonly class UpdateLinksInAvalexContentEventListener
 
         $content = preg_replace_callback(
             '@<a href="(?P<href>(?P<type>mailto:|#)[^"\']+)">(?P<text>[^<]+)</a>@',
-            static function ($match) use ($requestUrl, $contentObjectRenderer) {
+            static function (array $match) use ($requestUrl, $contentObjectRenderer) {
                 if ($match['type'] === 'mailto:') {
                     return $contentObjectRenderer->typoLink($match['text'], [
                         'parameter' => $match['href'],

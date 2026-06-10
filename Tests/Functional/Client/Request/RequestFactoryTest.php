@@ -88,7 +88,7 @@ class RequestFactoryTest extends FunctionalTestCase
         $this->expectException(NoAvalexConfigurationException::class);
 
         $this->avalexConfigurationRepositoryMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('findByRootPageUid')
             ->with(self::identicalTo(1))
             ->willThrowException(
@@ -106,7 +106,7 @@ class RequestFactoryTest extends FunctionalTestCase
         $this->expectException(InvalidAvalexEndpointException::class);
 
         $this->avalexConfigurationRepositoryMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('findByRootPageUid')
             ->with(self::equalTo(1))
             ->willReturn(new AvalexConfiguration(
@@ -134,7 +134,7 @@ class RequestFactoryTest extends FunctionalTestCase
     public function createWillReturnEndpointRequests(string $endpoint, string $expectedClass): void
     {
         $this->avalexConfigurationRepositoryMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('findByRootPageUid')
             ->with(self::equalTo(1))
             ->willReturn(new AvalexConfiguration(

@@ -84,11 +84,7 @@ class DataHandlerHook
             && $result['message'] === 'OK'
         ) {
             // API key valid
-            if (array_key_exists('domain', $result)) {
-                $domain = (string)$result['domain'];
-            } else {
-                $domain = '-';
-            }
+            $domain = array_key_exists('domain', $result) ? (string)$result['domain'] : '-';
 
             $this->flashMessageQueue->enqueue(GeneralUtility::makeInstance(
                 FlashMessage::class,

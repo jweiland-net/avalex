@@ -69,7 +69,7 @@ readonly class LanguageService
         $cacheIdentifier = $this->getCacheIdentifier($avalexConfiguration);
 
         if ($this->cache->has($cacheIdentifier)) {
-            $language = (array)$this->cache->get($cacheIdentifier);
+            return (array)$this->cache->get($cacheIdentifier);
         }
 
         return $language;
