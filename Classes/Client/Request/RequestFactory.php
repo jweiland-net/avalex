@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace JWeiland\Avalex\Client\Request;
 
+use JWeiland\Avalex\Client\AvalexEndpointEnum;
 use JWeiland\Avalex\Client\Request\Exception\InvalidAvalexEndpointException;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
@@ -39,7 +40,7 @@ readonly class RequestFactory
      * @throws DatabaseQueryException
      * @throws InvalidAvalexEndpointException
      */
-    public function create(string $endpoint, ServerRequestInterface $request): RequestInterface
+    public function create(AvalexEndpointEnum $endpoint, ServerRequestInterface $request): RequestInterface
     {
         $avalexConfiguration = $this->getAvalexConfiguration($request);
 
@@ -74,19 +75,19 @@ readonly class RequestFactory
      * @throws InvalidAvalexEndpointException
      */
     private function getRequestForEndpoint(
-        string $endpoint,
+        AvalexEndpointEnum $endpoint,
         AvalexConfiguration $avalexConfiguration,
     ): RequestInterface {
         foreach ($this->registeredAvalexRequests as $avalexRequest) {
-            if ($avalexRequest->getEndpoint() === $endpoint) {
+            if ($avalexRequest::ENDPOINT === $endpoint) {
                 $avalexRequest->setAvalexConfiguration($avalexConfiguration);
                 return $avalexRequest;
             }
         }
 
         throw new InvalidAvalexEndpointException(
-            'There is no registered avalex request with specified endpoint: ' . $endpoint,
-            6684879585,
+            'There is no registered avalex request with specified endpoint: ' . $endpoint->value,
+            1781095989,
         );
     }
 }

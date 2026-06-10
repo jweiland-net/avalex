@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace JWeiland\Avalex\Client\Request\Endpoint;
 
+use JWeiland\Avalex\Client\AvalexEndpointEnum;
 use JWeiland\Avalex\Client\Request\DomainRequestInterface;
 use JWeiland\Avalex\Client\Request\LocalizeableRequestInterface;
 use JWeiland\Avalex\Client\Request\RequestInterface;
@@ -30,11 +31,11 @@ final readonly class ImpressumRequest implements RequestInterface, DomainRequest
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    private const ENDPOINT = 'avx-impressum';
+    public const ENDPOINT = AvalexEndpointEnum::IMPRINT;
 
-    private const IS_JSON_REQUEST = false;
+    public const IS_JSON_REQUEST = false;
 
-    private const ALLOWED_PARAMETERS = [
+    public const ALLOWED_PARAMETERS = [
         'apikey' => 1,
         'domain' => 1,
         'lang' => 1,

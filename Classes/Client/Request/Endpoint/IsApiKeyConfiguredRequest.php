@@ -28,11 +28,11 @@ final readonly class IsApiKeyConfiguredRequest implements RequestInterface
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    private const ENDPOINT = 'api_keys/is_configured.json';
+    public const ENDPOINT = 'api_keys/is_configured.json';
 
-    private const IS_JSON_REQUEST = true;
+    public const IS_JSON_REQUEST = true;
 
-    private const ALLOWED_PARAMETERS = [
+    public const ALLOWED_PARAMETERS = [
         'apikey' => 1,
     ];
 

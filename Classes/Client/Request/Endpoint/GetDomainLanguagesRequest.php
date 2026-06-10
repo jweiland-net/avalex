@@ -29,11 +29,11 @@ final readonly class GetDomainLanguagesRequest implements RequestInterface, Doma
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    private const ENDPOINT = 'avx-get-domain-langs';
+    public const ENDPOINT = 'avx-get-domain-langs';
 
-    private const IS_JSON_REQUEST = true;
+    public const IS_JSON_REQUEST = true;
 
-    private const ALLOWED_PARAMETERS = [
+    public const ALLOWED_PARAMETERS = [
         'apikey' => 1,
         'domain' => 1,
         'version' => 1,

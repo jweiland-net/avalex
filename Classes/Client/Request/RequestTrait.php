@@ -35,22 +35,12 @@ trait RequestTrait
 
     private AvalexConfiguration $avalexConfiguration;
 
-    public function getEndpoint(): string
-    {
-        return self::ENDPOINT;
-    }
-
     /**
      * Endpoint 'avx-datenschutzerklaerung' - 'datenschutzerklaerung'
      */
     public function getEndpointWithoutPrefix(): string
     {
         return substr(self::ENDPOINT, 4);
-    }
-
-    public function isJsonRequest(): bool
-    {
-        return self::IS_JSON_REQUEST;
     }
 
     public function getParameters(): array

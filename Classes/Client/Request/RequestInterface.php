@@ -18,11 +18,9 @@ use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
  */
 interface RequestInterface
 {
+    public const ENDPOINT = '';
+
     public function isValidRequest(): bool;
-
-    public function isJsonRequest(): bool;
-
-    public function getEndpoint(): string;
 
     /**
      * Endpoint 'avx-datenschutzerklaerung' will be shorten to 'datenschutzerklaerung'
