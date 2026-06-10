@@ -2,23 +2,13 @@
 
 declare(strict_types=1);
 
-/*
- * This file is part of the package jweiland/avalex.
- *
- * For the full copyright and license information, please read the
- * LICENSE file that was distributed with this source code.
- */
-
-namespace JWeiland\Avalex\Upgrade;
+namespace JWeiland\Avalex\Update;
 
 use TYPO3\CMS\Core\Attribute\UpgradeWizard;
 use TYPO3\CMS\Core\Upgrades\AbstractListTypeToCTypeUpdate;
 
-/**
- * With TYPO3 13 all plugins have to be declared as content elements (CType) insteadof "list_type"
- */
-#[UpgradeWizard('avalex_migratePluginsToContentElementsUpdate')]
-class MigratePluginToContentElementUpgrade extends AbstractListTypeToCTypeUpdate
+#[UpgradeWizard('jweilandAvalexCTypeMigration')]
+final class JWeilandAvalexCTypeMigration extends AbstractListTypeToCTypeUpdate
 {
     protected function getListTypeToCTypeMapping(): array
     {
