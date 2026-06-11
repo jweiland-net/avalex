@@ -12,6 +12,9 @@ namespace JWeiland\Avalex\Tests\Functional\Client\Request\Endpoint;
 use JWeiland\Avalex\Client\Request\Endpoint\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use PHPUnit\Framework\Attributes\Test;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
+use TYPO3\CMS\Core\Http\NormalizedParams;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -70,13 +73,17 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
     #[Test]
     public function getParametersReturnsRequiredParameters(): void
     {
+        $request = (new ServerRequest('https://example.com/', 'GET'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $normalizedParams = NormalizedParams::createFromServerParams($request->getServerParams());
+
         self::assertSame(
             [
                 'apikey' => 'demo-key-with-online-shop',
                 'domain' => 'https://example.com',
                 'version' => '3.0.1',
             ],
-            $this->subject->getParameters(),
+            $this->subject->getParameters($normalizedParams),
         );
     }
 
@@ -84,13 +91,18 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
     public function getParametersWithDomainReturnsParametersWithDomain(): void
     {
         $this->subject->setDomain('https://www.jweiland.net');
+
+        $request = (new ServerRequest('https://example.com/', 'GET'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $normalizedParams = NormalizedParams::createFromServerParams($request->getServerParams());
+
         self::assertSame(
             [
                 'domain' => 'https://www.jweiland.net',
                 'apikey' => 'demo-key-with-online-shop',
                 'version' => '3.0.1',
             ],
-            $this->subject->getParameters(),
+            $this->subject->getParameters($normalizedParams),
         );
     }
 
@@ -98,13 +110,18 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
     public function getParametersWithInvalidParametersReturnsRequiredParameters(): void
     {
         $this->subject->addParameter('foo', 'bar');
+
+        $request = (new ServerRequest('https://example.com/', 'GET'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $normalizedParams = NormalizedParams::createFromServerParams($request->getServerParams());
+
         self::assertSame(
             [
                 'apikey' => 'demo-key-with-online-shop',
                 'domain' => 'https://example.com',
                 'version' => '3.0.1',
             ],
-            $this->subject->getParameters(),
+            $this->subject->getParameters($normalizedParams),
         );
     }
 
@@ -116,13 +133,18 @@ class GetDomainLanguagesRequestTest extends FunctionalTestCase
             'lang' => 'en',
             'domain' => 'https://www.jweiland.net',
         ]);
+
+        $request = (new ServerRequest('https://example.com/', 'GET'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $normalizedParams = NormalizedParams::createFromServerParams($request->getServerParams());
+
         self::assertSame(
             [
                 'domain' => 'https://www.jweiland.net',
                 'apikey' => 'demo-key-with-online-shop',
                 'version' => '3.0.1',
             ],
-            $this->subject->getParameters(),
+            $this->subject->getParameters($normalizedParams),
         );
     }
 }

@@ -14,6 +14,9 @@ use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Event\PostProcessApiResponseContentEvent;
 use PHPUnit\Framework\Attributes\Test;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
+use TYPO3\CMS\Core\Http\NormalizedParams;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
@@ -43,10 +46,15 @@ class PostProcessApiResponseContentEventTest extends FunctionalTestCase
             '',
         ));
 
+        $request = (new ServerRequest('https://example.com/', 'GET'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $request = $request->withAttribute('normalizedParams', NormalizedParams::createFromServerParams($request->getServerParams()));
+
         $this->subject = new PostProcessApiResponseContentEvent(
             'Hello World!',
             $endpointRequest,
-            new ContentObjectRenderer(),
+            $this->get(ContentObjectRenderer::class),
+            $request,
         );
     }
 

@@ -12,6 +12,6 @@ declare(strict_types=1);
 namespace JWeiland\Avalex\Client\Request\Exception;
 
 /**
- * This exception will be thrown, if no avalex endpoint object could be built for a specific request type
+ * This exception will be thrown if no avalex endpoint object could be built for a specific request type
  */
 class InvalidAvalexEndpointException extends \InvalidArgumentException {}

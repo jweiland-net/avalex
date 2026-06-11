@@ -80,7 +80,7 @@ class LanguageServiceTest extends FunctionalTestCase
         return (new ServerRequest(new Uri('/'), 'GET'))
             ->withAttribute('site', $site)
             ->withAttribute('routing', $routing)
-            ->withAttribute('currentContentObject', new ContentObjectRenderer())
+            ->withAttribute('currentContentObject', $this->get(ContentObjectRenderer::class))
             ->withAttribute(
                 'language',
                 new SiteLanguage(

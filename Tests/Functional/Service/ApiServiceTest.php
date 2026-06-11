@@ -19,6 +19,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Site\Entity\Site;
@@ -55,7 +56,8 @@ class ApiServiceTest extends FunctionalTestCase
         $this->request = (new ServerRequest())
             ->withAttribute('site', $site)
             ->withAttribute('routing', $routing)
-            ->withAttribute('currentContentObject', new ContentObjectRenderer());
+            ->withAttribute('currentContentObject', $this->get(ContentObjectRenderer::class));
+        $this->request = $this->request->withAttribute('normalizedParams', NormalizedParams::createFromServerParams($this->request->getServerParams()));
 
         $this->avalexClientMock = $this->createMock(AvalexClient::class);
         $this->cacheMock = $this->createMock(FrontendInterface::class);

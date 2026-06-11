@@ -60,6 +60,7 @@ readonly class RequestFactory
     {
         return $this->avalexConfigurationRepository->findByRootPageUid(
             $this->detectRootPageUid($request),
+            $request,
         );
     }
 

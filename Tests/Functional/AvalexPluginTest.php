@@ -56,7 +56,7 @@ class AvalexPluginTest extends FunctionalTestCase
         $this->request = (new ServerRequest())
             ->withAttribute('site', $site)
             ->withAttribute('routing', $routing)
-            ->withAttribute('currentContentObject', new ContentObjectRenderer());
+            ->withAttribute('currentContentObject', $this->get(ContentObjectRenderer::class));
 
         $this->apiServiceMock = $this->createMock(ApiService::class);
         $this->requestFactoryMock = $this->createMock(RequestFactory::class);

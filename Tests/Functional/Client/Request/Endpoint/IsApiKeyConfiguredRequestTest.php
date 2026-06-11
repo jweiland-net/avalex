@@ -12,6 +12,9 @@ namespace JWeiland\Avalex\Tests\Functional\Client\Request\Endpoint;
 use JWeiland\Avalex\Client\Request\Endpoint\IsApiKeyConfiguredRequest;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use PHPUnit\Framework\Attributes\Test;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
+use TYPO3\CMS\Core\Http\NormalizedParams;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -70,11 +73,15 @@ class IsApiKeyConfiguredRequestTest extends FunctionalTestCase
     #[Test]
     public function getParametersReturnsRequiredParameters(): void
     {
+        $request = (new ServerRequest('https://example.com/', 'GET'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $normalizedParams = NormalizedParams::createFromServerParams($request->getServerParams());
+
         self::assertSame(
             [
                 'apikey' => 'demo-key-with-online-shop',
             ],
-            $this->subject->getParameters(),
+            $this->subject->getParameters($normalizedParams),
         );
     }
 
@@ -82,11 +89,16 @@ class IsApiKeyConfiguredRequestTest extends FunctionalTestCase
     public function getParametersWithApiKeyReturnsParametersWithApiKey(): void
     {
         $this->subject->setApiKey('API_KEY');
+
+        $request = (new ServerRequest('https://example.com/', 'GET'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $normalizedParams = NormalizedParams::createFromServerParams($request->getServerParams());
+
         self::assertSame(
             [
                 'apikey' => 'API_KEY',
             ],
-            $this->subject->getParameters(),
+            $this->subject->getParameters($normalizedParams),
         );
     }
 
@@ -94,11 +106,16 @@ class IsApiKeyConfiguredRequestTest extends FunctionalTestCase
     public function getParametersWithInvalidParametersReturnsRequiredParameters(): void
     {
         $this->subject->addParameter('foo', 'bar');
+
+        $request = (new ServerRequest('https://example.com/', 'GET'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $normalizedParams = NormalizedParams::createFromServerParams($request->getServerParams());
+
         self::assertSame(
             [
                 'apikey' => 'demo-key-with-online-shop',
             ],
-            $this->subject->getParameters(),
+            $this->subject->getParameters($normalizedParams),
         );
     }
 
@@ -111,12 +128,16 @@ class IsApiKeyConfiguredRequestTest extends FunctionalTestCase
             'apikey' => 'API_KEY',
         ]);
 
+        $request = (new ServerRequest('https://example.com/', 'GET'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $normalizedParams = NormalizedParams::createFromServerParams($request->getServerParams());
+
         // API KEY will only be set through setApiKey(). setParameters has no effect
         self::assertSame(
             [
                 'apikey' => 'demo-key-with-online-shop',
             ],
-            $this->subject->getParameters(),
+            $this->subject->getParameters($normalizedParams),
         );
     }
 }
