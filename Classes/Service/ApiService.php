@@ -36,15 +36,15 @@ readonly class ApiService
     ) {}
 
     public function getHtmlContentFromEndpoint(
-        RequestInterface $endpointRequest,
+        RequestInterface $avalexRequest,
         ServerRequestInterface $request,
     ): string {
-        $cacheIdentifier = $this->getCacheIdentifier($endpointRequest, $request);
+        $cacheIdentifier = $this->getCacheIdentifier($avalexRequest, $request);
         if ($this->cache->has($cacheIdentifier)) {
             return (string)$this->cache->get($cacheIdentifier);
         }
 
-        $avalexResponse = $this->avalexClient->processRequest($endpointRequest);
+        $avalexResponse = $this->avalexClient->processRequest($avalexRequest, $request);
         if ($avalexResponse->hasError()) {
             return $avalexResponse->getErrorMessage();
         }
@@ -53,8 +53,9 @@ readonly class ApiService
         $postProcessApiResponseContentEvent = $this->eventDispatcher->dispatch(
             new PostProcessApiResponseContentEvent(
                 (string)$avalexResponse->getBody(),
-                $endpointRequest,
+                $avalexRequest,
                 $this->getContentObjectRendererFromRequest($request),
+                $request,
             ),
         );
 
@@ -70,7 +71,7 @@ readonly class ApiService
     {
         return sprintf(
             self::CACHE_IDENTIFIER_FORMAT,
-            $endpointRequest::ENDPOINT->value,
+            $endpointRequest->getEndpoint(),
             $this->detectCurrentPageUid($request),
             $this->detectRootPageUid($request),
             $this->languageService->getFrontendLocale($request),

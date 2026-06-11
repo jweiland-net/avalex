@@ -12,6 +12,6 @@ declare(strict_types=1);
 namespace JWeiland\Avalex\Domain\Repository\Exception;
 
 /**
- * This exception will be thrown, if there is a hard error while query the avalex configuration record
+ * This exception will be thrown if there is a hard error while query the avalex configuration record
  */
 class DatabaseQueryException extends \RuntimeException {}

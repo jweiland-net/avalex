@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace JWeiland\Avalex\Client\Request\Endpoint;
 
-use JWeiland\Avalex\Client\AvalexEndpointEnum;
 use JWeiland\Avalex\Client\Request\DomainRequestInterface;
 use JWeiland\Avalex\Client\Request\LocalizeableRequestInterface;
 use JWeiland\Avalex\Client\Request\RequestInterface;
@@ -22,7 +21,7 @@ use JWeiland\Avalex\Client\Request\RequestTrait;
  *
  * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk#0964aca9-4e31-4a5d-a52b-d2281bbec28c
  */
-final readonly class DatenschutzerklaerungRequest implements RequestInterface, DomainRequestInterface, LocalizeableRequestInterface
+class DatenschutzerklaerungRequest implements RequestInterface, DomainRequestInterface, LocalizeableRequestInterface
 {
     use RequestTrait;
 
@@ -31,11 +30,11 @@ final readonly class DatenschutzerklaerungRequest implements RequestInterface, D
      *
      * @link https://documenter.getpostman.com/view/5293147/SWLYDCAk
      */
-    public const ENDPOINT = AvalexEndpointEnum::PRIVACY_POLICY->value;
+    protected const ENDPOINT = 'avx-datenschutzerklaerung';
 
-    public const IS_JSON_REQUEST = false;
+    protected const IS_JSON_REQUEST = false;
 
-    public const ALLOWED_PARAMETERS = [
+    protected const ALLOWED_PARAMETERS = [
         'apikey' => 1,
         'domain' => 1,
         'lang' => 1,

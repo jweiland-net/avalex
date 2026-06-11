@@ -12,24 +12,25 @@ declare(strict_types=1);
 namespace JWeiland\Avalex\Client\Request;
 
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 
 /**
  * Interface for avalex requests
  */
 interface RequestInterface
 {
-    public const ENDPOINT = '';
+    public function isValidRequest(NormalizedParams $normalizedParams): bool;
 
-    public const IS_JSON_REQUEST = false;
+    public function isJsonRequest(): bool;
 
-    public function isValidRequest(): bool;
+    public function getEndpoint(): string;
 
     /**
      * Endpoint 'avx-datenschutzerklaerung' will be shorten to 'datenschutzerklaerung'
      */
     public function getEndpointWithoutPrefix(): string;
 
-    public function getParameters(): array;
+    public function getParameters(NormalizedParams $normalizedParams): array;
 
     public function setParameters(array $parameters): void;
 
@@ -44,5 +45,5 @@ interface RequestInterface
     /**
      * Merge all parameters to build a URI
      */
-    public function buildUri(): string;
+    public function buildUri(NormalizedParams $normalizedParams): string;
 }

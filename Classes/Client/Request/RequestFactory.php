@@ -78,15 +78,14 @@ readonly class RequestFactory
         AvalexConfiguration $avalexConfiguration,
     ): RequestInterface {
         foreach ($this->registeredAvalexRequests as $avalexRequest) {
-            if ($avalexRequest::ENDPOINT === $endpoint) {
+            if ($avalexRequest->getEndpoint() === $endpoint) {
                 $avalexRequest->setAvalexConfiguration($avalexConfiguration);
                 return $avalexRequest;
             }
         }
 
         throw new InvalidAvalexEndpointException(
-            'There is no registered avalex request with specified endpoint: ' . $endpoint,
-            1781095989,
+            'There is no registered avalex request with specified endpoint: ' . $endpoint, 9337260386,
         );
     }
 }

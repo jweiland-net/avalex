@@ -12,22 +12,27 @@ declare(strict_types=1);
 namespace JWeiland\Avalex\EventListener;
 
 use JWeiland\Avalex\Event\PostProcessApiResponseContentEvent;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Attribute\AsEventListener;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 
 /**
  * The retrieved HTML content from avalex API endpoint may contain visible email addresses in <a>-tags.
- * This listener will search for these tags and encrypts the contained email addresses like configured in TYPO3
+ * This listener will search for these tags and encrypt the contained email addresses like configured in TYPO3
  * @see config.spamProtectEmailAddresses
  */
-#[AsEventListener('avalexUpdateLinksInAvalexContent')]
+#[AsEventListener(
+    identifier: 'avalexUpdateLinksInAvalexContent',
+)]
 readonly class UpdateLinksInAvalexContentEventListener
 {
-    public function __invoke(PostProcessApiResponseContentEvent $postProcessApiResponseContentEvent): void
+    public function __invoke(PostProcessApiResponseContentEvent $event): void
     {
-        $requestUrl = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
-        $content = $postProcessApiResponseContentEvent->getContent();
-        $contentObjectRenderer = $postProcessApiResponseContentEvent->getContentObjectRenderer();
+        $normalizedParams = $this->getNormalizedParams($event->getServerRequest());
+
+        $requestUrl = $normalizedParams->getRequestUrl();
+        $content = $event->getContent();
+        $contentObjectRenderer = $event->getContentObjectRenderer();
 
         if ($content === '') {
             return;
@@ -42,11 +47,16 @@ readonly class UpdateLinksInAvalexContentEventListener
                     ]);
                 }
 
-                return (string)str_replace($match['href'], $requestUrl . $match['href'], $match[0]);
+                return str_replace($match['href'], $requestUrl . $match['href'], $match[0]);
             },
             $content,
         );
 
-        $postProcessApiResponseContentEvent->setContent($content);
+        $event->setContent($content);
+    }
+
+    private function getNormalizedParams(ServerRequestInterface $request): NormalizedParams
+    {
+        return $request->getAttribute('normalizedParams');
     }
 }

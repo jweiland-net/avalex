@@ -47,7 +47,7 @@ readonly class LanguageService
         $frontendLanguage = $this->getFrontendLocale($request);
 
         if (($avalexLanguageResponse = $this->getLanguageResponseFromCache($avalexConfiguration)) === null) {
-            $avalexLanguageResponse = $this->fetchLanguageResponse($avalexConfiguration);
+            $avalexLanguageResponse = $this->fetchLanguageResponse($avalexConfiguration, $request);
         }
 
         if (
@@ -74,13 +74,15 @@ readonly class LanguageService
         return null;
     }
 
-    protected function fetchLanguageResponse(AvalexConfiguration $avalexConfiguration): array
-    {
+    protected function fetchLanguageResponse(
+        AvalexConfiguration $avalexConfiguration,
+        ServerRequestInterface $request,
+    ): array {
         $getDomainLanguagesRequest = new GetDomainLanguagesRequest();
         $getDomainLanguagesRequest->setAvalexConfiguration($avalexConfiguration);
         $getDomainLanguagesRequest->setDomain($avalexConfiguration->getDomain());
 
-        $avalexResponse = $this->avalexClient->processRequest($getDomainLanguagesRequest);
+        $avalexResponse = $this->avalexClient->processRequest($getDomainLanguagesRequest, $request);
         if ($avalexResponse->hasError()) {
             return [
                 'error' => $avalexResponse->getErrorMessage(),

@@ -12,17 +12,20 @@ declare(strict_types=1);
 namespace JWeiland\Avalex\Event;
 
 use JWeiland\Avalex\Client\Request\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
- * With this event you have access to the HTML content of the avalex endpoint response. Modify it to your needs.
+ * With this event you have access to the HTML content of the avalex response.
+ * Modify it to your needs.
  */
-class PostProcessApiResponseContentEvent
+final class PostProcessApiResponseContentEvent
 {
     public function __construct(
         private string $content,
-        private readonly RequestInterface $endpointRequest,
+        private readonly RequestInterface $avalexRequest,
         private readonly ContentObjectRenderer $contentObjectRenderer,
+        private readonly ServerRequestInterface $serverRequest,
     ) {}
 
     public function getContent(): string
@@ -35,13 +38,18 @@ class PostProcessApiResponseContentEvent
         $this->content = $content;
     }
 
-    public function getEndpointRequest(): RequestInterface
+    public function getAvalexRequest(): RequestInterface
     {
-        return $this->endpointRequest;
+        return $this->avalexRequest;
     }
 
     public function getContentObjectRenderer(): ContentObjectRenderer
     {
         return $this->contentObjectRenderer;
+    }
+
+    public function getServerRequest(): ServerRequestInterface
+    {
+        return $this->serverRequest;
     }
 }

@@ -15,6 +15,8 @@ use GuzzleHttp\Exception\RequestException;
 use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Client\Response\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\RequestFactory;
 
 /**
@@ -26,20 +28,24 @@ readonly class AvalexClient
         private RequestFactory $requestFactory,
     ) {}
 
-    public function processRequest(RequestInterface $request): ResponseInterface
-    {
-        if (!$request->isValidRequest()) {
+    public function processRequest(
+        RequestInterface $avalexRequest,
+        ServerRequestInterface $request,
+    ): ResponseInterface {
+        $normalizedParams = $this->getNormalizedParams($request);
+
+        if (!$avalexRequest->isValidRequest($normalizedParams)) {
             return new AvalexResponse(
                 '',
                 [],
                 500,
                 false,
-                'URI is empty or contains invalid chars. URI: ' . $request->buildUri(),
+                'URI is empty or contains invalid chars. URI: ' . $avalexRequest->buildUri($normalizedParams),
             );
         }
 
         try {
-            $avalexResponse = $this->request($request);
+            $avalexResponse = $this->request($avalexRequest, $normalizedParams);
         } catch (RequestException $e) {
             return new AvalexResponse(
                 '',
@@ -53,14 +59,14 @@ readonly class AvalexClient
         return $avalexResponse;
     }
 
-    private function request(RequestInterface $request): AvalexResponse
+    private function request(RequestInterface $request, NormalizedParams $normalizedParams): AvalexResponse
     {
-        $response = $this->requestFactory->request($request->buildUri());
+        $response = $this->requestFactory->request($request->buildUri($normalizedParams));
         $body = (string)$response->getBody();
         $headers = $response->getHeaders();
         $status = $response->getStatusCode();
 
-        $avalexResponse = new AvalexResponse($body, $headers, $status, $request::IS_JSON_REQUEST, '');
+        $avalexResponse = new AvalexResponse($body, $headers, $status, $request->isJsonRequest(), '');
 
         // Check for errors
         if ($avalexResponse->isJsonResponse()) {
@@ -69,7 +75,7 @@ readonly class AvalexClient
                     '',
                     $headers,
                     $status,
-                    $request::IS_JSON_REQUEST,
+                    $request->isJsonRequest(),
                     'The response of Avalex could not be converted to array.',
                 );
             }
@@ -79,7 +85,7 @@ readonly class AvalexClient
                     '',
                     $headers,
                     $status,
-                    $request::IS_JSON_REQUEST,
+                    $request->isJsonRequest(),
                     'The JSON response of Avalex is empty.',
                 );
             }
@@ -89,7 +95,7 @@ readonly class AvalexClient
                     '',
                     $headers,
                     $status,
-                    $request::IS_JSON_REQUEST,
+                    $request->isJsonRequest(),
                     'The response of Avalex was empty.',
                 );
             }
@@ -99,12 +105,17 @@ readonly class AvalexClient
                     '',
                     $headers,
                     $status,
-                    $request::IS_JSON_REQUEST,
+                    $request->isJsonRequest(),
                     'Avalex Response Error' . $avalexResponse->getBody(),
                 );
             }
         }
 
         return $avalexResponse;
+    }
+
+    protected function getNormalizedParams(ServerRequestInterface $request): NormalizedParams
+    {
+        return $request->getAttribute('normalizedParams');
     }
 }

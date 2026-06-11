@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace JWeiland\Avalex;
 
-use JWeiland\Avalex\Client\AvalexEndpointEnum;
 use JWeiland\Avalex\Client\Request\Exception\InvalidAvalexEndpointException;
 use JWeiland\Avalex\Client\Request\RequestFactory;
 use JWeiland\Avalex\Domain\Repository\Exception\DatabaseQueryException;
@@ -41,10 +40,7 @@ readonly class AvalexPlugin
     public function render(string $content, array $conf, ServerRequestInterface $request): string
     {
         try {
-            $endpointRequest = $this->requestFactory->create(
-                AvalexEndpointEnum::from($conf['endpoint'])->value,
-                $request,
-            );
+            $endpointRequest = $this->requestFactory->create($conf['endpoint'], $request);
         } catch (NoAvalexConfigurationException) {
             return LocalizationUtility::translate('error.noAvalexConfiguration', 'avalex');
         } catch (DatabaseQueryException $databaseQueryException) {

@@ -82,7 +82,7 @@ class PostProcessApiResponseContentEventTest extends FunctionalTestCase
     {
         self::assertInstanceOf(
             RequestInterface::class,
-            $this->subject->getEndpointRequest(),
+            $this->subject->getAvalexRequest(),
         );
     }
 

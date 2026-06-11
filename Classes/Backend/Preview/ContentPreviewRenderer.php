@@ -46,7 +46,7 @@ final class ContentPreviewRenderer extends StandardContentPreviewRenderer
         );
 
         try {
-            $avalexConfiguration = $this->avalexConfigurationRepository->findByRootPageUid($rootPage);
+            $avalexConfiguration = $this->avalexConfigurationRepository->findByRootPageUid($rootPage, $request);
 
             $itemContent .= sprintf(
                 '<p>%s</p>',

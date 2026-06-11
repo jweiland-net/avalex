@@ -13,6 +13,7 @@ namespace JWeiland\Avalex\Hook;
 
 use JWeiland\Avalex\Client\AvalexClient;
 use JWeiland\Avalex\Client\Request\Endpoint\IsApiKeyConfiguredRequest;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
@@ -21,13 +22,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
- * Hook into DataHandler to check, if given avalex API key is valid
+ * Hook into DataHandler to check if a given avalex API key is valid
  */
-class DataHandlerHook
+readonly class DataHandlerHook
 {
     public function __construct(
-        private readonly AvalexClient $avalexClient,
-        private readonly FlashMessageQueue $flashMessageQueue,
+        private AvalexClient $avalexClient,
+        private FlashMessageQueue $flashMessageQueue,
     ) {}
 
     /**
@@ -64,7 +65,18 @@ class DataHandlerHook
     {
         $isValid = true;
 
-        $avalexResponse = $this->avalexClient->processRequest(new IsApiKeyConfiguredRequest($apiKey));
+        // This class is called from DataHandler where no Server Request object exists
+        $request = $GLOBALS['TYPO3_REQUEST'];
+
+        if ($request instanceof ServerRequestInterface) {
+            return false;
+        }
+
+        $avalexResponse = $this->avalexClient->processRequest(
+            new IsApiKeyConfiguredRequest($apiKey),
+            $request,
+        );
+
         if ($avalexResponse->hasError()) {
             $this->flashMessageQueue->enqueue(GeneralUtility::makeInstance(
                 FlashMessage::class,

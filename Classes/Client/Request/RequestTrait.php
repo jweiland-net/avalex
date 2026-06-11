@@ -14,7 +14,7 @@ namespace JWeiland\Avalex\Client\Request;
 use JWeiland\Avalex\Client\Request\Endpoint\GetDomainLanguagesRequest;
 use JWeiland\Avalex\Client\Request\Endpoint\IsApiKeyConfiguredRequest;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 
 /**
  * An abstract request with useful methods for extending request objects
@@ -26,7 +26,7 @@ trait RequestTrait
     public const API_VERSION = '3.0.1';
 
     /**
-     * Is this is set, this value will override the required parameter API KEY.
+     * Is this is set, the required parameter API KEY will be overridden by this value.
      * Please use that only within API tests like IsApiKeyConfiguredRequest
      */
     protected string $overrideApiKey = '';
@@ -34,6 +34,11 @@ trait RequestTrait
     protected array $parameters = [];
 
     private AvalexConfiguration $avalexConfiguration;
+
+    public function getEndpoint(): string
+    {
+        return self::ENDPOINT;
+    }
 
     /**
      * Endpoint 'avx-datenschutzerklaerung' - 'datenschutzerklaerung'
@@ -43,9 +48,14 @@ trait RequestTrait
         return substr(self::ENDPOINT, 4);
     }
 
-    public function getParameters(): array
+    public function isJsonRequest(): bool
     {
-        $this->setRequiredParameters();
+        return self::IS_JSON_REQUEST;
+    }
+
+    public function getParameters(NormalizedParams $normalizedParams): array
+    {
+        $this->setRequiredParameters($normalizedParams);
 
         return $this->parameters;
     }
@@ -83,24 +93,24 @@ trait RequestTrait
     /**
      * Merge all parameters to build a URI
      */
-    public function buildUri(): string
+    public function buildUri(NormalizedParams $normalizedParams): string
     {
         return sprintf(
             'https://%s/%s?%s',
             self::API_DOMAIN,
             self::ENDPOINT,
-            http_build_query($this->getParameters()),
+            http_build_query($this->getParameters($normalizedParams)),
         );
     }
 
-    public function isValidRequest(): bool
+    public function isValidRequest(NormalizedParams $normalizedParams): bool
     {
         $isValid = true;
-        $uri = $this->buildUri();
+        $uri = $this->buildUri($normalizedParams);
 
         if (
-            !array_key_exists('apikey', $this->getParameters())
-            || empty($this->getParameters()['apikey'])
+            !array_key_exists('apikey', $this->getParameters($normalizedParams))
+            || empty($this->getParameters($normalizedParams)['apikey'])
         ) {
             $isValid = false;
         }
@@ -116,7 +126,7 @@ trait RequestTrait
         return $isValid;
     }
 
-    protected function setRequiredParameters(): void
+    protected function setRequiredParameters(NormalizedParams $normalizedParams): void
     {
         if ($this instanceof IsApiKeyConfiguredRequest && $this->overrideApiKey !== '') {
             $this->addParameter('apikey', $this->overrideApiKey);
@@ -130,12 +140,12 @@ trait RequestTrait
 
         // Add domain parameter
         if ($this instanceof DomainRequestInterface) {
-            $domain = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
+            $domain = $normalizedParams->getRequestHost();
             if ($this->hasParameter('domain')) {
-                // Override value of TYPO3_REQUEST_HOST. Useful for own request objects or test cases
+                // Override the request host. Useful for own request objects or test cases
                 $domain = $this->getParameter('domain');
             } elseif ($this->avalexConfiguration->getDomain() !== '' && $this->avalexConfiguration->getDomain() !== '0') {
-                // Maybe this parameter will be removed in the future. Working with TYPO3_REQUEST_HOST
+                // Maybe this parameter will be removed in the future. Working with request host
                 // is the way to go.
                 $domain = $this->avalexConfiguration->getDomain();
             }
