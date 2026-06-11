@@ -86,7 +86,8 @@ readonly class RequestFactory
         }
 
         throw new InvalidAvalexEndpointException(
-            'There is no registered avalex request with specified endpoint: ' . $endpoint, 9337260386,
+            'There is no registered avalex request with specified endpoint: ' . $endpoint,
+            9337260386,
         );
     }
 }
