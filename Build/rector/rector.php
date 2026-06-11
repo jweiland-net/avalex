@@ -19,6 +19,7 @@ use Ssch\TYPO3Rector\CodeQuality\General\ExtEmConfRector;
 use Ssch\TYPO3Rector\Configuration\Typo3Option;
 use Ssch\TYPO3Rector\Set\Typo3LevelSetList;
 use Ssch\TYPO3Rector\Set\Typo3SetList;
+use Ssch\TYPO3Rector\TYPO313\v4\MigratePluginContentElementAndPluginSubtypesRector;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -53,6 +54,10 @@ return RectorConfig::configure()
     ->withImportNames(importShortClasses: false, removeUnusedImports: true)
     ->withSkip([
         NullToStrictStringFuncCallArgRector::class,
+        // Excluded because this project intentionally keeps upgrade wizards in Classes/Upgrade/.
+        // The rector also appends the content element plugin type to addPlugin(), although the
+        // arguments are already prepared version-dependently in the affected TCA registration.
+        MigratePluginContentElementAndPluginSubtypesRector::class,
         SafeDeclareStrictTypesRector::class => [
             '*ext_emconf.php',
         ],
