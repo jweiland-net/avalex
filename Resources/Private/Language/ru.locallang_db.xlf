@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<xliff version="1.0">
-  <file source-language="en" datatype="plaintext" original="messages" date="2018-03-18T17:38:20Z" product-name="avalex" target-language="ru">
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" datatype="plaintext" original="messages" date="2026-06-12T00:00:00Z" product-name="avalex" target-language="ru">
     <header/>
     <body>
       <trans-unit id="tx_avalex_avalex.name">
-        <source>Privacy statement</source>
-        <target state="needs-translation">Privacy statement</target>
+        <source>Privacy policy</source>
+        <target state="needs-translation">Privacy policy</target>
       </trans-unit>
       <trans-unit id="tx_avalex_avalex.description">
-        <source>This plugin displays a privacy statement for your website using the avalex.de API</source>
-        <target state="needs-translation">This plugin displays a privacy statement for your website using the avalex.de API</target>
+        <source>This plugin displays the privacy policy for your website using the avalex.de API</source>
+        <target state="needs-translation">This plugin displays the privacy policy for your website using the avalex.de API</target>
       </trans-unit>
       <trans-unit id="tx_avalex_imprint.name">
         <source>Imprint</source>
@@ -28,12 +28,20 @@
         <target state="needs-translation">This plugin displays terms and conditions for your website using the avalex.de API</target>
       </trans-unit>
       <trans-unit id="tx_avalex_widerruf.name">
-        <source>Cancellation policy</source>
-        <target state="needs-translation">Cancellation policy</target>
+        <source>Cancellation notice</source>
+        <target state="needs-translation">Cancellation notice</target>
       </trans-unit>
       <trans-unit id="tx_avalex_widerruf.description">
-        <source>This plugin displays a cancellation policy for your website using the avalex.de API</source>
-        <target state="needs-translation">This plugin displays a cancellation policy for your website using the avalex.de API</target>
+        <source>This plugin displays the cancellation notice for your website using the avalex.de API</source>
+        <target state="needs-translation">This plugin displays the cancellation notice for your website using the avalex.de API</target>
+      </trans-unit>
+      <trans-unit id="scheduler-importer.title">
+        <source>avalex content import</source>
+        <target state="needs-translation">avalex content import</target>
+      </trans-unit>
+      <trans-unit id="scheduler-importer.description">
+        <source>This importer fetches the current privacy policy for your website(s) from avalex.de.</source>
+        <target state="needs-translation">This importer fetches the current privacy policy for your website(s) from avalex.de.</target>
       </trans-unit>
       <trans-unit id="tx_avalex_configuration">
         <source>Avalex configuration</source>
