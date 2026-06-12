@@ -18,9 +18,12 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Preview\StandardContentPreviewRenderer;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
+use TYPO3\CMS\Core\Domain\Record;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\NormalizedParams;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 final class ContentPreviewRenderer extends StandardContentPreviewRenderer
 {
@@ -29,20 +32,26 @@ final class ContentPreviewRenderer extends StandardContentPreviewRenderer
         private readonly UriBuilder $uriBuilder,
         private readonly SiteFinder $siteFinder,
     ) {
-        parent::__construct();
+        $typo3Version = GeneralUtility::makeInstance(Typo3Version::class);
+        if (version_compare($typo3Version->getVersion(), '14.0.0', '>=')) {
+            parent::__construct();
+        }
     }
 
     public function renderPageModulePreviewContent(GridColumnItem $item): string
     {
+        $record = $item->getRecord();
+        $pid = $record instanceof Record ? $record->getPid() : (int)$record['pid'] ?? 0;
+        $cType = $record instanceof Record ? $record->getRecordType() : $record['CType'] ?? '';
+
         $itemContent = parent::renderPageModulePreviewContent($item);
-        $row = $item->getRecord();
-        $rootPage = $this->detectRootPageUid($row->getPid());
+        $rootPage = $this->detectRootPageUid($pid);
         $request = $item->getContext()->getCurrentRequest();
         $normalizedParams = $this->getNormalizedParams($request);
 
         $itemContent .= sprintf(
             '<p><b>Avalex: %s</b></p>',
-            $this->getTranslation(sprintf('tx_%s.name', $row->getRecordType())),
+            $this->getTranslation(sprintf('tx_%s.name', $cType)),
         );
 
         try {

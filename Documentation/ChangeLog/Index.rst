@@ -7,6 +7,16 @@
 ChangeLog
 =========
 
+Version 10.0.1
+==============
+
+*   [BUGFIX] Make CE preview TYPO3 13/14 compatible
+
+Version 10.0.0
+==============
+
+*   [TASK] Add TYPO3 14 compatibility
+
 Version 9.1.0
 =============
 
