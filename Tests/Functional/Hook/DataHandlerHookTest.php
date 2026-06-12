@@ -10,27 +10,17 @@
 namespace JWeiland\Avalex\Tests\Functional\Hook;
 
 use JWeiland\Avalex\Client\AvalexClient;
-use JWeiland\Avalex\Client\Request\Endpoint\ImpressumRequest;
 use JWeiland\Avalex\Client\Request\Endpoint\IsApiKeyConfiguredRequest;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Hook\DataHandlerHook;
-use JWeiland\Avalex\Service\ApiService;
-use JWeiland\Avalex\Service\LanguageService;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
-use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
-use TYPO3\CMS\Core\Routing\PageArguments;
-use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
-use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -96,9 +86,7 @@ class DataHandlerHookTest extends FunctionalTestCase
         $this->flashMessageQueueMock
             ->expects($this->atLeastOnce())
             ->method('enqueue')
-            ->with(self::callback(static function (FlashMessage $flashMessage): bool {
-                return $flashMessage->getSeverity() === ContextualFeedbackSeverity::ERROR;
-            }));
+            ->with(self::callback(static fn(FlashMessage $flashMessage): bool => $flashMessage->getSeverity() === ContextualFeedbackSeverity::ERROR));
 
         $this->avalexClientMock
             ->expects($this->atLeastOnce())
@@ -157,9 +145,7 @@ class DataHandlerHookTest extends FunctionalTestCase
         $this->flashMessageQueueMock
             ->expects($this->atLeastOnce())
             ->method('enqueue')
-            ->with(self::callback(static function (FlashMessage $flashMessage): bool {
-                return $flashMessage->getSeverity() === ContextualFeedbackSeverity::ERROR;
-            }));
+            ->with(self::callback(static fn(FlashMessage $flashMessage): bool => $flashMessage->getSeverity() === ContextualFeedbackSeverity::ERROR));
 
         $this->avalexClientMock
             ->expects($this->atLeastOnce())
@@ -198,9 +184,7 @@ class DataHandlerHookTest extends FunctionalTestCase
         $this->flashMessageQueueMock
             ->expects($this->atLeastOnce())
             ->method('enqueue')
-            ->with(self::callback(static function (FlashMessage $flashMessage): bool {
-                return $flashMessage->getSeverity() === ContextualFeedbackSeverity::OK;
-            }));
+            ->with(self::callback(static fn(FlashMessage $flashMessage): bool => $flashMessage->getSeverity() === ContextualFeedbackSeverity::OK));
 
         $this->avalexClientMock
             ->expects($this->atLeastOnce())
