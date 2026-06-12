@@ -24,7 +24,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 /**
  * Hook into DataHandler to check if a given avalex API key is valid
  */
-readonly class DataHandlerHook
+final readonly class DataHandlerHook
 {
     public function __construct(
         private AvalexClient $avalexClient,
@@ -61,7 +61,7 @@ readonly class DataHandlerHook
     /**
      * Check API key using Avalex API
      */
-    protected function checkApiKey(string $apiKey): bool
+    private function checkApiKey(string $apiKey): bool
     {
         $isValid = true;
 

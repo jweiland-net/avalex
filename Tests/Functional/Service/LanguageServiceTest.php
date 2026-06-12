@@ -25,7 +25,6 @@ use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
@@ -34,7 +33,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class LanguageServiceTest extends FunctionalTestCase
 {
-    protected AvalexClient|MockObject $avalexClientMock;
+    protected AvalexClient&MockObject $avalexClientMock;
 
     protected LanguageService $subject;
 
@@ -56,7 +55,6 @@ class LanguageServiceTest extends FunctionalTestCase
         $this->setUpFrontendRootPage(1);
 
         $this->avalexClientMock = $this->createMock(AvalexClient::class);
-        GeneralUtility::addInstance(AvalexClient::class, $this->avalexClientMock);
 
         $this->subject = new LanguageService(
             $this->avalexClientMock,
@@ -67,53 +65,29 @@ class LanguageServiceTest extends FunctionalTestCase
     protected function tearDown(): void
     {
         unset(
+            $this->avalexClientMock,
             $this->subject,
-            $GLOBALS['TSFE'],
         );
-    }
-
-    protected function getRequestWithLanguage(string $language): ServerRequestInterface
-    {
-        $site = new Site('main', 1, []);
-        $routing = new PageArguments(12, '', []);
-
-        return (new ServerRequest(new Uri('/'), 'GET'))
-            ->withAttribute('site', $site)
-            ->withAttribute('routing', $routing)
-            ->withAttribute('currentContentObject', $this->get(ContentObjectRenderer::class))
-            ->withAttribute(
-                'language',
-                new SiteLanguage(
-                    1,
-                    $language,
-                    new Uri('/'),
-                    [
-                        'enabled' => true,
-                        'iso-639-1' => $language,
-                    ],
-                ),
-            );
     }
 
     #[Test]
     public function addLanguageToEndpointWithoutResponseSetsDefaultLanguageToEndpoint(): void
     {
-        /** @var AvalexResponse|MockObject $avalexResponseMock */
-        $avalexResponseMock = $this->createMock(AvalexResponse::class);
-        $avalexResponseMock
-            ->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn([]);
-
         $this->avalexClientMock
             ->expects($this->atLeastOnce())
             ->method('processRequest')
             ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
-            ->willReturn($avalexResponseMock);
+            ->willReturn(new AvalexResponse(
+                '{}',
+                [],
+                200,
+                true,
+                '',
+            ));
 
         $avalexConfiguration = new AvalexConfiguration(
             1,
-            'demo-key-with-online-shop',
+            'avalex-api-key',
             'https://example.com',
             '',
         );
@@ -136,26 +110,27 @@ class LanguageServiceTest extends FunctionalTestCase
     #[Test]
     public function addLanguageToEndpointWithoutEndpointSetsDefaultLanguageToEndpoint(): void
     {
-        /** @var AvalexResponse|MockObject $avalexResponseMock */
-        $avalexResponseMock = $this->createMock(AvalexResponse::class);
-        $avalexResponseMock
-            ->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn([
-                'de' => [
-                    'invalid-endpoint' => 'foo->bar',
-                ],
-            ]);
+        $body = [
+            'de' => [
+                'invalid-endpoint' => 'foo->bar',
+            ],
+        ];
 
         $this->avalexClientMock
             ->expects($this->atLeastOnce())
             ->method('processRequest')
             ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
-            ->willReturn($avalexResponseMock);
+            ->willReturn(new AvalexResponse(
+                json_encode($body),
+                [],
+                200,
+                true,
+                '',
+            ));
 
         $avalexConfiguration = new AvalexConfiguration(
             1,
-            'demo-key-with-online-shop',
+            'avalex-api-key',
             'https://example.com',
             '',
         );
@@ -178,26 +153,27 @@ class LanguageServiceTest extends FunctionalTestCase
     #[Test]
     public function addLanguageToEndpointWithEndpointSetsLanguageToEndpoint(): void
     {
-        /** @var AvalexResponse|MockObject $avalexResponseMock */
-        $avalexResponseMock = $this->createMock(AvalexResponse::class);
-        $avalexResponseMock
-            ->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn([
-                'de' => [
-                    'impressum' => 'TYPO3 works',
-                ],
-            ]);
+        $body = [
+            'de' => [
+                'impressum' => 'TYPO3 works',
+            ],
+        ];
 
         $this->avalexClientMock
             ->expects($this->atLeastOnce())
             ->method('processRequest')
             ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
-            ->willReturn($avalexResponseMock);
+            ->willReturn(new AvalexResponse(
+                json_encode($body),
+                [],
+                200,
+                true,
+                '',
+            ));
 
         $avalexConfiguration = new AvalexConfiguration(
             1,
-            'demo-key-with-online-shop',
+            'avalex-api-key',
             'https://example.com',
             '',
         );
@@ -220,29 +196,30 @@ class LanguageServiceTest extends FunctionalTestCase
     #[Test]
     public function addLanguageToEndpointWithMultipleEndpointsSetsLanguageToEndpoint(): void
     {
-        /** @var AvalexResponse|MockObject $avalexResponseMock */
-        $avalexResponseMock = $this->createMock(AvalexResponse::class);
-        $avalexResponseMock
-            ->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn([
-                'de' => [
-                    'impressum' => 'TYPO3 klappt',
-                ],
-                'en' => [
-                    'impressum' => 'TYPO3 works',
-                ],
-            ]);
+        $body = [
+            'de' => [
+                'impressum' => 'TYPO3 klappt',
+            ],
+            'en' => [
+                'impressum' => 'TYPO3 works',
+            ],
+        ];
 
         $this->avalexClientMock
             ->expects($this->atLeastOnce())
             ->method('processRequest')
             ->with(self::isInstanceOf(GetDomainLanguagesRequest::class))
-            ->willReturn($avalexResponseMock);
+            ->willReturn(new AvalexResponse(
+                json_encode($body),
+                [],
+                200,
+                true,
+                '',
+            ));
 
         $avalexConfiguration = new AvalexConfiguration(
             1,
-            'demo-key-with-online-shop',
+            'avalex-api-key',
             'https://example.com',
             '',
         );
@@ -279,5 +256,28 @@ class LanguageServiceTest extends FunctionalTestCase
             $expected,
             $this->subject->getFrontendLocale($this->getRequestWithLanguage($language)),
         );
+    }
+
+    protected function getRequestWithLanguage(string $language): ServerRequestInterface
+    {
+        $site = new Site('main', 1, []);
+        $routing = new PageArguments(12, '', []);
+
+        return (new ServerRequest(new Uri('/'), 'GET'))
+            ->withAttribute('site', $site)
+            ->withAttribute('routing', $routing)
+            ->withAttribute('currentContentObject', $this->get(ContentObjectRenderer::class))
+            ->withAttribute(
+                'language',
+                new SiteLanguage(
+                    1,
+                    $language,
+                    new Uri('/'),
+                    [
+                        'enabled' => true,
+                        'iso-639-1' => $language,
+                    ],
+                ),
+            );
     }
 }

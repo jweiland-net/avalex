@@ -67,7 +67,7 @@ readonly class AvalexResponse implements ResponseInterface
     }
 
     /**
-     * Handles following header types
+     * Handles the following header types
      *
      * $header = 'Content-Length: 123'
      */

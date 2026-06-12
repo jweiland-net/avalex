@@ -89,7 +89,7 @@ readonly class LanguageService
             ];
         }
 
-        if (($result = $avalexResponse->getBody()) === '') {
+        if (($result = $avalexResponse->getBody()) === []) {
             return [
                 'error' => 'Empty response from avalex server.',
             ];

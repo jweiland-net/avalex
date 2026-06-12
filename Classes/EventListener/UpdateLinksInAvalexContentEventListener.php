@@ -24,7 +24,7 @@ use TYPO3\CMS\Core\Http\NormalizedParams;
 #[AsEventListener(
     identifier: 'avalexUpdateLinksInAvalexContent',
 )]
-readonly class UpdateLinksInAvalexContentEventListener
+final readonly class UpdateLinksInAvalexContentEventListener
 {
     public function __invoke(PostProcessApiResponseContentEvent $event): void
     {

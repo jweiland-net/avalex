@@ -28,6 +28,8 @@ readonly class ApiService
 
     protected const CACHE_IDENTIFIER_FORMAT = 'avalex_%s_%d_%d_%s';
 
+    protected const CACHE_LIFETIME = 21600;
+
     public function __construct(
         protected AvalexClient $avalexClient,
         protected LanguageService $languageService,
@@ -61,7 +63,7 @@ readonly class ApiService
 
         $content = $postProcessApiResponseContentEvent->getContent();
         if ($content !== '') {
-            $this->cache->set($cacheIdentifier, $content, [], 21600);
+            $this->cache->set($cacheIdentifier, $content, [], self::CACHE_LIFETIME);
         }
 
         return $content;
