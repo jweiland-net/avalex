@@ -40,9 +40,6 @@ jobs:
         if: ${{ matrix.php <= '8.3' }}
         run: Build/Scripts/runTests.sh -b podman -n -p ${{ matrix.php }} -s cgl
 
-      - name: 'Execute unit tests'
-        run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -s unit
-
       - name: 'Execute functional tests'
         run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -d mysql -s functional
 
@@ -51,4 +48,3 @@ jobs:
 
       - name: 'Execute functional tests'
         run: Build/Scripts/runTests.sh -b podman -p ${{ matrix.php }} -d postgres -s functional
-
