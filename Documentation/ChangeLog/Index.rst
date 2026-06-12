@@ -7,6 +7,12 @@
 ChangeLog
 =========
 
+Version 10.0.2
+==============
+
+*   [BUGFIX] Remove legacy imports from composer.json
+*   [BUGFIX] Streamline version also in composer.json
+
 Version 10.0.1
 ==============
 

@@ -37,8 +37,7 @@
 	"autoload-dev": {
 		"psr-4": {
 			"JWeiland\\Avalex\\Tests\\": "Tests"
-		},
-		"exclude-from-classmap": ["/Tests/Functional/LegacyImports"]
+		}
 	},
 	"config": {
 		"allow-plugins": {
@@ -55,7 +54,7 @@
 				"providesPackages": {}
 			},
 			"extension-key": "avalex",
-			"version": "10.0.0",
+			"version": "10.0.2",
 			"web-dir": ".Build/public"
 		}
 	}
