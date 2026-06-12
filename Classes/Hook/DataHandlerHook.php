@@ -68,7 +68,7 @@ readonly class DataHandlerHook
         // This class is called from DataHandler where no Server Request object exists
         $request = $GLOBALS['TYPO3_REQUEST'];
 
-        if ($request instanceof ServerRequestInterface) {
+        if (!$request instanceof ServerRequestInterface) {
             return false;
         }
 
