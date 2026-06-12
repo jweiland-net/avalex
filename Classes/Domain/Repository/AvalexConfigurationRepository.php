@@ -15,6 +15,7 @@ use Doctrine\DBAL\Exception;
 use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Domain\Repository\Exception\DatabaseQueryException;
 use JWeiland\Avalex\Domain\Repository\Exception\NoAvalexConfigurationException;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
@@ -35,17 +36,17 @@ class AvalexConfigurationRepository
     /**
      * Order by "global" to get the individual configuration record first.
      */
-    public function findByRootPageUid(int $websiteRoot): AvalexConfiguration
+    public function findByRootPageUid(int $websiteRoot, ServerRequestInterface $request): AvalexConfiguration
     {
-        $queryBuilder = $this->getPreConfiguredQueryBuilder();
+        $queryBuilder = $this->getPreConfiguredQueryBuilder($request);
 
         try {
             // define inSet filter for website_root to reuse as conditional AND sorting criteria.
             $websiteRootInSetFilter = $queryBuilder->expr()->inSet(
                 'website_root',
-                // PostgreSQL has issue using named parameters for inSet(), which may be either an issue how the
+                // PostgreSQL has an issue using named parameters for inSet(), which may be either an issue how the
                 // ExpressionBuilder compatibility is created by TYPO3 or PostgreSQL itself. Directly use value
-                // directly here which is considerable safe in this place.
+                // directly here, which is considerable safe in this place.
                 (string)$websiteRoot,
             );
             $queryBuilder
@@ -61,10 +62,10 @@ class AvalexConfigurationRepository
                     ),
                 );
 
-            // Define correct multi-level sorting to retrieve higher preceding configuration first.
+            // Define correct multi-level sorting to retrieve the higher preceding configuration first.
             // 1st level: $websiteRoot id found in record `website_root` set first, not matching last
             // 2nd level: for each 1st level sort by GLOBAL = 1 first and not global last.
-            // 3rd level: in case 1st and 2nd level is not unique enough which could happen, uid is added as
+            // 3rd level: in case the 1st and 2nd level are not unique enough, which could happen, uid is added as
             //            third sorting criteria to ensure a deterministic result set sorting and mitigates
             //            result randomization.
             $queryBuilder->getConcreteQueryBuilder()
@@ -72,7 +73,7 @@ class AvalexConfigurationRepository
                 ->addOrderBy('global', 'DESC')
                 ->addOrderBy('uid', 'ASC');
 
-            // Only first result record is required and result set is limited to one record to ensure correctly
+            // Only first result record is required, and result set is limited to one record to ensure correctly
             // closed result buffer when only retrieving one record even if result holds more records to avoid
             // issues with some database vendors and drivers.
             $queryBuilder->setMaxResults(1);
@@ -81,6 +82,7 @@ class AvalexConfigurationRepository
             if ($configurationRecord === false) {
                 throw new NoAvalexConfigurationException(
                     'No Avalex configuration could be found in database for page UID: ' . $websiteRoot,
+                    6417673362,
                 );
             }
 
@@ -93,6 +95,8 @@ class AvalexConfigurationRepository
         } catch (Exception $exception) {
             throw new DatabaseQueryException(
                 'Error in query of AvalexConfigurationRepository::findByRootPageUid: ' . $exception->getMessage(),
+                $exception->getCode(),
+                $exception,
             );
         }
     }
@@ -103,11 +107,11 @@ class AvalexConfigurationRepository
      * is not taken into account in the frontend context. For this reason, we also disable the display of
      * hidden avalex configuration records in the backend (keep DefaultRestriction).
      */
-    private function getPreConfiguredQueryBuilder(): QueryBuilder
+    private function getPreConfiguredQueryBuilder(ServerRequestInterface $request): QueryBuilder
     {
         $queryBuilder = $this->queryBuilder;
 
-        if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
+        if (ApplicationType::fromRequest($request)->isFrontend()) {
             $queryBuilder->setRestrictions(GeneralUtility::makeInstance(FrontendRestrictionContainer::class));
         }
 

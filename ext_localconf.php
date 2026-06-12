@@ -16,8 +16,8 @@ use JWeiland\Avalex\Hook\DataHandlerHook;
 use JWeiland\Avalex\Service\ApiService;
 
 // Use hook to check API key while saving the record
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['avalex'] =
-    DataHandlerHook::class;
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['avalex']
+    = DataHandlerHook::class;
 
 if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_languages'])) {
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['avalex_languages'] = [];

@@ -14,6 +14,8 @@ use JWeiland\Avalex\Domain\Model\AvalexConfiguration;
 use JWeiland\Avalex\Event\PostProcessApiResponseContentEvent;
 use JWeiland\Avalex\EventListener\UpdateLinksInAvalexContentEventListener;
 use PHPUnit\Framework\Attributes\Test;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Site\Entity\Site;
@@ -55,7 +57,7 @@ class UpdateLinksInAvalexContentEventListenerTest extends FunctionalTestCase
             ->withAttribute('routing', $routing)
             ->withAttribute('frontend.typoscript', $frontendTypoScript);
 
-        $this->contentObjectRenderer = new ContentObjectRenderer();
+        $this->contentObjectRenderer = $this->get(ContentObjectRenderer::class);
         $this->contentObjectRenderer->setRequest($request);
 
         $this->subject = new UpdateLinksInAvalexContentEventListener();
@@ -79,10 +81,15 @@ class UpdateLinksInAvalexContentEventListenerTest extends FunctionalTestCase
             '',
         ));
 
+        $request = (new ServerRequest('https://example.com/', 'GET'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $request = $request->withAttribute('normalizedParams', NormalizedParams::createFromServerParams($request->getServerParams()));
+
         $postProcessApiResponseContentEvent = new PostProcessApiResponseContentEvent(
             'Contact me here: <a href="mailto:foo@example.com">Max Mustermann</a>',
             $endpointRequest,
             $this->contentObjectRenderer,
+            $request,
         );
 
         $this->subject->__invoke($postProcessApiResponseContentEvent);

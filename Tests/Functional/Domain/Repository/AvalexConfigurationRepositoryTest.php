@@ -13,6 +13,7 @@ use JWeiland\Avalex\Domain\Repository\AvalexConfigurationRepository;
 use JWeiland\Avalex\Domain\Repository\Exception\NoAvalexConfigurationException;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Site\Entity\Site;
@@ -73,13 +74,21 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
             ],
         );
 
-        $this->subject->findByRootPageUid(12);
+        $request = (new ServerRequest('https://example.com/', 'GET'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $request = $request->withAttribute('normalizedParams', NormalizedParams::createFromServerParams($request->getServerParams()));
+
+        $this->subject->findByRootPageUid(12, $request);
     }
 
     #[Test]
     public function findByWebsiteRootWithConfigurationWillReturnConfiguration(): void
     {
-        $avalexConfiguration = $this->subject->findByRootPageUid(25);
+        $request = (new ServerRequest('https://example.com/', 'GET'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $request = $request->withAttribute('normalizedParams', NormalizedParams::createFromServerParams($request->getServerParams()));
+
+        $avalexConfiguration = $this->subject->findByRootPageUid(25, $request);
 
         self::assertSame(
             'invalid-key',
@@ -94,7 +103,11 @@ class AvalexConfigurationRepositoryTest extends FunctionalTestCase
     #[Test]
     public function findByWebsiteRootWithoutConfigurationWillReturnFallbackConfiguration(): void
     {
-        $avalexConfiguration = $this->subject->findByRootPageUid(414);
+        $request = (new ServerRequest('https://example.com/', 'GET'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $request = $request->withAttribute('normalizedParams', NormalizedParams::createFromServerParams($request->getServerParams()));
+
+        $avalexConfiguration = $this->subject->findByRootPageUid(414, $request);
 
         self::assertSame(
             'demo-key-with-online-shop',

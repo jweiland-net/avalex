@@ -37,10 +37,6 @@ class DomainEvaluation
      */
     public function evaluateFieldValue(string $value, string $isIn, bool &$set): string
     {
-        if (!str_starts_with($value, 'http')) {
-            $value = 'https://' . $value;
-        }
-
-        return $value;
+        return str_starts_with($value, 'http') ? $value : 'https://' . $value;
     }
 }

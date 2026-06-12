@@ -15,29 +15,37 @@ use GuzzleHttp\Exception\RequestException;
 use JWeiland\Avalex\Client\Request\RequestInterface;
 use JWeiland\Avalex\Client\Response\AvalexResponse;
 use JWeiland\Avalex\Client\Response\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\RequestFactory;
 
 /**
- * This is the avalex client which will send the request to the avalex server
+ * This is the avalex client that will send the request to the avalex server
  */
 readonly class AvalexClient
 {
-    public function __construct(private RequestFactory $requestFactory) {}
+    public function __construct(
+        private RequestFactory $requestFactory,
+    ) {}
 
-    public function processRequest(RequestInterface $request): ResponseInterface
-    {
-        if (!$request->isValidRequest()) {
+    public function processRequest(
+        RequestInterface $avalexRequest,
+        ServerRequestInterface $request,
+    ): ResponseInterface {
+        $normalizedParams = $this->getNormalizedParams($request);
+
+        if (!$avalexRequest->isValidRequest($normalizedParams)) {
             return new AvalexResponse(
                 '',
                 [],
                 500,
                 false,
-                'URI is empty or contains invalid chars. URI: ' . $request->buildUri(),
+                'URI is empty or contains invalid chars. URI: ' . $avalexRequest->buildUri($normalizedParams),
             );
         }
 
         try {
-            $avalexResponse = $this->request($request);
+            $avalexResponse = $this->request($avalexRequest, $normalizedParams);
         } catch (RequestException $e) {
             return new AvalexResponse(
                 '',
@@ -51,9 +59,9 @@ readonly class AvalexClient
         return $avalexResponse;
     }
 
-    private function request(RequestInterface $request): AvalexResponse
+    private function request(RequestInterface $request, NormalizedParams $normalizedParams): AvalexResponse
     {
-        $response = $this->requestFactory->request($request->buildUri());
+        $response = $this->requestFactory->request($request->buildUri($normalizedParams));
         $body = (string)$response->getBody();
         $headers = $response->getHeaders();
         $status = $response->getStatusCode();
@@ -104,5 +112,10 @@ readonly class AvalexClient
         }
 
         return $avalexResponse;
+    }
+
+    protected function getNormalizedParams(ServerRequestInterface $request): NormalizedParams
+    {
+        return $request->getAttribute('normalizedParams');
     }
 }

@@ -45,7 +45,7 @@ class DomainEvaluationTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function returnFieldJSWillReturnValidationJavaScript()
+    public function returnFieldJSWillReturnValidationJavaScript(): void
     {
         self::assertStringContainsString(
             'https://',
@@ -54,7 +54,7 @@ class DomainEvaluationTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function evaluateFieldValueWillNotAddScheme()
+    public function evaluateFieldValueWillNotAddScheme(): void
     {
         $set = false;
         self::assertSame(
@@ -68,7 +68,7 @@ class DomainEvaluationTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function evaluateFieldValueWillAddScheme()
+    public function evaluateFieldValueWillAddScheme(): void
     {
         $set = false;
         self::assertSame(

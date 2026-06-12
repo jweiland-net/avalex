@@ -23,20 +23,16 @@ use TYPO3\CMS\Core\Site\Entity\Site;
 /**
  * Factory to create a new request object based on a given endpoint configuration
  */
-class RequestFactory
+readonly class RequestFactory
 {
-    /**
-     * @var RequestInterface[]
-     */
-    private iterable $registeredAvalexRequests;
-
     public function __construct(
-        private readonly AvalexConfigurationRepository $avalexConfigurationRepository,
+        private AvalexConfigurationRepository $avalexConfigurationRepository,
         private LanguageService $languageService,
-        iterable $registeredAvalexRequests,
-    ) {
-        $this->registeredAvalexRequests = $registeredAvalexRequests;
-    }
+        /**
+         * @var RequestInterface[]
+         */
+        private iterable $registeredAvalexRequests,
+    ) {}
 
     /**
      * @throws NoAvalexConfigurationException
@@ -64,6 +60,7 @@ class RequestFactory
     {
         return $this->avalexConfigurationRepository->findByRootPageUid(
             $this->detectRootPageUid($request),
+            $request,
         );
     }
 
@@ -90,6 +87,7 @@ class RequestFactory
 
         throw new InvalidAvalexEndpointException(
             'There is no registered avalex request with specified endpoint: ' . $endpoint,
+            9337260386,
         );
     }
 }

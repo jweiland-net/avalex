@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -7,15 +9,13 @@
  * LICENSE file that was distributed with this source code.
  */
 
-if (!defined('TYPO3_MODE') && !defined('TYPO3')) {
+if (!defined('TYPO3')) {
     die('Access denied.');
 }
 
-$locallangTtc = 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:';
-$locallangGeneral = 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:';
-$iconFile = 'EXT:avalex/Resources/Public/Icons/Extension.png';
+use JWeiland\Avalex\Evaluation\DomainEvaluation;
 
-$tca = [
+return [
     'ctrl' => [
         'title' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration',
         'adminOnly' => 1,
@@ -24,63 +24,22 @@ $tca = [
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
         'dividers2tabs' => true,
+        'versioningWS' => true,
         'delete' => 'deleted',
         'enablecolumns' => [
             'disabled' => 'hidden',
             'starttime' => 'starttime',
             'endtime' => 'endtime',
         ],
-        'iconfile' => $iconFile,
+        'iconfile' => 'EXT:avalex/Resources/Public/Icons/Extension.png',
     ],
     'types' => [
         '1' => [
-            'showitem' => 'hidden, api_key, domain, website_root, global, description, --div--;' . $locallangTtc . 'tabs.access, starttime, endtime',
+            'showitem' => 'hidden, api_key, domain, website_root, global, description,
+            --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access, starttime, endtime',
         ],
     ],
     'columns' => [
-        't3ver_label' => [
-            'label' => $locallangGeneral . 'LGL.versionLabel',
-            'config' => [
-                'type' => 'input',
-                'size' => 30,
-                'max' => 255,
-            ],
-        ],
-        'hidden' => [
-            'exclude' => true,
-            'label' => $locallangGeneral . 'LGL.hidden',
-            'config' => [
-                'type' => 'check',
-            ],
-        ],
-        'starttime' => [
-            'exclude' => true,
-            'label' => $locallangGeneral . 'LGL.starttime',
-            'config' => [
-                'type' => 'datetime',
-                'format' => 'datetime',
-                'size' => 13,
-                'checkbox' => 0,
-                'default' => 0,
-                'range' => [
-                    'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y')),
-                ],
-            ],
-        ],
-        'endtime' => [
-            'exclude' => true,
-            'label' => $locallangGeneral . 'LGL.endtime',
-            'config' => [
-                'type' => 'datetime',
-                'format' => 'datetime',
-                'size' => 13,
-                'checkbox' => 0,
-                'default' => 0,
-                'range' => [
-                    'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y')),
-                ],
-            ],
-        ],
         'website_root' => [
             'exclude' => true,
             'label' => 'LLL:EXT:avalex/Resources/Private/Language/locallang_db.xlf:tx_avalex_configuration.website_root',
@@ -118,7 +77,7 @@ $tca = [
             'config' => [
                 'required' => true,
                 'type' => 'input',
-                'eval' => \JWeiland\Avalex\Evaluation\DomainEvaluation::class,
+                'eval' => DomainEvaluation::class,
             ],
         ],
         'description' => [
@@ -130,7 +89,3 @@ $tca = [
         ],
     ],
 ];
-
-$tca['ctrl']['versioningWS'] = true;
-
-return $tca;

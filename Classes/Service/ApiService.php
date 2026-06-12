@@ -26,25 +26,27 @@ readonly class ApiService
 {
     use SiteTrait;
 
-    public const CACHE_IDENTIFIER_FORMAT = 'avalex_%s_%d_%d_%s';
+    protected const CACHE_IDENTIFIER_FORMAT = 'avalex_%s_%d_%d_%s';
+
+    protected const CACHE_LIFETIME = 21600;
 
     public function __construct(
-        private AvalexClient $avalexClient,
-        private LanguageService $languageService,
-        private FrontendInterface $cache,
-        private EventDispatcherInterface $eventDispatcher,
+        protected AvalexClient $avalexClient,
+        protected LanguageService $languageService,
+        protected FrontendInterface $cache,
+        protected EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function getHtmlContentFromEndpoint(
-        RequestInterface $endpointRequest,
+        RequestInterface $avalexRequest,
         ServerRequestInterface $request,
     ): string {
-        $cacheIdentifier = $this->getCacheIdentifier($endpointRequest, $request);
+        $cacheIdentifier = $this->getCacheIdentifier($avalexRequest, $request);
         if ($this->cache->has($cacheIdentifier)) {
             return (string)$this->cache->get($cacheIdentifier);
         }
 
-        $avalexResponse = $this->avalexClient->processRequest($endpointRequest);
+        $avalexResponse = $this->avalexClient->processRequest($avalexRequest, $request);
         if ($avalexResponse->hasError()) {
             return $avalexResponse->getErrorMessage();
         }
@@ -53,14 +55,15 @@ readonly class ApiService
         $postProcessApiResponseContentEvent = $this->eventDispatcher->dispatch(
             new PostProcessApiResponseContentEvent(
                 (string)$avalexResponse->getBody(),
-                $endpointRequest,
+                $avalexRequest,
                 $this->getContentObjectRendererFromRequest($request),
+                $request,
             ),
         );
 
         $content = $postProcessApiResponseContentEvent->getContent();
         if ($content !== '') {
-            $this->cache->set($cacheIdentifier, $content, [], 21600);
+            $this->cache->set($cacheIdentifier, $content, [], self::CACHE_LIFETIME);
         }
 
         return $content;

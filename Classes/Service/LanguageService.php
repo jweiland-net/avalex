@@ -20,7 +20,7 @@ use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 
 /**
- * Service to get the frontend language for given endpoint.
+ * Service to get the frontend language for a given endpoint.
  */
 readonly class LanguageService
 {
@@ -47,7 +47,7 @@ readonly class LanguageService
         $frontendLanguage = $this->getFrontendLocale($request);
 
         if (($avalexLanguageResponse = $this->getLanguageResponseFromCache($avalexConfiguration)) === null) {
-            $avalexLanguageResponse = $this->fetchLanguageResponse($avalexConfiguration);
+            $avalexLanguageResponse = $this->fetchLanguageResponse($avalexConfiguration, $request);
         }
 
         if (
@@ -65,30 +65,31 @@ readonly class LanguageService
 
     protected function getLanguageResponseFromCache(AvalexConfiguration $avalexConfiguration): ?array
     {
-        $language = null;
         $cacheIdentifier = $this->getCacheIdentifier($avalexConfiguration);
 
         if ($this->cache->has($cacheIdentifier)) {
-            $language = (array)$this->cache->get($cacheIdentifier);
+            return (array)$this->cache->get($cacheIdentifier);
         }
 
-        return $language;
+        return null;
     }
 
-    protected function fetchLanguageResponse(AvalexConfiguration $avalexConfiguration): array
-    {
+    protected function fetchLanguageResponse(
+        AvalexConfiguration $avalexConfiguration,
+        ServerRequestInterface $request,
+    ): array {
         $getDomainLanguagesRequest = new GetDomainLanguagesRequest();
         $getDomainLanguagesRequest->setAvalexConfiguration($avalexConfiguration);
         $getDomainLanguagesRequest->setDomain($avalexConfiguration->getDomain());
 
-        $avalexResponse = $this->avalexClient->processRequest($getDomainLanguagesRequest);
+        $avalexResponse = $this->avalexClient->processRequest($getDomainLanguagesRequest, $request);
         if ($avalexResponse->hasError()) {
             return [
                 'error' => $avalexResponse->getErrorMessage(),
             ];
         }
 
-        if (($result = $avalexResponse->getBody()) === '') {
+        if (($result = $avalexResponse->getBody()) === []) {
             return [
                 'error' => 'Empty response from avalex server.',
             ];

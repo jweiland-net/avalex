@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the package jweiland/avalex.
+ * This file is part of the package jweiland/maps2.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
@@ -47,6 +47,7 @@ use TYPO3\TestingFramework\Core\Testbase;
     if (!getenv('TYPO3_PATH_ROOT')) {
         putenv('TYPO3_PATH_ROOT=' . rtrim($testbase->getWebRoot(), '/'));
     }
+
     if (!getenv('TYPO3_PATH_WEB')) {
         putenv('TYPO3_PATH_WEB=' . rtrim($testbase->getWebRoot(), '/'));
     }
@@ -56,8 +57,15 @@ use TYPO3\TestingFramework\Core\Testbase;
     // We can use the "typo3/cms-composer-installers" constant "TYPO3_COMPOSER_MODE" to determine composer mode.
     // This should be always true except for TYPO3 mono repository.
     $composerMode = defined('TYPO3_COMPOSER_MODE') && TYPO3_COMPOSER_MODE === true;
-    $requestType = \TYPO3\CMS\Core\Core\SystemEnvironmentBuilder::REQUESTTYPE_BE | \TYPO3\CMS\Core\Core\SystemEnvironmentBuilder::REQUESTTYPE_CLI;
-    SystemEnvironmentBuilder::run(0, $requestType, $composerMode);
+
+    // @todo: Remove else branch when dropping support for v12
+    $hasConsolidatedHttpEntryPoint = class_exists(CoreHttpApplication::class);
+    if ($hasConsolidatedHttpEntryPoint) {
+        SystemEnvironmentBuilder::run(0, \TYPO3\CMS\Core\Core\SystemEnvironmentBuilder::REQUESTTYPE_CLI, $composerMode);
+    } else {
+        $requestType = \TYPO3\CMS\Core\Core\SystemEnvironmentBuilder::REQUESTTYPE_BE | \TYPO3\CMS\Core\Core\SystemEnvironmentBuilder::REQUESTTYPE_CLI;
+        SystemEnvironmentBuilder::run(0, $requestType, $composerMode);
+    }
 
     $testbase->createDirectory(Environment::getPublicPath() . '/typo3conf/ext');
     $testbase->createDirectory(Environment::getPublicPath() . '/typo3temp/assets');
