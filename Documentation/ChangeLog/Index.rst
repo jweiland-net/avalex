@@ -7,6 +7,11 @@
 ChangeLog
 =========
 
+Version 10.0.3
+==============
+
+*   [BUGFIX] Remove strict type from ext_emconf as TER wont support
+
 Version 10.0.2
 ==============
 
