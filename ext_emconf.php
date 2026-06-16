@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * This file is part of the package jweiland/avalex.
  *
@@ -17,7 +15,7 @@ $EM_CONF[$_EXTKEY] = [
     'author_email' => 'support@jweiland.net',
     'author_company' => 'jweiland.net',
     'state' => 'stable',
-    'version' => '10.0.2',
+    'version' => '10.0.3',
     'constraints' => [
         'depends' => [
             'typo3' => '13.4.0-14.3.99',
