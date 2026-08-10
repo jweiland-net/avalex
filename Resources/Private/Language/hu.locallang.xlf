@@ -5,23 +5,23 @@
     <body>
       <trans-unit id="flash_message.configuration.response_ok">
         <source>The submitted API key is valid and can be used for the following domain(s): %s</source>
-        <target state="needs-translation">The submitted API key is valid and can be used for the following domain(s): %s</target>
+        <target state="translated">A megadott API-kulcs érvényes, és a következő domain(ek)hez használható: %s</target>
       </trans-unit>
       <trans-unit id="flash_message.configuration.key_invalid">
         <source>The submitted API key is invalid, please check your input!</source>
-        <target state="needs-translation">The submitted API key is invalid, please check your input!</target>
+        <target state="translated">A megadott API-kulcs érvénytelen, kérjük, ellenőrizze a bevitt adatokat!</target>
       </trans-unit>
       <trans-unit id="error.noAvalexConfiguration">
         <source>No avalex configuration could be determined. Please create a new configuration data record in the backend first.</source>
-        <target state="needs-translation">No avalex configuration could be determined. Please create a new configuration data record in the backend first.</target>
+        <target state="translated">Nem volt meghatározható avalex konfiguráció. Kérjük, először hozzon létre egy új konfigurációs adatrekordot a háttérrendszerben.</target>
       </trans-unit>
       <trans-unit id="error.dbError">
         <source>The determination of an avalex configuration led to a serious database error:</source>
-        <target state="needs-translation">The determination of an avalex configuration led to a serious database error:</target>
+        <target state="translated">Az avalex konfiguráció meghatározása súlyos adatbázis-hibát okozott:</target>
       </trans-unit>
       <trans-unit id="error.invalidAvalexRequest">
         <source>An invalid request to the avalex servers was detected.</source>
-        <target state="needs-translation">An invalid request to the avalex servers was detected.</target>
+        <target state="translated">Érvénytelen kérés érkezett az avalex szerverekhez.</target>
       </trans-unit>
     </body>
   </file>
